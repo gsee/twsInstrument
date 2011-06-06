@@ -104,14 +104,15 @@ twsInstrument('SPY') #assumes it's a stock
 
 #Now something that isn't denominated in USD
 twsInstrument(twsFUT(symbol='NIY',exch='GLOBEX',expiry='201106',
-                     currency='JPY',underlying_id='NIY'))
+                     currency='JPY'))
 
 #As a wrapper for contract wrappers
-Contr_From_Instr(option(primary_id='.SPY', currency='USD', multiplier=100, 
-    tick_size=0.01, expiry='201106',right='C',strike=135, underlying_id='SPY'))
+Contr_From_Instr(option(primary_id='.SPY', currency='USD', 
+    multiplier=100,tick_size=0.01,expiry='201106',callput='call',
+    strike=135,underlying_id='SPY'))
 Instr_From_Contr(twsFUT(symbol='ES',exch='GLOBEX',expiry='201106', currency='USD'))
 
-buildIBcontract(twsSTK("GOOG"),updateInstrument=TRUE, addIBslot=FALSE, invisible=TRUE)
+buildIBcontract(twsSTK("GOOG"),updateInstrument=TRUE, addIBslot=FALSE, output='nothing')
 
 stock('AAPL','USD')
 buildIBcontract('AAPL', updateInstrument=FALSE) #uses instrument

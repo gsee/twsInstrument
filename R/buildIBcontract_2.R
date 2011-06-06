@@ -222,16 +222,19 @@ buildIBcontract <- function(symbol, tws=NULL,
             multiplier <- ""
         } else multiplier <- instr$multiplier            
 
-        primary <- instr$exchange
+        primary <- instr$exchange #should this be "" ?
+        exchange <- instr$exchange #Should exchange and primary both be the same ?
         expiry <- instr$expires
 		IBexpiry <- expiry
-#IB uses the Friday before expiration Saturday for expiry
-#except for EOM options.
+        #IB uses the Friday before expiration Saturday for expiry
+        #except for EOM options.
 		if (!is.null(IBexpiry) && is.character(IBexpiry)) {
-			expdate <- as.Date(IBexpiry,format="%Y%m%d")
-			if (weekdays(expdate) == "Saturday") {
-				IBexpiry <- format(expdate - 1,"%Y%m%d")
-			}
+            if (length(IBexpiry) == 8) {
+			    expdate <- as.Date(IBexpiry,format="%Y%m%d")
+			    if (weekdays(expdate) == "Saturday") {
+				    IBexpiry <- format(expdate - 1,"%Y%m%d")
+			    }
+            }
 		} else IBexpiry = ""
 
         strike <- instr$strike
@@ -241,7 +244,8 @@ buildIBcontract <- function(symbol, tws=NULL,
         #TODO: try to add other info here: local,etc.
 
         #change the NULL values to empty character strings
-        if (is.null(primary) || primary == "N/A") primary <- ""        
+        if (is.null(primary) || primary == "N/A") primary <- ""
+        if (is.null(exchange)) exchange <- 'SMART'        
         if (is.null(expiry)) expiry <- ""
         if (is.null(strike)) strike <- ""
         if (is.null(right)) right <- ""
@@ -250,7 +254,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		
         #create/get initial contract
         #FIXME: Should exch="" here? or instr$exchange? or 'SMART'?        
-        contract <- twsContract(conId=conId, symbol=symbol, exch='SMART',primary=primary,
+        contract <- twsContract(conId=conId, symbol=symbol, exch=exchange,primary=primary,
                         sectype=sectype, expiry=IBexpiry, strike=strike, currency=currency,
                         right=right, local="", multiplier=multiplier, combo_legs_desc="",
                         comboleg="", include_expired=include_expired) 
@@ -343,7 +347,8 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    #else instr$identifiers <- list(IB=uc$local)        
         instr$primary_id <- primary_id
         instr$local <- uc$local
-        instr$exchange <- uc$primary
+#        instr$exchange <- uc$primary
+        instr$exchange <- uc$exch #ok to overwrite 'SMART' ? 
         instr$currency <- uc$currency
         switch(uc$sectype, 
             STK={
@@ -388,6 +393,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		} else tclass <- unique(c(instr$type,"instrument")) 
         #update info about where & when the instrument was updated
         instr$defined.by <- paste(c(instr$defined.by, "IB"), collapse=";")
+        # ^ Maybe only unique defined.by should be kept?        
         instr$updated <- Sys.time()    
         
         class(instr) <- tclass 

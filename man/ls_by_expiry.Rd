@@ -25,9 +25,6 @@ exact match of pattern?
   \item{x}{what to remove
 }
 }
-\details{
-
-}
 \value{
 \code{ls_by_expiry} gives a vector of names of instruments that expire on the given expiry.
 \code{rm_by_expiry} is called for its side-effect.
