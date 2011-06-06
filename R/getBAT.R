@@ -50,8 +50,8 @@ function(symbol, endDateTime, tws=NULL, barSize='1 min',
         if (NCOL(bat)==4)
         	colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Trade.Price','Mid.Price'),sep='.')        
 	    if (auto.assign) { 
-		    assign(contract$symbol, bat, envir=env)
-		    return(contract$symbol)
+		    assign(symbol, bat, envir=env)
+		    return(symbol)
 	    } else { return(bat) }
     } else NULL
 }

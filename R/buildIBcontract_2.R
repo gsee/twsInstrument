@@ -220,10 +220,13 @@ buildIBcontract <- function(symbol, tws=NULL,
         #set multiplier
         if (sectype == "STK") { # || sectype == "CASH") {
             multiplier <- ""
-        } else multiplier <- instr$multiplier            
-
+            exchange <- 'SMART'
+        } else {
+            multiplier <- instr$multiplier            
+            exchange <- instr$exchange #Should exchange and primary both be the same ?        
+        }
         primary <- instr$exchange #should this be "" ?
-        exchange <- instr$exchange #Should exchange and primary both be the same ?
+    
         expiry <- instr$expires
 		IBexpiry <- expiry
         #IB uses the Friday before expiration Saturday for expiry
@@ -245,7 +248,11 @@ buildIBcontract <- function(symbol, tws=NULL,
 
         #change the NULL values to empty character strings
         if (is.null(primary) || primary == "N/A") primary <- ""
-        if (is.null(exchange)) exchange <- 'SMART'        
+        if (is.null(exchange)) {
+            if (sectype == 'STK') {
+                exchange <- 'SMART' 
+            } else exchange <- ''
+        }        
         if (is.null(expiry)) expiry <- ""
         if (is.null(strike)) strike <- ""
         if (is.null(right)) right <- ""
@@ -294,7 +301,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 contract$symbol, ' may not be a valid ', contract$sectype, 
                 '. Disconnected.\n', sep=""))
         } else { 
-            cat('Request complete. Disconnected.\n')
+            cat('Contract details request complete. Disconnected.\n')
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
 	    }
