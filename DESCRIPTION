@@ -6,7 +6,7 @@ Date: 2011-06-02
 Depends: IBrokers, FinancialInstrument, quantmod
 Author: Garrett See
 Maintainer: Garrett See <gsee000@gmail.com>
-Description: functions that involve getting data with IBrokers
+Description: Integrates IBrokers and FinancialInstrument.
 License: GPL-3
 LazyLoad: yes
 LazyData: yes
