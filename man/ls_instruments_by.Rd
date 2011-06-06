@@ -2,10 +2,10 @@
 \alias{ls_instruments_by}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+Subset names of instruments
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+list names of instruments that have an attribute that matches some value
 }
 \usage{
 ls_instruments_by(what, value, pattern = NULL, match = TRUE)
@@ -13,76 +13,32 @@ ls_instruments_by(what, value, pattern = NULL, match = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{what}{
-%%     ~~Describe \code{what} here~~
+what attribute (e.g. currency, type, strike, etc.)
 }
   \item{value}{
-%%     ~~Describe \code{value} here~~
+what value must the attribute have (e.g. sQuote{EUR}, sQuote{option}, 100, etc.)
 }
   \item{pattern}{
-%%     ~~Describe \code{pattern} here~~
+only return instruments with \code{pattern} in the name
 }
   \item{match}{
-%%     ~~Describe \code{match} here~~
+should pattern match names exactly?
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+list instruments that have a given attribute level with a given value.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
+chr vector of instrument names
 }
 \author{
-%%  ~~who you are~~
+Garrett See
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+buildHierarchy, instrument.table, ls_instruments
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (what, value, pattern=NULL, match=TRUE) {
-    if (length(pattern) > 1 && !match) {
-        warning("Using match because length of pattern > 1.")
-        match <- TRUE
-    }
-    if (!is.null(pattern) && match) {   #there's a pattern and match is TRUE
-        symbols <- ls(.instrument, all.names=TRUE)
-        symbols <- symbols[match(pattern,symbols)]
-    } else if (!match && length(pattern) == 1) { # pattern is length(1) and match is FALSE
-        symbols <- ls(.instrument, all.names=TRUE, pattern=pattern)
-    } else if (is.null(pattern)) {  #no pattern
-        symbols <- ls(.instrument, all.names=TRUE)
-    } # else pattern length > 1 & don't match
-        
-    tmp_symbols <- NULL 
-    for (symbol in symbols) {
-        tmp_instr <- try(get(symbol, pos = .instrument),silent=TRUE)
-        if (is.instrument(tmp_instr) && !is.null(tmp_instr[[what]])) {
-            if (tmp_instr[[what]] == value){    
-                tmp_symbols <- c(tmp_symbols,symbol)
-            }
-        }    
-    }
-    tmp_symbols
-  }
+\dontrun{
+ls_instruments_by('type','stock')
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}
