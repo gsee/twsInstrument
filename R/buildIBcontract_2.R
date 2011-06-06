@@ -62,14 +62,15 @@ buildIBcontract <- function(symbol, tws=NULL,
 {
     #TODO: Allow for vector of symbols, instruments, or contracts
     if (is.xts(symbol)) stop('symbol can be the name of an xts object, but not the object itself.')    
-    primary_id <- NULL    
+    primary_id <- NULL
+    right <- NULL    
     contract <- NULL
     instr <- NULL        
     if (is.twsContract(symbol)){ #then make an instr
         #also create instrument (but it will only be assigned if updateInstrument==TRUE) &| assign_i==TRUE
         #need at least primary_id, currency, multiplier, tick_size, identifiers, type
                 
-		contract <- symbol
+	contract <- symbol
         symbol <- contract$symbol
 
         #make sure the currency is defined for this product
@@ -130,22 +131,23 @@ buildIBcontract <- function(symbol, tws=NULL,
         if (!is.null(instr$underlying_id)) { 
             symbol <- instr$underlying_id
         } else symbol <- instr$primary_id
-#if it was an instrument, we copied it to instr, figured out the primary_id, and the symbol 
+	#if it was an instrument, we copied it to instr, figured out the primary_id, and the symbol 
     } else if (!is.twsContract(symbol)) { 
-#not an instrument or contract (if it was initially a twsContract or instrument, 
-#symbol has been overwritten with symbol name)
+	#not an instrument or contract 
+	#(if it was initially a twsContract or instrument, 
+	#symbol has been overwritten with symbol name)
         if (length(symbol) > 1) { 
             #TODO: allow for vector of symbols, instruments, twsContracts, or twsInstruments 
 	        #TODO2: allow for named lists.
             stop('symbol must be an instrument, twsInstrument, twsContract, or the name of an instrument')
         } else {
-#we'll get here if the symbol argument given was a string (e.g. "SPY") or a twsContract
+	#we'll get here if the symbol argument given was a string (e.g. "SPY") or a twsContract
             if (is.null(primary_id)) { #i.e. if it wasn't a twsContract
 				#if it has a "_" in it, then split into primary and suffix?				
 				primary_id <- symbol
 			}             
             if (is.null(instr) && length(primary_id) ==1 )  {
-#instr will be null if we were given a string.
+		#instr will be null if we were given a string.
                 instr <- try(getInstrument(primary_id,silent=TRUE),silent=TRUE)
             }
         }
@@ -170,7 +172,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 	if (is.instrument(instr) && is.null(instr$IB) && is.null(contract)) { #make contract
 	    primary_id <- instr$primary_id
 	    #figure out sectype
-		if (is.null(instr$sectype) ) {
+	    if (is.null(instr$sectype) ) {
 			#currencies don't have type by FinancialInstrument default                
             if (inherits(instr,'currency') || 
 				(!is.null(instr$type) && instr$type[1] == 'currency') ) {
