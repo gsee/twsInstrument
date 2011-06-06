@@ -46,7 +46,7 @@ Do not delete currency instruments when deleting multiple instruments.
 }
 \value{
 ls_ functions return vector of instrument names
-rm_ functions return invisible
+rm_ functions return invisible / called for side-effect.
 }
 \author{
 Garrett See
@@ -57,18 +57,26 @@ ls_instruments, ls_currencies, rm_instruments, rm_currencies, twsInstrument, ins
 }
 \examples{
 \dontrun{
-#rm_instruments(keep.currencies=FALSE)
-define_stocks(c('GAR','SEE','GA','RRE','TT', 'GS', 'EE'))
-ls_stocks()
-ls_currencies()
-ls_EUR()
-ls_CAD()
+#First create instruments
+currency('USD')
+currency('CAD')
+currency('GBP')
+stock('CM','CAD')
+stock('CNQ','CAD')
+stock('BET','GBP')
+stock('BARC','GBP')
+stock('SPY','USD')
+stock('DIA','USD')
+
+#now the examples
+ls_by_currency(c('CAD','GBP'))
+
 ls_USD()
- 
-ls_by_currency(c('CAD','EUR'))
+ls_CAD()
+
 #2 ways to remove all instruments of a currency
-rm_instruments(ls_EUR()) 
-#rm_instruments(ls_EUR(),keep.currencies=FALSE)
+rm_instruments(ls_USD()) 
+#rm_instruments(ls_GBP(),keep.currencies=FALSE)
 rm_by_currency( ,'CAD') 
 #rm_by_currency( ,'CAD', keep.currencies=FALSE)
 }

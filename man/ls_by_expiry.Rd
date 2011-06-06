@@ -1,13 +1,15 @@
 \name{ls_by_expiry}
 \alias{ls_by_expiry}
+\alias{rm_by_expiry}
 \title{
-show names of instruments by expiration date
+list or remove instruments by expiration date
 }
 \description{
-show names of instruments that expire on a given date
+show names of or remove instruments that expire on a given date
 }
 \usage{
 ls_by_expiry(expiry, pattern = NULL, match = TRUE)
+rm_by_expiry(x, expiry)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,12 +22,15 @@ an optional regular expression.  Only names matching sQuote{pattern} are returne
   \item{match}{
 exact match of pattern?
 }
+  \item{x}{what to remove
+}
 }
 \details{
 
 }
 \value{
-vector of names of instruments that expire on the given expiry.
+\code{ls_by_expiry} gives a vector of names of instruments that expire on the given expiry.
+\code{rm_by_expiry} is called for its side-effect.
 }
 \author{
 Garrett See

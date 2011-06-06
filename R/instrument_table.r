@@ -28,7 +28,7 @@ instrument.table <- function(symbols=NULL, exclude = NULL, attrs.of = NULL) {
 }
 
 #This version works
-#instrument.table
+#instrument.table <-
 #function (exclude = NULL, attrs.of = NULL) 
 #{
 #    if (is.null(attrs.of)) {
@@ -45,24 +45,6 @@ instrument.table <- function(symbols=NULL, exclude = NULL, attrs.of = NULL) {
 #    out <- buildHierarchy(primary_ids, levels)
 #    data.frame(out[, -1], row.names = as.character(out[, 1]))
 #}
-
-#library(IBtools)
-#data(SP500desc)
-#define_stocks()
-#it <- instrument.table()
-#NROW(it);NCOL(it)
-
-#TODO: make templates for options, futures, stocks, currencies, exchange_rates
-#yahoo_ia
-
-
-#IB_ia
-#twsInstrument_ia
-
-#stock_ia
-#option_ia
-#future_ia
-#exchange_rate_ia
 
 
 

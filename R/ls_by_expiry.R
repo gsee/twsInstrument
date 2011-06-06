@@ -1,9 +1,9 @@
-
+#TODO: allow for more date formats. 
 
 ls_by_expiry <- function(expiry, pattern=NULL, match=TRUE) {
     if (length(pattern) > 1 && !match) {
         warning("Using match because length of pattern > 1.")
-        #FIXME: should I use match?
+        #should I use match even though it's TRUE?
         #or, ignore pattern and return everything?
         #or, do multiple ls calls and return unique
         match <- TRUE    
@@ -31,8 +31,15 @@ ls_by_expiry <- function(expiry, pattern=NULL, match=TRUE) {
     tmp_symbols
 }
 
+#remove x by expiry
+rm_by_expiry <- function(x,expiry) {
+    if (missing(x)) {
+        x <- ls_by_expiry(expiry)
+    } else x <- ls_by_expiry(expiry,pattern=x)
+    rm(list=x,pos=.instrument)
+}
+#rm_by_expiry(ls_options(),'20130119')
 
 
-
-
-
+#TODO: ls_by_underlying
+        #if (it's  %in% ls_derivatives())

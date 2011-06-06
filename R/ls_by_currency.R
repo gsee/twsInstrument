@@ -1,7 +1,7 @@
 ls_by_currency <- function(currency, pattern=NULL, match=TRUE,show.currencies=FALSE) {
     if (length(pattern) > 1 && !match) {
         warning("Using match because length of pattern > 1.")
-        #FIXME: should I use match?
+        #should I use match?
         #or, ignore pattern and return everything?
         #or, do multiple ls calls and return unique
         match <- TRUE    
