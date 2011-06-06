@@ -1,0 +1,12 @@
+Package: twsInstrument
+Type: Package
+Title: Improves ease of use of IBrokers and FinacialInstrument 
+Version: 1.0-2
+Date: 2011-06-02
+Depends: IBrokers, FinancialInstrument, quantmod
+Author: Garrett See
+Maintainer: Garrett See <gsee000@gmail.com>
+Description: functions that involve getting data with IBrokers
+License: GPL-3
+LazyLoad: yes
+LazyData: yes

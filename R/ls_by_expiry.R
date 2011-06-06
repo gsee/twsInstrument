@@ -1,0 +1,38 @@
+
+
+ls_by_expiry <- function(expiry, pattern=NULL, match=TRUE) {
+    if (length(pattern) > 1 && !match) {
+        warning("Using match because length of pattern > 1.")
+        #FIXME: should I use match?
+        #or, ignore pattern and return everything?
+        #or, do multiple ls calls and return unique
+        match <- TRUE    
+    }    
+
+    if (!is.null(pattern) && match) {   #there's a pattern and match is TRUE
+        symbols <- ls(.instrument, all.names=TRUE)
+        symbols <- symbols[match(pattern,symbols)]
+    } else if (!match && length(pattern) == 1) { # pattern is length(1) and match is FALSE
+        symbols <- ls(.instrument, all.names=TRUE, pattern=pattern)
+    } else if (is.null(pattern)) {  #no pattern
+        symbols <- ls(.instrument, all.names=TRUE)
+    } # else pattern length > 1 & don't match
+        
+    tmp_symbols <- NULL            
+    for (symbol in symbols) {
+        tmp_instr <- try(get(symbol, pos = .instrument),silent=TRUE)
+        if (is.instrument(tmp_instr) && !is.null(tmp_instr$expires) ) {
+        	if (tmp_instr$expires == expiry ){    
+				tmp_symbols <- c(tmp_symbols,symbol)
+    		}	        
+        }    
+    }
+
+    tmp_symbols
+}
+
+
+
+
+
+
