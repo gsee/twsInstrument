@@ -27,8 +27,8 @@ ls_instruments <- function(pattern=NULL, match=TRUE) {
 }
 
 
-ls_stocks <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_stocks <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -39,8 +39,8 @@ ls_stocks <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_options <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)    
+ls_options <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)    
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -51,8 +51,8 @@ ls_options <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_futures <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_futures <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -63,8 +63,8 @@ ls_futures <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_currencies <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_currencies <- function(pattern=NULL, match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -74,8 +74,8 @@ ls_currencies <- function(pattern=NULL) {
     }
     tmp_symbols
 }
-ls_non_currencies <- function(pattern=NULL, includeFX=TRUE) {
-    symbols <- ls_instruments(pattern)
+ls_non_currencies <- function(pattern=NULL, includeFX=TRUE, match=TRUE) {
+    symbols <- ls_instruments(pattern, match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -87,12 +87,10 @@ ls_non_currencies <- function(pattern=NULL, includeFX=TRUE) {
     tmp_symbols
 }
 
-ls_exchange_rates <- function(pattern=NULL) {
-    if (!is.null(pattern)) {
-        symbols <- ls(.instrument, all.names=TRUE, pattern=pattern)
+ls_exchange_rates <- function(pattern=NULL,match=TRUE) {
     #This could use ls_currencies instead of ls_instruments, but currency class may be
     #subject to change
-    } else symbols <- ls(.instrument, all.names=TRUE)
+    symbols <- ls_instruments(pattern=pattern,match=match)    
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -103,8 +101,8 @@ ls_exchange_rates <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_bonds <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_bonds <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -115,8 +113,8 @@ ls_bonds <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_funds <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_funds <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match=TRUE)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -127,8 +125,8 @@ ls_funds <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_spreads <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_spreads <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match=TRUE)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -139,8 +137,8 @@ ls_spreads <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_guaranteed_spreads <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_guaranteed_spreads <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -151,10 +149,8 @@ ls_guaranteed_spreads <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_synthetics <- function(pattern=NULL) {
-    if (!is.null(pattern)) {
-        symbols <- ls(.instrument, all.names=TRUE, pattern=pattern)
-    } else symbols <- ls(.instrument, all.names=TRUE)
+ls_synthetics <- function(pattern=NULL, match=TRUE) {
+    symbols <- ls_instruments(pattern,match)    
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -226,8 +222,8 @@ ls_derivatives <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
-ls_non_derivatives <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_non_derivatives <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
     #there is currently no derivative class
     #but check for it in case someone made one    
     tmp_symbols <- NULL
@@ -243,9 +239,9 @@ ls_non_derivatives <- function(pattern=NULL) {
 }
 
 
-ls_calls <- function(pattern=NULL) {
+ls_calls <- function(pattern=NULL,match=TRUE) {
    if (!is.null(pattern)) {
-        symbols <- ls_options(pattern=pattern)
+        symbols <- ls_options(pattern=pattern,match=match)
     } else symbols <- ls_instruments()    
 	tmp_symbols <- NULL
     for (instr in symbols) {
@@ -265,9 +261,9 @@ ls_calls <- function(pattern=NULL) {
     tmp_symbols
 }
 
-ls_puts <- function(pattern=NULL) {
+ls_puts <- function(pattern=NULL,match=TRUE) {
 	if (!is.null(pattern)) {
-        symbols <- ls_options(pattern=pattern)
+        symbols <- ls_options(pattern=pattern,match=TRUE)
     } else symbols <- ls_instruments()    
 	tmp_symbols <- NULL
     for (instr in symbols) {

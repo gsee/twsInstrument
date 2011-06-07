@@ -41,23 +41,23 @@ ls functions return the names of all the instruments of the class implied by the
 rm functions remove the instruments of the class implied by the function name
 }
 \usage{
-ls_stocks(pattern=NULL)
-ls_options(pattern=NULL)
-ls_futures(pattern=NULL)
-ls_currencies(pattern=NULL)
-ls_non_currencies(pattern=NULL, includeFX=TRUE)
-ls_exchange_rates(pattern=NULL)
-ls_bonds(pattern=NULL)
-ls_funds(pattern=NULL)
-ls_spreads(pattern=NULL)
-ls_guaranteed_spreads(pattern=NULL)
-ls_synthetics(pattern=NULL)
+ls_stocks(pattern=NULL, match=TRUE)
+ls_options(pattern=NULL, match=TRUE)
+ls_futures(pattern=NULL, match=TRUE)
+ls_currencies(pattern=NULL, match=TRUE)
+ls_non_currencies(pattern=NULL, includeFX=TRUE, match=TRUE)
+ls_exchange_rates(pattern=NULL, match=TRUE)
+ls_bonds(pattern=NULL, match=TRUE)
+ls_funds(pattern=NULL, match=TRUE)
+ls_spreads(pattern=NULL, match=TRUE)
+ls_guaranteed_spreads(pattern=NULL, match=TRUE)
+ls_synthetics(pattern=NULL, match=TRUE)
 ls_derivatives(pattern=NULL, match=TRUE)
-ls_non_derivatives(pattern=NULL)
+ls_non_derivatives(pattern=NULL, match=TRUE)
 ls_instruments(pattern=NULL, match=TRUE)
-%ls_defined.by(x,pattern=NULL)
-%ls_yahoo(pattern=NULL)
-%ls_IB(pattern=NULL)
+%ls_defined.by(x,pattern=NULL, match=TRUE)
+%ls_yahoo(pattern=NULL, match=TRUE)
+%ls_IB(pattern=NULL, match=TRUE)
 
 rm_instruments(x, keep.currencies=TRUE)
 rm_stocks(x)
@@ -88,8 +88,6 @@ ls functions return vector of character strings corresponding to instruments of 
 rm functions are called for side-effect
 }
 \details{
-ls_instruments and and ls_derivatives are the only two that have a match argument. The rest will be updated soon. 
-
 rm_instruments and rm_non_derivatives will not delete currencies 
 unless the keep.currencies argument is FALSE.
 
