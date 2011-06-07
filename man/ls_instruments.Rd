@@ -52,7 +52,7 @@ ls_funds(pattern=NULL)
 ls_spreads(pattern=NULL)
 ls_guaranteed_spreads(pattern=NULL)
 ls_synthetics(pattern=NULL)
-ls_derivatives(pattern=NULL)
+ls_derivatives(pattern=NULL, match=TRUE)
 ls_non_derivatives(pattern=NULL)
 ls_instruments(pattern=NULL, match=TRUE)
 %ls_defined.by(x,pattern=NULL)
@@ -88,7 +88,7 @@ ls functions return vector of character strings corresponding to instruments of 
 rm functions are called for side-effect
 }
 \details{
-ls_instruments is the only one that has a match argument. The rest will be updated soon.
+ls_instruments and and ls_derivatives are the only two that have a match argument. The rest will be updated soon. 
 
 rm_instruments and rm_non_derivatives will not delete currencies 
 unless the keep.currencies argument is FALSE.
@@ -107,6 +107,7 @@ Often is is useful to nest these functions to get things like futures denominate
 Garrett See
 }
 \seealso{
+ls_instruments_by, ls_by_currency, ls_by_expiry,
 ls, rm, instrument, stock, future, option, currency
 }
 
@@ -154,6 +155,10 @@ ls_instruments()
 
 rm_instruments() #remove all but currencies
 rm_currencies()
+
+#option_series.yahoo('DIA')
+ls_instruments_by('underlying_id','DIA') #underlying_id must exactly match 'DIA'
+ls_derivatives('DIA',match=FALSE) #primary_ids that contain 'DIA'
 }
 }
 

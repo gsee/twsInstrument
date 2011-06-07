@@ -210,9 +210,8 @@ ls_synthetics <- function(pattern=NULL) {
 #	tmp_symbols
 #}
 
-
-ls_derivatives <- function(pattern=NULL) {
-    symbols <- ls_instruments(pattern)
+ls_derivatives <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
     #there is currently no derivative class    
     #but check for it in case someone made one    
     tmp_symbols <- NULL

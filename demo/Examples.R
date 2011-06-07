@@ -11,13 +11,13 @@ twsInstrument(twsSTK("SPY","USD",exch="ARCA"))
 twsInstrument(twsSTK("DIA","USD",exch="ARCA"))
 
 option('.SPY','USD',100,right='P',strike=135,
-     expiry=201112,underlying_id="SPY")
+     expires=201112,underlying_id="SPY")
 option('.DIA','USD',100,right='C',strike=120,
-     expiry=201112,underlying_id="DIA")
+     expires=201112,underlying_id="DIA")
 
 contract <- Contr_From_Instr('.SPY') #doesn't change instrument
 contract
-Instr_From_Contr(contract)
+Instr_From_Contr(contract) #same as twsInstrument(contract, addIBslot=FALSE, output='instrument')
 
 Instr_From_Contr(twsFUT('ES',exch='GLOBEX',expiry='201109'))
 
@@ -28,6 +28,14 @@ ls_stocks()
 ls_derivatives()
 ls_options()
 ls_twsInstruments()
+
+
+#option_series.yahoo('XOM')
+FinancialInstrument:::option_series.yahoo('XOM')
+
+ls_instruments_by('underlying_id','XOM') #underlying_id must exactly match 'XOM'
+ls_derivatives('XOM',match=FALSE) #primary_ids that contain 'XOM'
+
 
 instrument.table(ls_yahoo(),attrs.of='S')
 instrument.table(ls_options(), attrs.of='.SPY')
@@ -52,11 +60,16 @@ ls_non_derivatives()
 #several ways to remove groups
 #get some more stocks to play with
 define_stocks(c('A','B','U','N','CH','O','SY','MB','L', 'S'),use.yahoo=FALSE)
+ls_stocks()
 #a couple ways to delete groups
-rm_instruments(ls_CAD(show.currencies=TRUE)) #remove CAD denominated instruments
+rm_instruments(ls_CAD(show.currencies=TRUE),keep.currencies=FALSE) #remove CAD denominated instruments and CAD currency.
 # or, to not remove currencies, rm_instruments(ls_CAD()) 
-rm_stocks(ls_EUR(),keep.currencies=FALSE) #remove EUR denominated stocks
-rm_by_currency( , "USD") #re
+rm_stocks(ls_EUR(show.currencies=TRUE)) #remove EUR denominated stocks & EUR currency
+# or, to not remove EUR currency, rm_stocks(ls_EUR())
+rm_by_currency( , "USD") #remove USD denominated instruments
+
+#Often useful to nest:
+#rm_by_currency(ls_options(), "USD") 
 
 rm_non_derivatives(ls_stocks())
 
@@ -64,7 +77,9 @@ rm_non_derivatives(ls_stocks())
 #info from attached SP500desc data, IB, and yahoo,
 define_stocks( ,currency="USD", use.IB=FALSE) 
 ls_stocks()
-update_instruments.IB()
+update_instruments.IB() 
+
+
 ###########################
 # Getting Historical Data #
 ###########################
