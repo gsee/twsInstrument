@@ -73,7 +73,7 @@ rm_derivatives(x)
 rm_non_derivatives(x, keep.currencies=TRUE)
 }
 \arguments{
-  \item{pattern}{an optional regular expression.  Only names matching sQuote{pattern} are returned.}
+  \item{pattern}{an optional regular expression.  Only names matching \sQuote{pattern} are returned.}
   \item{match}{return only exact matches?}
   
   \item{x}{what to remove. if not supplied all instruments of relevent class will be removed

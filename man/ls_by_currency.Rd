@@ -30,7 +30,7 @@ rm_by_currency(x,currency,keep.currencies=TRUE)
 chr vector of names of currency
 }
   \item{pattern}{
-chr vector of names of instruments to remove
+an optional regular expression.  Only names matching \sQuote{pattern} are returned.
 }
   \item{match}{
 exact match?
