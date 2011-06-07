@@ -201,7 +201,7 @@ buildIBcontract <- function(symbol, tws=NULL,
         
         if (is.null(contract$conId) || contract$conId == 0) {     
             conId <- 0        
-            if ((sectype == "FUT" || sectype == "OPT") && is.null(instr$expires) )
+            if ((sectype == "FUT" || sectype == "OPT") && is.null(instr$expires) && is.null(instr$expiry) )
                 warning("Expiry not defined for future or option.")   
             if (sectype == "OPT") {
 				if (is.null(instr$strike))
@@ -226,8 +226,9 @@ buildIBcontract <- function(symbol, tws=NULL,
             exchange <- instr$exchange #Should exchange and primary both be the same ?        
         }
         primary <- instr$exchange #should this be "" ?
-    
-        expiry <- instr$expires
+        if (is.null(instr$expires) && !is.null(instr$expiry)) {
+            expiry <- instr$expiry
+        } else expiry <- instr$expires
 		IBexpiry <- expiry
         #IB uses the Friday before expiration Saturday for expiry
         #except for EOM options.
