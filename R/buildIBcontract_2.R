@@ -70,7 +70,7 @@ buildIBcontract <- function(symbol, tws=NULL,
         #also create instrument (but it will only be assigned if updateInstrument==TRUE) &| assign_i==TRUE
         #need at least primary_id, currency, multiplier, tick_size, identifiers, type
                 
-	contract <- symbol
+	    contract <- symbol
         symbol <- contract$symbol
 
         #make sure the currency is defined for this product
@@ -83,10 +83,14 @@ buildIBcontract <- function(symbol, tws=NULL,
 		}        
 	    #primary_id <- symbol
         #TODO: Include conId as an identifier
+        #FIXME: these instrument constructor wrappers assign_i=TRUE; 
+        #       I need to replace wrappers with direct call to instrument    
         instr <- switch(contract$sectype, 
                 STK={
                     primary_id <- contract$symbol                    
-                    stock(primary_id=primary_id, currency=contract$currency, exchange=contract$exchange)
+                    #stock(primary_id=primary_id, currency=contract$currency, exchange=contract$exchange)
+                    instrument(primary_id=primary_id, currency=contract$currency,multiplier=1,
+                                tick_size=0.01, identifiers=NULL, type='stock', assign_i=FALSE)
                 }, 
                 OPT={
 #                   primary_id <- paste('.', contract$symbol,sep="")
@@ -99,21 +103,34 @@ buildIBcontract <- function(symbol, tws=NULL,
 					#local <- paste(symbol, si, sep="   ")      
 					primary_id <- paste(".", contract$symbol, "_", expiry, right, strike, sep="")
 		
-                    option(primary_id=primary_id, currency=contract$currency,
-                        multiplier=contract$multiplier, expires=contract$expiry, right=contract$right,
-                        strike=contract$strike, exchange=contract$exchange, underlying_id=contract$symbol)
+                    #option(primary_id=primary_id, currency=contract$currency,
+                    #    multiplier=contract$multiplier, expires=contract$expiry, right=contract$right,
+                    #    strike=contract$strike, exchange=contract$exchange, underlying_id=contract$symbol)
+                    instrument(primary_id=primary_id, currency=contract$currency,
+                        multiplier=contract$multiplier, tick_size=NULL, 
+                        identifiers=NULL, expires=contract$expiry, right=contract$right, 
+                        strike=contract$strike, exchange=contract$exchange, type='option', 
+                        underlying_id=contract$symbol, assign_i=FALSE)
+
                 }, 
                 FUT={
                     primary_id <- symbol
-                    future(primary_id=primary_id, currency=contract$currency, 
-                        multiplier=as.numeric(contract$multiplier), expires=contract$expiry, 
-                        exchange=contract$exch, underlying_id=contract$symbol) #maybe shouldn't specify exchange here
+                    #future(primary_id=primary_id, currency=contract$currency, 
+                    #    multiplier=as.numeric(contract$multiplier), expires=contract$expiry, 
+                    #    exchange=contract$exch, underlying_id=contract$symbol) #maybe shouldn't specify exchange here
+                    instrument(primary_id=primary_id, currency=contract$currency, 
+                        multiplier=as.numeric(contract$multiplier), tick_size=NULL,
+                        expires=contract$expiry, exchange=contract$exch, type='future', 
+                        underlying_id=contract$symbol, assign_i=FALSE) #maybe shouldn't specify exchange here
                 }, 
                 CASH={ 
                     if (contract$local == "") {
                         primary_id <- paste(contract$symbol, contract$currency, sep=".") #will be contract$local after update
                     } else primary_id <- contract$local
-                    exchange_rate(primary_id=primary_id, currency=contract$currency, second_currency=contract$symbol)
+                    #exchange_rate(primary_id=primary_id, currency=contract$currency, second_currency=contract$symbol)
+                    instrument(primary_id=primary_id, currency=contract$currency, multiplier=1, 
+                                tick_size=0.01, identifiers=NULL, second_currency=contract$symbol, 
+                                type=c("exchange_rate","currency"), assign_i=FALSE)
                     #currency(primary_id=contract$symbol, currency=contract$currency, exchange=contract$exch, type='currency')
                 }) #End switch on sectype
          #TODO: Implement for bonds and other instruments        

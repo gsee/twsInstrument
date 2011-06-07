@@ -52,6 +52,18 @@ future('ES','USD',50,exchange='GLOBEX',expires='201109')
 Contr_From_Instr('ES')
 
 
+#Get front-month future; let IB figure out expiry 
+rm_instruments(); rm_currencies()
+contract <- twsContract()
+contract$symbol <- 'ES'
+contract$currency <- 'USD'
+contract$sectype <- "FUT"
+
+twsInstrument(contract)
+getInstrument('ES')
+
+
+
 
 
 
