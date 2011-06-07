@@ -35,25 +35,21 @@ or the name of an instrument. }
 %of a FinancialInstrument instrument. 
 
 reqTBBO is an alias for getBAT.
-For getBAT/reqTBBO symbol can be one of: the name of an instrument, the name of an undefined stock, or a twsContract object.
 
-if symbol is a twsContract object, it will make the request with symbol.
-if symbol is the name of an instrument, and there is a twsContract object stored in the IB slot of that instrument, it will use 
-that twsContract object to make the request.
+symbol can be one of: an instrument, the name of an instrument, the name of an undefined stock, or a twsContract object. 
 
-If symbol is the name of a stock/instrument, but there is no instrument found by that name, or if there is no IB slot in the
-instrument's definition, getBAT will act as if symbol is the name of an undefined stock and try the request 
-using a temporary twsEquity contract.
+Before making a request for historical data, symbol will be passed through \code{Contr_From_Instr} 
+(which is a wrapper for \code{buildIBcontract}) which will convert symbol into an updated, complete twsContract. 
 
-Currently, if you want to get data for something other than a stock, then either it should be defined as an instrument 
-with a slot fo IB containing the twsContract object, or you getBAT should be called with a twsContract object instead of a name.
-This may be updated in the future, but isn't very high on the priority list.
+If you want to get data for something other than a stock, then \code{symbol} should be an instrument object, 
+a twsContract object or the name of a previosly defined instrument
 
+!!! Ignore the rest of this details section until I upload getBAThistory function !!!
 Unlike reqHistoricalData, The \code{endDateTime} argument must be of the form
 'CCYY-MM-DD HH:MM:SS'
 
 (Below is mostly copied from reqHistoricalData help)
-If not specified the current
+If endDateTime is not specified the current
 time as returned from the TWS server will be used. This
 is the preferred method for backfilling data. The \sQuote{TZ}
 portion of the string is optional.
@@ -91,7 +87,7 @@ IB API \url{http://interactivebrokers.com/php/apiUsersGuide/apiguide.htm}
 }
 
 \author{Garrett See}
-\seealso{IBrokers, reqHistoricalData, reqHistory, getIBequities}
+\seealso{Contr_From_Instr, IBrokers, reqHistoricalData, reqHistory, getIBequities}
 
 \examples{
 \dontrun{
