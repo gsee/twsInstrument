@@ -1,11 +1,12 @@
 \name{front_future.IB}
 \alias{front_future.IB}
-instrument class constructor for futures
 \title{
-Create a future instrument for the front-month contract as well as specs for the root.
+instrument class constructor for futures
 }
 \description{
-Looks up contract details of the front-month contract from IB and creates a futures instrument. If the contract root will also be defined if it hasn't been defined yet.
+Create a future instrument for the front-month contract as well as specs for the root.
+Looks up contract details of the front-month contract from IB and creates a futures instrument. 
+The contract root will also be defined if it hasn't been defined yet.
 }
 \usage{
 front_future.IB(root, currency = "USD", underlying_id = NULL, addIBslot=TRUE)
@@ -45,7 +46,4 @@ front_future.IB('ES')
 front_future.IB('SPY')
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+
