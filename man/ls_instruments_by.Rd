@@ -16,7 +16,7 @@ ls_instruments_by(what, value, pattern = NULL, match = TRUE)
 what attribute (e.g. currency, type, strike, etc.)
 }
   \item{value}{
-what value must the attribute have (e.g. sQuote{EUR}, sQuote{option}, 100, etc.)
+what value must the attribute have (e.g. \sQuote{EUR}, \sQuote{option}, 100, etc.)
 }
   \item{pattern}{
 only return instruments with \code{pattern} in the name

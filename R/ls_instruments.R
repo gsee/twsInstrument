@@ -114,7 +114,7 @@ ls_bonds <- function(pattern=NULL,match=TRUE) {
 }
 
 ls_funds <- function(pattern=NULL,match=TRUE) {
-    symbols <- ls_instruments(pattern,match=TRUE)
+    symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -126,7 +126,7 @@ ls_funds <- function(pattern=NULL,match=TRUE) {
 }
 
 ls_spreads <- function(pattern=NULL,match=TRUE) {
-    symbols <- ls_instruments(pattern,match=TRUE)
+    symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -240,9 +240,7 @@ ls_non_derivatives <- function(pattern=NULL,match=TRUE) {
 
 
 ls_calls <- function(pattern=NULL,match=TRUE) {
-   if (!is.null(pattern)) {
-        symbols <- ls_options(pattern=pattern,match=match)
-    } else symbols <- ls_instruments()    
+    symbols <- ls_options(pattern=pattern,match=match)
 	tmp_symbols <- NULL
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -262,9 +260,7 @@ ls_calls <- function(pattern=NULL,match=TRUE) {
 }
 
 ls_puts <- function(pattern=NULL,match=TRUE) {
-	if (!is.null(pattern)) {
-        symbols <- ls_options(pattern=pattern,match=TRUE)
-    } else symbols <- ls_instruments()    
+    symbols <- ls_options(pattern=pattern,match=match)
 	tmp_symbols <- NULL
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)

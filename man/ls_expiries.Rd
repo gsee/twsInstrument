@@ -24,7 +24,7 @@ chr string name of class that instruments to be returned must inherit.
 \details{
 \code{ls_expires} is an alias. (plural of expires?)
 
-type is currently only implemented for sQuote{derivative}, sQuote{future}, sQuote{option}, sQuote{call} and sQuote{put}
+type is currently only implemented for \sQuote{derivative}, \sQuote{future}, \sQuote{option}, \sQuote{call} and \sQuote{put}
 internally, a call is made to the appropriate ls_ function.
 }
 \value{
@@ -37,8 +37,8 @@ Garrett
 This should be updated to deal with dates instead of character strings
 }
 \seealso{
-ls_instruments_by for things like e.g. ls_instruments_by('expires','20110916')
-ls_instruments, ls_derivatives, ls_options, ls_calls
+ls_instruments_by for things like e.g. ls_instruments_by('expires','20110916'),
+ls_instruments, ls_derivatives, ls_options, ls_calls,
 buildHierarchy, instrument.table
 }
 \examples{
@@ -46,6 +46,7 @@ buildHierarchy, instrument.table
 option_series.yahoo('SPY')
 option_series.yahoo('DIA',NULL)
 ls_expiries()
+
 }
 }
 
