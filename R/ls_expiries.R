@@ -3,7 +3,7 @@ ls_expiries <- function(pattern=NULL, match=TRUE, underlying_id=NULL, type='deri
     #if (!is.null(pattern)) underlying_id <- ls_underlyings    
     if (is.null(underlying_id))
         underlying_id <- ls_underlyings(pattern,match)
-    symbols <- do.call(eval(paste('ls_',type,"s",sep="")),args=list(pattern=NULL) ) #symbols == all derivatives by default
+    symbols <- do.call(eval(paste('ls_',type,"s",sep="")),args=list(pattern=pattern) ) #symbols == all derivatives by default
     dates <- NULL   
     underlyings <- NULL
     for (symbol in symbols) { 
