@@ -9,13 +9,13 @@ show unique expiration dates of instruments
 show unique expiration dates of instruments
 }
 \usage{
-ls_expiries(pattern=NULL, match=FALSE, underlying_id=NULL, type='derivative')
-ls_expires(pattern=NULL, match=FALSE, underlying_id=NULL, type='derivative') 
+ls_expiries(pattern=NULL, match=TRUE, underlying_id=NULL, type='derivative')
+ls_expires(pattern=NULL, match=TRUE, underlying_id=NULL, type='derivative') 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{pattern}{optional regular expression.
-}
+  \item{pattern}{optional regular expression.}
+  \item{match}{exact match?}
   \item{underlying_id}{
 chr name of underlying or vector of underlying_ids. If NULL, all underlyings will be used
 }

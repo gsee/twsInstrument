@@ -8,13 +8,12 @@ show names of underlyings
 shows names that are stored in the \code{underlying_id} slot of derivative instruments
 }
 \usage{
-ls_underlyings(pattern = NULL)
+ls_underlyings(pattern = NULL, match=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{pattern}{
-an optional regular expression.  Only names matching \sQuote{pattern} are returned.
-}
+  \item{pattern}{an optional regular expression.  Only names matching \sQuote{pattern} are returned.}
+  \item{match}{require exact match?}
 }
 \details{
 first calls \code{ls_derivatives}, then looks for unique \code{underlying_id}s. If no derivatives have been defined, nothing will be returned.
