@@ -54,7 +54,7 @@ ls_guaranteed_spreads(pattern=NULL, match=TRUE)
 ls_synthetics(pattern=NULL, match=TRUE)
 ls_derivatives(pattern=NULL, match=TRUE)
 ls_non_derivatives(pattern=NULL, match=TRUE)
-ls_instruments(pattern=NULL, match=TRUE)
+ls_instruments(pattern=NULL, match=TRUE, verbose=TRUE)
 %ls_defined.by(x,pattern=NULL, match=TRUE)
 %ls_yahoo(pattern=NULL, match=TRUE)
 %ls_IB(pattern=NULL, match=TRUE)
@@ -75,6 +75,7 @@ rm_non_derivatives(x, keep.currencies=TRUE)
 \arguments{
   \item{pattern}{an optional regular expression.  Only names matching \sQuote{pattern} are returned.}
   \item{match}{return only exact matches?}
+  \item{verbose}{be verbose?}
   
   \item{x}{what to remove. if not supplied all instruments of relevent class will be removed
 %For \code{ls_defined.by} x is the string describing how the instrument was defined.

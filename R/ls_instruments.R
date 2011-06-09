@@ -1,7 +1,8 @@
 
-ls_instruments <- function(pattern=NULL, match=TRUE) {
+ls_instruments <- function(pattern=NULL, match=TRUE, verbose=TRUE) {
     if (length(pattern) > 1 && !match) {
-        warning("Using match because length of pattern > 1.")
+        if (verbose)
+            warning("Using match=TRUE because length of pattern > 1.")
         #should I use match?
         #or, ignore pattern and return everything?
         #or, do multiple ls calls and return unique

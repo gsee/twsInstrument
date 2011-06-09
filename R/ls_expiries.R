@@ -1,7 +1,8 @@
 
-ls_expiries <- function(underlying_id=NULL, type='derivative') {
+ls_expiries <- function(pattern=NULL, match=TRUE, underlying_id=NULL, type='derivative') {
+    #if (!is.null(pattern)) underlying_id <- ls_underlyings    
     if (is.null(underlying_id))
-        underlying_id <- ls_underlyings()
+        underlying_id <- ls_underlyings(pattern,match)
     symbols <- do.call(eval(paste('ls_',type,"s",sep="")),args=list(pattern=NULL) ) #symbols == all derivatives by default
     dates <- NULL   
     underlyings <- NULL
@@ -37,5 +38,8 @@ ls_expiries <- function(underlying_id=NULL, type='derivative') {
 ls_expires <- ls_expiries
 
 #ls_instruments_by('expires','20110916')
+#ls_expiries(underlying_id=ls_underlyings(ls_calls())) #Nesting
+#ls_expiries('SPY')
+#ls_expiries(ls_calls())
 
 

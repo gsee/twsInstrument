@@ -1,5 +1,5 @@
-ls_underlyings <- function(pattern=NULL) {
-    symbols <- ls_derivatives(pattern)
+ls_underlyings <- function(pattern=NULL, match=TRUE) {
+    symbols <- ls_derivatives(pattern, match)
     tmp_symbols <- NULL
     for (symbol in symbols) {
         tmp_instr <- try(get(symbol,pos=.instrument),silent=TRUE)

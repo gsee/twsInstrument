@@ -9,13 +9,15 @@ show unique expiration dates of instruments
 show unique expiration dates of instruments
 }
 \usage{
-ls_expiries(underlying_id = NULL, type = "derivative")
-ls_expires(underlying_id = NULL, type = "derivative")
+ls_expiries(pattern=NULL, match=FALSE, underlying_id=NULL, type='derivative')
+ls_expires(pattern=NULL, match=FALSE, underlying_id=NULL, type='derivative') 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{pattern}{optional regular expression.
+}
   \item{underlying_id}{
-chr name of underlying. If NULL, all underlyings will be used
+chr name of underlying or vector of underlying_ids. If NULL, all underlyings will be used
 }
   \item{type}{
 chr string name of class that instruments to be returned must inherit.
