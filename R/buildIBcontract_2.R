@@ -402,7 +402,7 @@ buildIBcontract <- function(symbol, tws=NULL,
         #the IB API event that provides them has been deprecated.
 		if (uc$sectype != "CASH" || (instr$currency != instr$primary_id)) {
 		#we don't have this info for non-tradeable base currency			    
-			instr$tick_size <- details$minTick        
+			instr$tick_size <- as.numeric(details$minTick)        
 		    instr$longName <- details$longName
 		    instr$industry <- details$industry
 		    if (!is.null(details) && details$contractMonth != "") 
