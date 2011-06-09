@@ -4,19 +4,17 @@
 #(3)include an argument for expiration date
 
 ATM_k <- function(options, verbose=TRUE) {
-
     underlying <- ls_underlyings(options)
     if (length(underlying) > 1) {
         warning(paste('More than one underlying found in options. ',
                         'Finding At-The-Money strike for ',
                         underlying[1], sep=""))
     }
-
     underlying <- underlying[1]
-    expiries <- ls_expiries(underlying)
+    expiries <- ls_expiries(underlying_id=underlying)
     if (length(expiries) > 1) {
         warning(paste(
-                    'More than 1 expiration date found in options. \n Using ',
+                    'More than 1 expiration date found in options. \n  Using ',
                     expiries[1], ' to find At-The-Money Strike.', sep=""))
     }
     expiry <- expiries[1]
@@ -26,6 +24,5 @@ ATM_k <- function(options, verbose=TRUE) {
     uLast <- getQuote(underlying)$Last
     strikes <- ls_strikes(options)    
     strikes[which.min(abs(uLast-strikes))]
-   
 }
 

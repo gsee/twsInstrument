@@ -22,7 +22,7 @@ ls_by_expiry <- function(expiry, pattern=NULL, match=TRUE) {
     for (symbol in symbols) {
         tmp_instr <- try(get(symbol, pos = .instrument),silent=TRUE)
         if (is.instrument(tmp_instr) && !is.null(tmp_instr$expires) ) {
-        	if (tmp_instr$expires == expiry ){    
+        	if (any(tmp_instr$expires == expiry) ){    
 				tmp_symbols <- c(tmp_symbols,symbol)
     		}	        
         }    
