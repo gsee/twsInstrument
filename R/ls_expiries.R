@@ -21,9 +21,14 @@ ls_expiries <- function(underlying_id=NULL, type='derivative') {
         #names(ll) <- underlying
         #dates <- c(dates, ll)
     }
-    #cbind(underlyings,dates[-which(duplicated(underlyings))]) 
-    expires <- dates[-which(duplicated(dates))]
-    names(expires) <- underlyings[-which(duplicated(dates))]    
+    #cbind(underlyings,dates[-which(duplicated(underlyings))])
+    if(!identical(which(duplicated(dates)),integer(0))) {
+        expires <- dates[-which(duplicated(dates))]
+        names(expires) <- underlyings[-which(duplicated(dates))]    
+    } else {
+        expires <- dates
+        names(expires) <- underlyings
+    }
     expires
 #    underlying_id <- underlyings[-which(duplicated(dates))]
 #    names(underlying_id) <- dates[-which(duplicated(dates))]    
