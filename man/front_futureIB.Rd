@@ -5,7 +5,10 @@ instrument class constructor for futures
 }
 \description{
 Create a future instrument for the front-month contract as well as specs for the root.
-Looks up contract details of the front-month contract from IB and creates a futures instrument. 
+Looks up contract details of a futures contract from IB and creates a futures instrument.
+The contract details that IB gives are usually for the front month contract, but there
+is no guarantee that the contract will actually be the front contract.
+ 
 The contract root will also be defined if it hasn't been defined yet.
 }
 \usage{

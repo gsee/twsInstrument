@@ -107,7 +107,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     #    multiplier=contract$multiplier, expires=contract$expiry, right=contract$right,
                     #    strike=contract$strike, exchange=contract$exchange, underlying_id=contract$symbol)
                     instrument(primary_id=primary_id, currency=contract$currency,
-                        multiplier=contract$multiplier, tick_size=NULL, 
+                        multiplier=as.numeric(contract$multiplier), tick_size=NULL, 
                         identifiers=NULL, expires=contract$expiry, right=contract$right, 
                         strike=contract$strike, exchange=contract$exchange, type='option', 
                         underlying_id=contract$symbol, assign_i=FALSE)
@@ -382,14 +382,14 @@ buildIBcontract <- function(symbol, tws=NULL,
             }, 
             OPT={
                 instr$type <- unique(c('option',instr$type)) 
-                instr$multiplier <- uc$multiplier
+                instr$multiplier <- as.numeric(uc$multiplier)
                 instr$expires <- uc$expiry
                 instr$strike <- uc$strike
                 instr$right <- uc$right
             }, 
             FUT={
                 instr$type <- unique(c('future',instr$type))
-                instr$multiplier <- uc$multiplier
+                instr$multiplier <- as.numeric(uc$multiplier)
                 instr$expires <- uc$expiry
                 instr$strike <- uc$strike
                 instr$right <- uc$right
