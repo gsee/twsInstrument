@@ -1,0 +1,60 @@
+\name{buildSpread2}
+\alias{buildSpread2}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+build price series for pre-defined multi-leg spread instrument
+}
+\description{
+build price series for spreads, butterflies, or other synthetic instruments, using metadata of a previously defined synthetic instrument.
+}
+\usage{
+buildSpread2(spread_id, Dates = NULL, onelot = TRUE, prefer = NULL)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{spread_id}{
+The name of the instrument that contains members and memberratio  
+}
+  \item{Dates}{
+date range to subset on; currently not implemented
+}
+  \item{onelot}{
+Should the series be divided by the first leg's ratio 
+}
+  \item{prefer}{
+price column to use to build structure.
+}
+}
+\details{
+The spread and all legs must be defined instruments.
+
+This function can build multileg spreads such as calendars, butterflies, condors, etc. However, the returned series will be univariate. It does not build Bid Ask Mid data like fn_SpreadBuilder2 does.
+}
+\value{
+a univariate xts object 
+}
+\author{
+Brian Peterson, Garrett See
+}
+\note{
+This function requires that the spread to be build be defined using one of the twsInstrument functions. Specifically, synthetic.ratio from FinancialInstrument should not be used. synthetic.ratio stores memberratios deeper inside the instrument (instr$members$members instead of instr$members)
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+fn_SpreadBuilder2
+}
+\examples{
+\dontrun{
+rm_instruments()
+front_future.IB('ES')
+front_future.IB('YM')
+fut1 <- ls_futures()[2]
+fut2 <- ls_futures()[3]
+spread("ESYM", "USD", c(fut1,fut2),c(1,-1))
+bs <- buildSpread2('ESYM')
+head(bs)
+}
+}
+
