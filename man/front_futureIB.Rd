@@ -12,14 +12,14 @@ is no guarantee that the contract will actually be the front contract.
 The contract root will also be defined if it hasn't been defined yet.
 }
 \usage{
-front_future.IB(root, currency = "USD", underlying_id = NULL, addIBslot=TRUE)
+front_future.IB(roots, currency = "USD", underlying_id = NULL, addIBslot=TRUE)
 }
 \arguments{
-  \item{root}{
-chr string; contract root.
+  \item{roots}{
+vector of chr strings; contract roots.
 }
   \item{currency}{
-name of currency
+name of currency; if more than one root, they all must have the same currency
 }
   \item{underlying_id}{
 name of underlying
