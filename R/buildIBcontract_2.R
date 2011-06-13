@@ -18,47 +18,47 @@ is.twsInstrument <- function(x) {
 Contr_From_Instr <- function(instrument, tws=NULL, 
 		addIBslot=FALSE, updateInstrument=FALSE, 
 		output=c('contract','symbol','nothing','instrument'), 
-		include_expired="0", assign_i=FALSE, assign_c=TRUE) 
+		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE) 
 {
     if (is.numeric(output))
         output <- c('contract','symbol','nothing','instrument')[output]
     buildIBcontract(symbol=instrument, tws=tws, addIBslot=addIBslot,
         updateInstrument=updateInstrument, output=output[1], 
         include_expired=include_expired, 
-        assign_i=assign_i, assign_c=assign_c)
+        assign_i=assign_i, assign_c=assign_c, verbose=verbose)
 }
 
 Instr_From_Contr<- function(contract, tws=NULL, 
 		addIBslot=FALSE, updateInstrument=TRUE, 
 		output=c('instrument','symbol','nothing','contract'), 
-		include_expired="0", assign_i=TRUE, assign_c=TRUE) 
+		include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE) 
 {
     if (is.numeric(output)) 
         output=c('instrument','symbol','nothing','contract')[output]
     buildIBcontract(symbol=contract, tws=tws, addIBslot=addIBslot,
         updateInstrument=updateInstrument, output=output[1],
         include_expired=include_expired, 
-        assign_i=assign_i, assign_c=assign_c)
+        assign_i=assign_i, assign_c=assign_c, verbose=verbose)
 }
 
 twsInstrument <- function(symbol, tws=NULL, 
         addIBslot=TRUE, updateInstrument=TRUE, 
         output=c('nothing','symbol','instrument','contract'), 
-        include_expired="0", assign_i=TRUE, assign_c=TRUE)
+        include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE)
 {
     if (is.numeric(output)) 
         output <- c('nothing','symbol','instrument','contract')[output]
     buildIBcontract(symbol=symbol, tws=tws, addIBslot=addIBslot,
             updateInstrument=updateInstrument, output=output, 
             include_expired=include_expired, 
-            assign_i=assign_i, assign_c=assign_c)
+            assign_i=assign_i, assign_c=assign_c, verbose=verbose)
 } 
 
 
 buildIBcontract <- function(symbol, tws=NULL, 
 		addIBslot=FALSE, updateInstrument=FALSE, 
 		output=c('contract','instrument','symbol','nothing'), 
-		include_expired="0", assign_i=FALSE, assign_c=TRUE)
+		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE)
 {
     #TODO: Allow for vector of symbols, instruments, or contracts
     if (is.xts(symbol)) stop('symbol can be the name of an xts object, but not the object itself.')    
@@ -303,7 +303,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 if (inherits(tws,'try-error')) tws <- twsConnect(50) #a last attempt for an available clientId
             }, finally={ 
                 if (isConnected(tws)) {
-                    cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
+                    if (verbose) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
                     if (tws$clientId == 50) warning("IB Trader Workstation should be restarted.")                    
                     #request that IB fill in missing info.                
                     details <- try(reqContractDetails(tws,contract),silent=TRUE)                
@@ -319,7 +319,8 @@ buildIBcontract <- function(symbol, tws=NULL,
                 contract$symbol, ' may not be a valid ', contract$sectype, 
                 '. Disconnected.\n', sep=""))
         } else { 
-            cat('Contract details request complete. Disconnected.\n')
+            if (verbose)            
+                cat('Contract details request complete. Disconnected.\n')
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
 	    }

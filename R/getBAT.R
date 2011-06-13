@@ -12,7 +12,7 @@ function(symbol, endDateTime, tws=NULL, barSize='1 min',
 	duration='5 D', useRTH="1", auto.assign=TRUE, env=.GlobalEnv) {
 	#TODO: use dots. check for tws, symbol, contract, endDateTime, barSize, duration, clientId
 	
-	contract <- Contr_From_Instr(symbol)
+	contract <- Contr_From_Instr(symbol,verbose=FALSE)
     
 	#if endDateTime is provided, does it need to be converted to an IB time?    
     if (!missing(endDateTime)) {
