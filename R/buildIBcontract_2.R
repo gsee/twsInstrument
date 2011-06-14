@@ -31,7 +31,7 @@ Contr_From_Instr <- function(instrument, tws=NULL,
 Instr_From_Contr<- function(contract, tws=NULL, 
 		addIBslot=FALSE, updateInstrument=TRUE, 
 		output=c('instrument','symbol','nothing','contract'), 
-		include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE) 
+		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE) 
 {
     if (is.numeric(output)) 
         output=c('instrument','symbol','nothing','contract')[output]
@@ -286,7 +286,6 @@ buildIBcontract <- function(symbol, tws=NULL,
     } else if (is.null(contract) && is.instrument(instr)) contract <- instr$IB
         #done getting twsContract object
 
-### FIXME: How did I get here and have a NULL contract    
     #Establish a connection, and download contract details from IB. on error: disconnect
 	if ( (contract$sectype != "CASH") || 
          (instr$currency != instr$primary_id) || 
@@ -339,7 +338,7 @@ buildIBcontract <- function(symbol, tws=NULL,
     #getInstrument throws a ton of warnings if you pass something with length > 1
     #So, 2 problems: is.currency is FALSE if you don't pass it a string.
     #and, getInstrument doesn't check length of pattern before grep'ing    
-    if (!is.null(uc) && !is.null(uc$currency)) {
+        if (!is.null(uc) && !is.null(uc$currency)) {
             currency(uc$currency)
             warning(paste("Creating currency ", uc$currency))   
         }
@@ -348,7 +347,7 @@ buildIBcontract <- function(symbol, tws=NULL,
     #If the instrument doesn't exist, create it, unless assign_i==FALSE    
     #tmpinstr <- try(getInstrument(primary_id),silent=TRUE)
     if (is.null(instr) || inherits(instr, 'try-error') || !is.instrument(instr)) {    
-    #chances are, you got here by giving symbol a name instead of instrument or contract
+    #chances are, you got here by giving symbol a name instead of an instrument or contract
 #    if (inherits(tmpinstr,'try-error') || !is.instrument(tmpinstr)) {
         updateInstrument <- TRUE
         cat(paste("Attempting to create instrument", primary_id,'.\n'))

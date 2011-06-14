@@ -28,7 +28,7 @@ twsInstrument(symbol, tws=NULL,
 Instr_From_Contr(contract, tws=NULL, 
     	addIBslot=FALSE, updateInstrument=TRUE, 
     	output=c('instrument','symbol','nothing','contract'), 
-    	include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE) 
+    	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE) 
 Contr_From_Instr(instrument, tws=NULL, 
     	addIBslot=FALSE, updateInstrument=FALSE, 
     	output=c('contract','symbol','nothing','instrument'), 
