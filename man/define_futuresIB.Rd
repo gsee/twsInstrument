@@ -1,0 +1,56 @@
+\name{define_futures.IB}
+\alias{define_futures.IB}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+futures contract contstructor
+}
+\description{
+Define one or many futures contracts for a given underlying.
+}
+\usage{
+define_futures.IB(symbol, exch, expiries = as.Date(Sys.time()), ...)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{symbol}{
+chr name of underlying
+}
+  \item{exch}{
+chr name of exchange (\sQuote{GLOBEX},\sQuote{CFE}, \sQuote{eCBOT}, etc)
+}
+  \item{expiries}{
+vector of type chr. YYYYMM or YYYYMMDD
+}
+  \item{\dots}{
+any other parameters to pass to twsFuture: 
+\sQuote{primary}, \sQuote{currency}, \sQuote{local}, \sQuote{multiplier}, \sQuote{include_expired}, \sQuote{conId}
+}
+}
+\details{
+This is just a wrapper that loops through all of the expiries, calling twsInstrument.
+The name of the future contract will usually be the value of \sQuote{local} (retrieved with a call to reqContractDetails) with an underscore separating the root symbol and the suffix_id. 
+If \code{symbol} is not found in \sQuote{local} (e.g. \sQuote{VIX} is not in \sQuote{VXU1}) the suffix_id will be of format MMMYY 
+}
+\value{
+names of instruments that were created.
+Called for side-effect
+}
+\author{
+Garrett See
+}
+
+\seealso{
+twsInstrument, twsFuture, future, future_series, instrument
+}
+\examples{
+\dontrun{
+define_futures.IB("ES","GLOBEX",c("201109","201112"))
+define_futures.IB("ES","GLOBEX","201103",include_expired="1")
+
+months <- c(paste("0",1:9,sep=""),paste(10:12))
+define_futures.IB("VIX","CFE",paste("2010",months,sep=""),include_expired="1")
+
+define_futures.IB("YM","eCBOT","201109")
+}
+}
+

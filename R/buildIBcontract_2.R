@@ -95,7 +95,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 OPT={
 #                   primary_id <- paste('.', contract$symbol,sep="")
 					ylocal <- gsub("   ","",contract$local)#take out the triple space
-					si <- gsub(contract$symbol,"",ylocal)
+					si <- gsub(contract$symbol,"",ylocal) #suffix_id
 					#id <- paste(primary_id,suffix_id,sep="_")
 					expiry <- substr(si,1,6)
 					right <- substr(si,7,7)
@@ -115,9 +115,6 @@ buildIBcontract <- function(symbol, tws=NULL,
                 }, 
                 FUT={
                     primary_id <- symbol
-                    #future(primary_id=primary_id, currency=contract$currency, 
-                    #    multiplier=as.numeric(contract$multiplier), expires=contract$expiry, 
-                    #    exchange=contract$exch, underlying_id=contract$symbol) #maybe shouldn't specify exchange here
                     instrument(primary_id=primary_id, currency=contract$currency, 
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL,
                         expires=contract$expiry, exchange=contract$exch, type='future', 
@@ -391,9 +388,27 @@ buildIBcontract <- function(symbol, tws=NULL,
                 instr$type <- unique(c('future',instr$type))
                 instr$multiplier <- as.numeric(uc$multiplier)
                 instr$expires <- uc$expiry
-                instr$strike <- uc$strike
-                instr$right <- uc$right
-            }, 
+                iblocal <- uc$local
+                    si <- gsub(uc$symbol,"",iblocal) #suffix_id
+                    if (identical(iblocal, si))  #i.e. if the symbol is not in local        
+                    #FIXME: below may be overkill. At this point in the code, expiry should be of format CCYYMMDD
+                    si <- if(nchar(uc$expiry)==8) { #20110614
+                            paste(toupper(format(as.Date(uc$expiry,format="%Y%m%d"),"%b")),
+                            format(as.Date(uc$expiry,format="%Y%m%d"),"%y"),sep="") 
+                        } else if (nchar(uc$expiry)==6) { #201106
+                            paste(toupper(format(as.Date(paste(uc$expiry,'01',sep=""),format="%Y%m%d"),"%b")),
+                            format(as.Date(paste(uc$expiry,'01',sep=""),format="%Y%m%d"),"%y"),sep="")
+                        } else { #JUN11, JUN, M1, etc.
+                            #contract$expiry 
+                        }
+                    
+                    #e.g. if symbol is "VIX" and local is "VXM1", primary_id would be VIX_JUN11
+                    #e.g. if symbol is "ES" and local is "ESM1", primary_id wold be ES_M1
+                    primary_id <- paste(contract$symbol,si,sep="_")
+                    primary_id <- gsub(" ","",primary_id)
+                    instr$primary_id <- primary_id
+                    instr$suffix_id <- gsub(" ","",si)
+            },
             CASH={
                 instr$type <- unique(c('currency',instr$type))
                 instr$multiplier <- 1            
@@ -412,10 +427,14 @@ buildIBcontract <- function(symbol, tws=NULL,
 		    instr$timeZoneId <- details$timeZoneId
 		}  #End deprecated
 
+        tmptype <- switch(instr$type,
+                future=c('future_series','future'),
+                option=c('option_series','option'),
+                instr$type)
         if (addIBslot) {
 			instr$IB <- uc 
-			tclass <- unique(c('twsInstrument',instr$type,'instrument'))
-		} else tclass <- unique(c(instr$type,"instrument")) 
+			tclass <- unique(c(tmptype,'twsInstrument','instrument'))		
+        } else tclass <- unique(c(tmptype,"instrument")) 
         #update info about where & when the instrument was updated
         instr$defined.by <- paste(c(instr$defined.by, "IB"), collapse=";")
         # ^ Maybe only unique defined.by should be kept?        
