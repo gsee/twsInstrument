@@ -292,7 +292,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		{    
             tryCatch( 		        
             {
-                if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
+                if (is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
                     tws <- try(twsConnect(),silent=TRUE)
                 if (inherits(tws,'try-error')) tws <- try(twsConnect(2),silent=TRUE) #try another clientId
                 if (inherits(tws,'try-error')) tws <- try(twsConnect(3),silent=TRUE) #3rd time's the charm
@@ -319,7 +319,8 @@ buildIBcontract <- function(symbol, tws=NULL,
                 cat('Contract details request complete. Disconnected.\n')
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
-	    }
+            uc$include_expired <- contract$include_expired #FIXME: reqContractDetails overwrites include_expired	    
+        }
     } else {
 		warning(paste(primary_id, 'is not a tradeable currency pair.'))
 		addIBslot = FALSE		

@@ -1,5 +1,6 @@
 \name{define_futures.IB}
 \alias{define_futures.IB}
+\alias{define_futures}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 futures contract contstructor
@@ -8,7 +9,8 @@ futures contract contstructor
 Define one or many futures contracts for a given underlying.
 }
 \usage{
-define_futures.IB(symbol, exch, expiries = as.Date(Sys.time()), ...)
+define_futures.IB(symbol, exch, expiries = as.Date(Sys.time()), include_expired = "0", ...)
+define_futures(symbol, exch, expiries = as.Date(Sys.time()), include_expired = "0", src = "IB", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,13 +23,17 @@ chr name of exchange (\sQuote{GLOBEX},\sQuote{CFE}, \sQuote{eCBOT}, etc)
   \item{expiries}{
 vector of type chr. YYYYMM or YYYYMMDD
 }
+  \item{include_expired}{is the contract expired? \sQuote{0} for no, \sQuote{1} for yes.}
+  \item{src}{currently only sQuote{IB}}
   \item{\dots}{
 any other parameters to pass to twsFuture: 
-\sQuote{primary}, \sQuote{currency}, \sQuote{local}, \sQuote{multiplier}, \sQuote{include_expired}, \sQuote{conId}
+\sQuote{primary}, \sQuote{currency}, \sQuote{local}, \sQuote{multiplier}, \sQuote{conId}
 }
 }
 \details{
-This is just a wrapper that loops through all of the expiries, calling twsInstrument.
+\code{define_futures} is currently just a wrapper that calls \code{define_futures.IB}
+
+\code{define_futures.IB} is just a wrapper that loops through all of the expiries, calling twsInstrument.
 The name of the future contract will usually be the value of \sQuote{local} (retrieved with a call to reqContractDetails) with an underscore separating the root symbol and the suffix_id. 
 If \code{symbol} is not found in \sQuote{local} (e.g. \sQuote{VIX} is not in \sQuote{VXU1}) the suffix_id will be of format MMMYY 
 }
@@ -44,13 +50,13 @@ twsInstrument, twsFuture, future, future_series, instrument
 }
 \examples{
 \dontrun{
-define_futures.IB("ES","GLOBEX",c("201109","201112"))
-define_futures.IB("ES","GLOBEX","201103",include_expired="1")
+define_futures("ES","GLOBEX",c("201109","201112"))
+define_futures("ES","GLOBEX","201103",include_expired="1")
 
 months <- c(paste("0",1:9,sep=""),paste(10:12))
-define_futures.IB("VIX","CFE",paste("2010",months,sep=""),include_expired="1")
+define_futures("VIX","CFE",paste("2010",months,sep=""),include_expired="1")
 
-define_futures.IB("YM","eCBOT","201109")
+define_futures("YM","eCBOT","201109")
 }
 }
 

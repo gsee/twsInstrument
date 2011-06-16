@@ -19,6 +19,8 @@ function(symbol, endDateTime, tws=NULL, barSize='1 min',
         if(is.character(endDateTime)) {
             endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
         }
+    } else if (contract$include_expired == "1") {
+        endDateTime <- paste(contract$expiry, "23:59:00")
     }
     if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
         tws <- try(twsConnect())

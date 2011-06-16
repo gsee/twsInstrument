@@ -44,10 +44,12 @@ Before making a request for historical data, symbol will be passed through \code
 If you want to get data for something other than a stock, then \code{symbol} should be an instrument object, 
 a twsContract object or the name of a previosly defined instrument
 
-!!! Ignore the rest of this details section until I upload getBAThistory function !!!
 Unlike reqHistoricalData, The \code{endDateTime} argument must be of the form
 'CCYY-MM-DD HH:MM:SS'
 
+If the contract is expired, and no \code{endDateTime} is given, an \code{endDateTime} of 1 minute before midnight on the expiration date will be used.
+
+!!! Ignore the rest of this details section until I upload getBAThistory function !!!
 (Below is mostly copied from reqHistoricalData help)
 If endDateTime is not specified the current
 time as returned from the TWS server will be used. This
