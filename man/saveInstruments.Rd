@@ -19,7 +19,7 @@ What to name the file (name of file that holds a .instrument enviroment)
 Does not include file extension.
 }
   \item{dir}{
-Directory of file (defaults to current working directory. ie. \sQuote{})
+Directory of file (defaults to current working directory. ie. "")
 }
   \item{extension}{
 File extension of file. default is RData
@@ -29,7 +29,7 @@ What environment to put the newly loaded .instrument environment in. Default is 
 }
 }
 \details{
-After you have defined a bunch of instruments, you can use \code{saveInstruments} to save the entire .instrument environment to disk.
+After you have defined some instruments, you can use \code{saveInstruments} to save the entire .instrument environment to disk.
 }
 \value{
 Called for side-effect

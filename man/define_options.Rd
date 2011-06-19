@@ -54,6 +54,7 @@ option, option_series, twsInstrument
 \examples{
 \dontrun{
 define_options("SPY")
+update_instruments.IB(ls_options("SPY",match=FALSE))
 }
 }
 
