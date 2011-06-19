@@ -428,7 +428,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		    instr$timeZoneId <- details$timeZoneId
 		}  #End deprecated
 
-        tmptype <- switch(instr$type,
+        tmptype <- switch(instr$type[1],
                 future=c('future_series','future'),
                 option=c('option_series','option'),
                 instr$type)

@@ -8,7 +8,7 @@ create twsInstruments for options on a given underlying
 Get option chains for a given underlying and create instruments (or twsInstruments)
 }
 \usage{
-define_options(symbol, currency = "USD", multiplier = 100, tick_size = NULL, use.IB = TRUE, src = "yahoo")
+define_options(symbol, currency = "USD", multiplier = 100, tick_size = NULL, src = "yahoo")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,9 +27,9 @@ minimum price change
 %  \item{first_traded}{
 %first date it is tradeable 
 %}
-  \item{use.IB}{
-Should IBrokers be used to get twsContracts?
-}
+%  \item{use.IB}{
+%Should IBrokers be used to get twsContracts?
+%}
   \item{src}{
 where to get the options_chain. Currently only yahoo is implemented
 }

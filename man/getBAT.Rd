@@ -85,7 +85,10 @@ along with additional information stored in the objects xtsAttributes,
 }
 \references{
 InteractiveBrokers \url{www.interactivebrokers.com}
+
 IB API \url{http://interactivebrokers.com/php/apiUsersGuide/apiguide.htm}
+
+IB Historic Data Limitations \url{http://individuals.interactivebrokers.com/php/apiUsersGuide/apiguide/api/historical_data_limitations.htm#XREF_93621_Historical_Data}
 }
 
 \author{Garrett See}

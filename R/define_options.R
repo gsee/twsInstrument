@@ -21,10 +21,9 @@ option_id <- function(underlying_id, expiry, right, strike) {
 }
 
 
-define_options <- function(symbol, currency="USD", multiplier=100, tick_size=NULL, use.IB=TRUE, src='yahoo') { 
+define_options <- function(symbol, currency="USD", multiplier=100, tick_size=NULL, src='yahoo') { 
 	do.call('define_options.yahoo', list(symbol=symbol, currency=currency, 
-		multiplier=multiplier, tick_size, #first_traded=first_traded,
-		use.IB=use.IB))
+		multiplier=multiplier, tick_size)) #,first_traded=first_traded,
 }
 
 define_options.yahoo <- function(symbol, currency="USD", multiplier=100, tick_size=NULL) { 
