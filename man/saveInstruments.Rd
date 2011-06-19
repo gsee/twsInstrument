@@ -2,7 +2,7 @@
 \alias{saveInstruments}
 \alias{loadInstruments}
 \title{
-Save and Load the all instrument definitions
+Save and Load all instrument definitions
 }
 \description{
 Saves (loads) the .instrument environment to (from) disk.
