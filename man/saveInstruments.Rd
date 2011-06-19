@@ -19,7 +19,7 @@ What to name the file (name of file that holds a .instrument enviroment)
 Does not include file extension.
 }
   \item{dir}{
-Directory of file (defaults to current working directory. ie. sQuote{})
+Directory of file (defaults to current working directory. ie. \sQuote{})
 }
   \item{extension}{
 File extension of file. default is RData
