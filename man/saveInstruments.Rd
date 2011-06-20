@@ -6,11 +6,11 @@ Save and Load all instrument definitions
 }
 \description{
 Saves (loads) the .instrument environment to (from) disk.
-\code{loadInstruments} will overwrite your .instrument environment with the newly loaded one!
+\code{loadInstruments} will add instrument definitions that were saved to your .instrument environment
 }
 \usage{
 saveInstruments(file_name = "MyInstruments", dir = "", extension = "RData")
-loadInstruments(file_name = "MyInstruments", dir = "", extension = "RData", env = parent.frame())
+loadInstruments(file_name = "MyInstruments", dir = "", extension = "RData", env = .GlobalEnv)
 }
 
 \arguments{
@@ -25,7 +25,7 @@ Directory of file (defaults to current working directory. ie. "")
 File extension of file. default is RData
 }
   \item{env}{
-What environment to put the newly loaded .instrument environment in. Default is parent.frame()
+What environment holds .instrument environment to be updated; usually .GlobalEnv.
 }
 }
 \details{
