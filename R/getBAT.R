@@ -42,14 +42,20 @@ function(symbol, endDateTime, tws=NULL, barSize='1 min',
         cat("Disconnecting ... \n")
     }, finally=twsDisconnect(tws) )
 
-    if (!is.null(BID) && !is.null(ASK) && !is.null(TRADES)) {
+    if (!is.null(BID) && !is.null(ASK)) { # && !is.null(TRADES)) {
 	    bat <- merge(Cl(BID),Cl(ASK),all=FALSE)
         bat <- na.omit(bat)
-        bat <- merge(bat,Cl(TRADES),all=FALSE)
-        bat <- na.locf(bat,na.rm=TRUE)
-	    bat$Mid.Price <- (bat[,1] + bat[,2])/2
-        if (NCOL(bat)==4)
-        	colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Trade.Price','Mid.Price'),sep='.')        
+        if (!is.null(TRADES)) {        
+            bat <- merge(bat,Cl(TRADES),all=FALSE)
+            bat <- na.locf(bat,na.rm=TRUE)	    
+        }
+        bat$Mid.Price <- (bat[,1] + bat[,2])/2
+        bat <- na.omit(bat)
+        if (!is.null(TRADES)) {
+            bat <- merge(bat, Vo(TRADES))
+        	colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Trade.Price','Mid.Price','Volume'),sep='.')
+        } else colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Mid.Price'),sep='.')
+
 	    if (auto.assign) { 
 		    assign(symbol, bat, envir=env)
 		    return(symbol)
