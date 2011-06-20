@@ -1,13 +1,15 @@
 \name{plotRelPerf}
 \alias{plotRelPerf}
+\alias{plotInstruments}
 \title{
-Plot several stocks on the same chart}
+Plot several instruments on the same chart}
 \description{
-Plot the cumulative return of the closing prices of several stocks
+Plot the prices or cumulative return of prices of several instruments
 on the same chart.
 }
 \usage{
 plotRelPerf(symbols, prefer=NULL, env=.GlobalEnv)
+plotInstruments(symbols, prefer=NULL, env=.GlobalEnv)
 }
 \arguments{
   \item{symbols}{character strings. vector of names of xts objects containing Close column}
@@ -15,7 +17,7 @@ plotRelPerf(symbols, prefer=NULL, env=.GlobalEnv)
   \item{env}{the environment that holds the xts data}
 }
 \details{
-A VERY simple wrapper for ts.plot.
+VERY simple wrappers for ts.plot.
 
 prefer is passed to \code{getPrice}
 
@@ -34,6 +36,7 @@ ts.plot, chart_Series, ggplot2, cumsum, ROC, getPrice, environment
     syms <- c('SPY','TLT','DBA')
     getSymbols(syms)
     plotRelPerf(syms)
+    plotInstruments(syms)
 
     #Use intraday data from IB.
     #and demonstrate how you can put data in different environments    
@@ -42,6 +45,7 @@ ts.plot, chart_Series, ggplot2, cumsum, ROC, getPrice, environment
     getBAT(twsSTK('TLT','SMART'),env=twsData)
     getBAT(twsSTK('DBA','SMART'),env=twsData)
     plotRelPerf(c('TLT','DBA'),env=twsData)    
+    
 }
 }
 
