@@ -88,7 +88,7 @@ ls_non_currencies <- function(pattern=NULL, includeFX=TRUE, match=TRUE) {
     tmp_symbols
 }
 
-ls_exchange_rates <- function(pattern=NULL,match=TRUE) {
+ls_exchange_rates <- ls_FX <- function(pattern=NULL,match=TRUE) {
     #This could use ls_currencies instead of ls_instruments, but currency class may be
     #subject to change
     symbols <- ls_instruments(pattern=pattern,match=match)    
@@ -325,7 +325,7 @@ rm_currencies <- function(x) {
     rm(list=x,pos=.instrument)
 }   
 
-rm_exchange_rates <- function(x) {
+rm_exchange_rates <- rm_FX <- function(x) {
     if (missing(x)) {
         x <- ls_currencies()
     }

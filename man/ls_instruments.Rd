@@ -6,6 +6,7 @@
 \alias{ls_currencies}
 \alias{ls_non_currencies}
 \alias{ls_exchange_rates}
+\alias{ls_FX}
 \alias{ls_bonds}
 \alias{ls_funds}
 \alias{ls_spreads}
@@ -24,6 +25,7 @@
 \alias{rm_futures}
 \alias{rm_currencies}
 \alias{rm_exchange_rates}
+\alias{rm_FX}
 \alias{rm_bonds}
 \alias{rm_funds}
 \alias{rm_spreads}
@@ -47,6 +49,7 @@ ls_futures(pattern=NULL, match=TRUE)
 ls_currencies(pattern=NULL, match=TRUE)
 ls_non_currencies(pattern=NULL, includeFX=TRUE, match=TRUE)
 ls_exchange_rates(pattern=NULL, match=TRUE)
+ls_FX(pattern=NULL, match=TRUE)
 ls_bonds(pattern=NULL, match=TRUE)
 ls_funds(pattern=NULL, match=TRUE)
 ls_spreads(pattern=NULL, match=TRUE)
@@ -65,6 +68,7 @@ rm_options(x)
 rm_futures(x)
 rm_currencies(x)
 rm_exchange_rates(x)
+rm_FX(x)
 rm_bonds(x)
 rm_funds(x)
 rm_spreads(x)

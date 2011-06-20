@@ -1,0 +1,34 @@
+define_FX <- define_exchange_rates <- function(pairs, quote_currencies=NULL, base_currencies=NULL, use.IB=TRUE) {
+    if (missing(pairs)) {
+        if (is.null(quote_currencies) || is.null(base_currencies) ) { #nothing is given
+            pairs <- c("EUR.USD","USD.JPY","GBP.USD","USD.CHF","AUD.USD","USD.CAD","NZD.USD","GBP.JPY","EUR.JPY")
+        } else {
+            pairs <- NULL
+            if (is.null(base_currencies)) {
+                if (length(ls_currencies())==1) {
+                    base_currencies <- ls_currencies()[1]
+                } else base_currencies <- "USD"
+            }
+            for (bc in base_currencies) {
+                pairs <- c(pairs, paste(quote_currencies, bc, sep="."))
+            }
+        }    
+    }
+    if (!(all(do.call(c,lapply(strsplit(pairs,"\\."),length)) == 2))) { #not formatted like EUR.USD    
+        if (all(do.call(c,lapply(strsplit(pairs,"/"),length)) == 2)) { #EUR/USD
+            pairs <- gsub("/","\\.",pairs)
+        } else if (all(do.call(c,lapply(pairs,nchar)) == 6)) { #EURUSD
+            pairs <- paste(paste(substr(pairs,1,3),".",sep=""),substr(pairs,4,6),sep="")        
+        }
+    }
+    for (pair in pairs) {
+        instrument(primary_id=pair, 
+                currency=strsplit(pair,"\\.")[[1]][2],
+                multiplier=1,
+                tick_size=0.01,
+                quote_currency = strsplit(pair,"\\.")[[1]][1],
+                type = c("exchange_rate","currency"), assign_i = TRUE)            
+    }
+    if (use.IB) update_instruments.IB(pairs)
+}
+

@@ -111,7 +111,6 @@ buildIBcontract <- function(symbol, tws=NULL,
                         identifiers=NULL, expires=contract$expiry, right=contract$right, 
                         strike=contract$strike, exchange=contract$exchange, type='option', 
                         underlying_id=contract$symbol, assign_i=FALSE)
-
                 }, 
                 FUT={
                     primary_id <- symbol
@@ -126,7 +125,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     } else primary_id <- contract$local
                     #exchange_rate(primary_id=primary_id, currency=contract$currency, second_currency=contract$symbol)
                     instrument(primary_id=primary_id, currency=contract$currency, multiplier=1, 
-                                tick_size=0.01, identifiers=NULL, second_currency=contract$symbol, 
+                                tick_size=0.01, identifiers=NULL, quote_currency=contract$symbol, #WARNING: I use quote_currency instead of second_currency
                                 type=c("exchange_rate","currency"), assign_i=FALSE)
                     #currency(primary_id=contract$symbol, currency=contract$currency, exchange=contract$exch, type='currency')
                 }) #End switch on sectype
@@ -144,6 +143,8 @@ buildIBcontract <- function(symbol, tws=NULL,
     	primary_id <- instr$primary_id #TODO: check for suffix_id
         if (!is.null(instr$underlying_id)) { 
             symbol <- instr$underlying_id
+        } else if (!is.null(instr$quote_currency)) {
+            symbol <- instr$quote_currency
         } else symbol <- instr$primary_id
 	#if it was an instrument, we copied it to instr, figured out the primary_id, and the symbol 
     } else if (!is.twsContract(symbol)) { 
@@ -172,12 +173,21 @@ buildIBcontract <- function(symbol, tws=NULL,
 #(if we got instr from a string, it may not have succeed. we'll check for that next.)
 
     if (inherits(instr,'try-error') || !is.instrument(instr)) {
-        warning(paste("Unable to find or infer instrument, ",
-                symbol, ".\n  Trying with type = \"stock\"", sep=""))
-#        contract <- twsSTK(primary_id)        
-        contract <- twsContract() #blank twsContract shell
-        contract$symbol <- primary_id #symbol #fill in the only info we have
-        contract$sectype <- "STK"
+        #TODO: allow for EUR/USD format also.
+        if (!identical(grep('\\.',symbol), integer(0)) && nchar(symbol) == 7) {
+            #if it has 7 characters and one of them is a period, treat it as an FX pair (e.g. EUR.USD)            
+            ccys <- strsplit(symbol, "\\.")[[1]]            
+            contract <- twsCASH(ccys[1], ccys[2])
+        } else if (nchar(symbol) == 4 && substr(symbol,4,4) == "." ) {
+            contract <-twsCASH(substr(symbol,1,3))
+        } else {
+            warning(paste("Unable to find or infer instrument, ",
+                    symbol, ".\n  Trying with type = \"stock\"", sep=""))
+    #        contract <- twsSTK(primary_id)        
+            contract <- twsContract() #blank twsContract shell
+            contract$symbol <- primary_id #symbol #fill in the only info we have
+            contract$sectype <- "STK"
+        }
         #instr is still not an instrument!
 		instr <- NULL #Have to reset it because getInstrument gave it a value of FALSE
     }
@@ -187,11 +197,20 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    primary_id <- instr$primary_id
 	    #figure out sectype
 	    if (is.null(instr$sectype) ) {
-			#currencies don't have type by FinancialInstrument default                
+			#currencies don't have type by FinancialInstrument default
             if (inherits(instr,'currency') || 
 				(!is.null(instr$type) && instr$type[1] == 'currency') ) {
-                sectype <- "CASH"                
-            } else if (inherits(instr,'option') || 
+                sectype <- "CASH"
+                if (!is.null(instr$quote_currency)) {
+                    symbol <- instr$quote_currency
+                } else if (!is.null(instr$second_currency)) {
+                    symbol <- instr$second_currency
+                } else if (nchar(instr$primary_id) == 7) { 
+                    symbol <- strsplit(instr$primary_id,"\\.")[[1]][1]                 
+                } else if (nchar(instr$primary_id) == 7) { #e.g. if it was EUR/USD, then the last line didn't change it
+                    symbol <- strsplit(instr$primary_id,"/")[[1]][1]
+                } else symbol <- instr$primary_id
+           } else if (inherits(instr,'option') || 
                 instr$type[1] == "option" || 
                 instr$type[1] == "OPT") {
                     sectype <- "OPT"
@@ -213,7 +232,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             }     
         } else sectype = instr$sectype
         
-        if (is.null(contract$conId) || contract$conId == 0) {     
+        if (is.null(contract$conId) || contract$conId == 0) { #This if statement isn't necessary
             conId <- 0        
             if ((sectype == "FUT" || sectype == "OPT") && is.null(instr$expires) && is.null(instr$expiry) )
                 warning("Expiry not defined for future or option.")   
@@ -235,14 +254,18 @@ buildIBcontract <- function(symbol, tws=NULL,
         if (sectype == "STK") { # || sectype == "CASH") {
             multiplier <- ""
             exchange <- 'SMART'
+        } else if (sectype == "CASH") {
+            multiplier <- ""
+            exchange <- "IDEALPRO"
         } else {
             multiplier <- instr$multiplier            
             exchange <- instr$exchange #Should exchange and primary both be the same ?        
         }
-        primary <- instr$exchange #should this be "" ?
+        primary <- "" # instr$exchange #should this be "" ?
         if (is.null(instr$expires) && !is.null(instr$expiry)) {
             expiry <- instr$expiry
         } else expiry <- instr$expires
+
 		IBexpiry <- expiry
         #IB uses the Friday before expiration Saturday for expiry
         #except for EOM options.
@@ -266,6 +289,8 @@ buildIBcontract <- function(symbol, tws=NULL,
         if (is.null(exchange)) {
             if (sectype == 'STK') {
                 exchange <- 'SMART' 
+            } else if (sectype == 'CASH') {
+                exchange <- 'IDEALPRO'
             } else exchange <- ''
         }        
         if (is.null(expiry)) expiry <- ""
@@ -285,8 +310,8 @@ buildIBcontract <- function(symbol, tws=NULL,
 
     #Establish a connection, and download contract details from IB. on error: disconnect
 	if ( (contract$sectype != "CASH") || 
-         (instr$currency != instr$primary_id) || 
-         (contract$symbol != contract$currency) ) {		
+         (instr$currency != instr$primary_id) ) {
+        #|| (contract$symbol != contract$currency) ) {		
         # || is.exchange_rate(instr) #no function for this
 		tryCatch(
 		{    
@@ -306,7 +331,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 } else cat('Could not connect to tws.')
             }) #end nested tryCatch  
 	    },finally=twsDisconnect(tws)) #End outer tryCatch 
-        
+
         if (length(details) == 0) {
             uc <- contract
             details <- NULL

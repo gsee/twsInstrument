@@ -105,7 +105,7 @@ update_instruments.IB <- function(symbols=c('all','stocks','futures','options','
                 stocks={symbols <- ls_stocks()}, 
                 futures={symbols <- ls_futures()}, 
                 options={symbols <- ls_options()}, 
-                currencies={symbols <- ls_currencies()} ) #end symbols switch    
+                currencies={symbols <- ls_exchange_rates()} ) #end symbols switch    
     }
     #make sure it's a vector of instrument names
     if (is.null(symbols)) {
