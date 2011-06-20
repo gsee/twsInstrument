@@ -47,7 +47,7 @@ a twsContract object or the name of a previosly defined instrument
 Unlike reqHistoricalData, The \code{endDateTime} argument must be of the form
 'CCYY-MM-DD HH:MM:SS'
 
-If the contract is expired, and no \code{endDateTime} is given, an \code{endDateTime} of 1 minute before midnight on the expiration date will be used.
+If the contract is expired, the minimum (i.e. oldest) of \code{endDateTime}, if given, and 1 minute before midnight on the expiration date, will be used for endDateTime in the call to reqHistoricalData.
 
 !!! Ignore the rest of this details section until I upload getBAThistory function !!!
 (Below is mostly copied from reqHistoricalData help)

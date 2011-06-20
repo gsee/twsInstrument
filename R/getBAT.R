@@ -14,14 +14,13 @@ function(symbol, endDateTime, tws=NULL, barSize='1 min',
 	
 	contract <- Contr_From_Instr(symbol,verbose=FALSE)
     
-	#if endDateTime is provided, does it need to be converted to an IB time?    
-    if (!missing(endDateTime)) {
-        if(is.character(endDateTime)) {
-            endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
-        }
-    } else if (contract$include_expired == "1") {
-        endDateTime <- paste(contract$expiry, "23:59:00")
+    if (missing(endDateTime)) endDateTime <- Sys.time()
+    if (!is.null(contract$expiry) && contract$expiry != "") {
+        endDate <- min(as.Date(contract$expiry,format="%Y%m%d"), Sys.Date())
+        endDateTime <- as.POSIXct(paste(endDate, "23:59:59"))    
     }
+    endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
+    
     if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
         tws <- try(twsConnect())
     if (inherits(tws,'try-error')) tws <- try(twsConnect(2)) #try another clientId
