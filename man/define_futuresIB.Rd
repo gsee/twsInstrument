@@ -9,8 +9,8 @@ futures contract contstructor
 Define one or many futures contracts for a given underlying.
 }
 \usage{
-define_futures.IB(symbol, exch, expiries = as.Date(Sys.time()), include_expired = "0", ...)
-define_futures(symbol, exch, expiries = as.Date(Sys.time()), include_expired = "0", src = "IB", ...)
+define_futures.IB(symbol, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", ...)
+define_futures(symbol, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", src = "IB", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,7 @@ chr name of exchange (\sQuote{GLOBEX},\sQuote{CFE}, \sQuote{eCBOT}, etc)
   \item{expiries}{
 vector of type chr. YYYYMM or YYYYMMDD
 }
+  \item{currency}{denominating currency. default "USD"}
   \item{include_expired}{is the contract expired? \sQuote{0} for no, \sQuote{1} for yes.}
   \item{src}{currently only sQuote{IB}}
   \item{\dots}{
