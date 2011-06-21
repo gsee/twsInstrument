@@ -58,7 +58,10 @@ buildIBcontract is the main function; the rest are wrappers.
 symbol can be the name of an instrument, an instrument, a twsContract, or a 
 twsInstrument.  Using the information given, it will create an instrument 
 and a twsContract.  It will then make a call to reqContractDetails to fill in 
-any missing information.
+any missing information. (If you give it a string and there is no instrument
+by that name, then: (a) If the string ends in a period, it will treat it as a currency pair 
+using "USD" as the base currency. (b) If the string does not end in a period, it will
+assume it is a stock.) 
 
 if addIBslot is TRUE it will store the contract in the IB slot of the instrument 
 (creating the slot if necessary.)  If updateInstrument is TRUE it will add/replace 
@@ -104,7 +107,7 @@ instrument, twsContract, addIBslot,
 twsInstrument('SPY') #assumes it's a stock
 
 #Now something that isn't denominated in USD
-twsInstrument(twsFUT(symbol='NIY',exch='GLOBEX',expiry='201106',
+twsInstrument(twsFUT(symbol='NIY',exch='GLOBEX',expiry='201109',
                      currency='JPY'))
 
 #As a wrapper for contract wrappers

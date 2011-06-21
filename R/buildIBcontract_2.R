@@ -78,7 +78,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		if (inherits(tmpccy, 'try-error') || !is.instrument(tmpccy) ) {
             if (assign_c)	{	    
                 currency(contract$currency)
-		        warning(paste("Creating currency ", contract$currency))   
+		        warning(paste("Creating base currency ", contract$currency))   
             } else stop (paste(contract$currency, 'cannot be found, and assign_c=FALSE'))
 		}        
 	    #primary_id <- symbol
@@ -178,8 +178,25 @@ buildIBcontract <- function(symbol, tws=NULL,
             #if it has 7 characters and one of them is a period, treat it as an FX pair (e.g. EUR.USD)            
             ccys <- strsplit(symbol, "\\.")[[1]]            
             contract <- twsCASH(ccys[1], ccys[2])
+            primary_id=paste(contract$symbol, contract$currency, sep=".")
+            instr <- instrument(primary_id=primary_id, 
+                        currency=contract$currency, 
+                        multiplier=1, 
+                        tick_size=0.01, 
+                        identifiers=NULL, 
+                        quote_currency=contract$symbol, #WARNING: I use quote_currency instead of second_currency
+                        type=c("exchange_rate","currency"), assign_i=FALSE)
         } else if (nchar(symbol) == 4 && substr(symbol,4,4) == "." ) {
             contract <-twsCASH(substr(symbol,1,3))
+            #instr <- Instr_From_Contr(contract)
+            primary_id=paste(contract$symbol, contract$currency, sep=".")
+            instr <- instrument(primary_id=primary_id, 
+                        currency=contract$currency, 
+                        multiplier=1, 
+                        tick_size=0.01, 
+                        identifiers=NULL, 
+                        quote_currency=contract$symbol, #WARNING: I use quote_currency instead of second_currency
+                        type=c("exchange_rate","currency"), assign_i=FALSE)        
         } else {
             warning(paste("Unable to find or infer instrument, ",
                     symbol, ".\n  Trying with type = \"stock\"", sep=""))
@@ -187,9 +204,9 @@ buildIBcontract <- function(symbol, tws=NULL,
             contract <- twsContract() #blank twsContract shell
             contract$symbol <- primary_id #symbol #fill in the only info we have
             contract$sectype <- "STK"
+            #instr is still not an instrument!
+		    instr <- NULL #Have to reset it because getInstrument gave it a value of FALSE
         }
-        #instr is still not an instrument!
-		instr <- NULL #Have to reset it because getInstrument gave it a value of FALSE
     }
 
 
@@ -307,10 +324,11 @@ buildIBcontract <- function(symbol, tws=NULL,
                         comboleg="", include_expired=include_expired) 
     } else if (is.null(contract) && is.instrument(instr)) contract <- instr$IB
         #done getting twsContract object
-
+####################################################################
     #Establish a connection, and download contract details from IB. on error: disconnect
 	if ( (contract$sectype != "CASH") || 
-         (instr$currency != instr$primary_id) ) {
+         ((contract$sectype == "CASH") && !is.instrument(instr)) ||
+          (is.instrument(instr) && instr$currency != instr$primary_id) ) {
         #|| (contract$symbol != contract$currency) ) {		
         # || is.exchange_rate(instr) #no function for this
 		tryCatch(
@@ -363,7 +381,7 @@ buildIBcontract <- function(symbol, tws=NULL,
     #and, getInstrument doesn't check length of pattern before grep'ing    
         if (!is.null(uc) && !is.null(uc$currency)) {
             currency(uc$currency)
-            warning(paste("Creating currency ", uc$currency))   
+            warning(paste("Creating base currency ", uc$currency))   
         }
     }
 
