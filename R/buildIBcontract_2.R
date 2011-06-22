@@ -101,7 +101,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 					right <- substr(si,7,7)
 					strike <- as.numeric(substr(si,8,15))/1000
 					#local <- paste(symbol, si, sep="   ")      
-					primary_id <- paste(".", contract$symbol, "_", expiry, right, strike, sep="")
+					primary_id <- paste(contract$symbol, "_", expiry, right, strike, sep="")
 		
                     #option(primary_id=primary_id, currency=contract$currency,
                     #    multiplier=contract$multiplier, expires=contract$expiry, right=contract$right,

@@ -21,8 +21,9 @@ option_id <- function(underlying_id, expiry, right, strike) {
 }
 
 
-define_options <- function(symbol, currency="USD", multiplier=100, tick_size=NULL, src='yahoo') { 
-	do.call('define_options.yahoo', list(symbol=symbol, currency=currency, 
+define_options <- function(symbol, Exp, currency="USD", multiplier=100, tick_size=NULL, first_traded=NULL, src='yahoo') { 
+    if (src == 'yahoo')	
+    do.call('define_options.yahoo', list(symbol=symbol, currency=currency, 
 		multiplier=multiplier, tick_size)) #,first_traded=first_traded,
 }
 
@@ -44,7 +45,7 @@ define_options.yahoo <- function(symbol, currency="USD", multiplier=100, tick_si
         strike <- as.numeric(substr(si,8,15))/1000
 #        local <- paste(symbol, si, sep="   ")      
 		clean.si <- paste(expiry,right,strike,sep="")		
-		primary_id <- paste(".", symbol, "_", clean.si, sep="")
+		primary_id <- paste(symbol, "_", clean.si, sep="")
 #		ids <- c(ids, primary_id)
         instrument(primary_id=primary_id, 
 				suffix_id=clean.si, 
