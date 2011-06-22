@@ -1,6 +1,7 @@
 \name{plotRelPerf}
 \alias{plotRelPerf}
 \alias{plotInstruments}
+\alias{plotBAT}
 \title{
 Plot several instruments on the same chart}
 \description{
@@ -10,6 +11,7 @@ on the same chart.
 \usage{
 plotRelPerf(symbols, prefer=NULL, env=.GlobalEnv)
 plotInstruments(symbols, prefer=NULL, env=.GlobalEnv)
+plotBAT(symbols, prefer=NULL, env=.GlobalEnv)
 }
 \arguments{
   \item{symbols}{character strings. vector of names of xts objects containing Close column}
@@ -45,7 +47,7 @@ ts.plot, chart_Series, ggplot2, cumsum, ROC, getPrice, environment
     getBAT(twsSTK('TLT','SMART'),env=twsData)
     getBAT(twsSTK('DBA','SMART'),env=twsData)
     plotRelPerf(c('TLT','DBA'),env=twsData)    
-    
+    plotBAT(c('TLT','DBA'),env=twsData)
 }
 }
 
