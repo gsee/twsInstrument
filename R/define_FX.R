@@ -14,11 +14,16 @@ define_FX <- define_exchange_rates <- function(pairs, quote_currencies=NULL, bas
             }
         }    
     }
+    lastc <- function(x) substr(x,nchar(x),nchar(x))
     if (!(all(do.call(c,lapply(strsplit(pairs,"\\."),length)) == 2))) { #not formatted like EUR.USD    
         if (all(do.call(c,lapply(strsplit(pairs,"/"),length)) == 2)) { #EUR/USD
             pairs <- gsub("/","\\.",pairs)
         } else if (all(do.call(c,lapply(pairs,nchar)) == 6)) { #EURUSD
             pairs <- paste(paste(substr(pairs,1,3),".",sep=""),substr(pairs,4,6),sep="")        
+        } else if (all(do.call(c, lapply(pairs,nchar)) == 4)
+                    && all(do.call(c, lapply(pairs,lastc)) == ".")) {
+            #EUR.
+            pairs <- paste(pairs,"USD",sep="")
         }
     }
     for (pair in pairs) {
