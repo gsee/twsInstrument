@@ -10,12 +10,12 @@ Quickly define several exhange rate instruments.
 }
 \usage{
 define_FX(pairs, base_currencies = NULL, quote_currencies = NULL, use.IB = TRUE)
-define_exchange_rates(pairs, quote_currencies = NULL, base_currencies = NULL, use.IB = TRUE)
+define_exchange_rates(pairs, base_currencies = NULL, quote_currencies = NULL, use.IB = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pairs}{
-chr names of currency pairs to be defined. Each currency pair name should be the quote currency and base currency, separated by a period e.g. EUR.USD
+chr names of currency pairs to be defined. Each currency pair name should be the base currency and base currency, separated by a period e.g. EUR.USD
 Optional.
 }
   \item{base_currencies}{

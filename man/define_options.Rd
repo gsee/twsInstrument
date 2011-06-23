@@ -8,13 +8,14 @@ create twsInstruments for options on a given underlying
 Get option chains for a given underlying and create instruments (or twsInstruments)
 }
 \usage{
-define_options(symbol, currency = "USD", multiplier = 100, tick_size = NULL, src = "yahoo")
+define_options(symbol, Exp, currency = "USD", multiplier = 100, tick_size = NULL, first_traded = NULL, src = "yahoo")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{symbol}{
 ticker symbol. character string
 }
+  \item{Exp}{expiration dates. optional. If not given, front month will be used. If Exp=NULL, all expiries will be used}
   \item{currency}{
 base currency. character string
 }
@@ -24,9 +25,9 @@ contract multiplier (usually 100 for stocks)
   \item{tick_size}{
 minimum price change
 }
-%  \item{first_traded}{
-%first date it is tradeable 
-%}
+  \item{first_traded}{
+first date it is tradeable 
+}
 %  \item{use.IB}{
 %Should IBrokers be used to get twsContracts?
 %}
