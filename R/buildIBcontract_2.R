@@ -78,7 +78,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		if (inherits(tmpccy, 'try-error') || !is.instrument(tmpccy) ) {
             if (assign_c)	{	    
                 currency(contract$currency)
-		        warning(paste("Creating base currency ", contract$currency))   
+		        warning(paste("Creating currency ", contract$currency))   
             } else stop (paste(contract$currency, 'cannot be found, and assign_c=FALSE'))
 		}        
 	    #primary_id <- symbol
@@ -383,7 +383,7 @@ buildIBcontract <- function(symbol, tws=NULL,
     #and, getInstrument doesn't check length of pattern before grep'ing    
         if (!is.null(uc) && !is.null(uc$currency)) {
             currency(uc$currency)
-            warning(paste("Creating base currency ", uc$currency))   
+            warning(paste("Creating currency ", uc$currency))   
         }
     }
 

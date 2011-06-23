@@ -47,6 +47,14 @@ define_options.yahoo <- function(symbol, currency="USD", multiplier=100, tick_si
 		clean.si <- paste(expiry,right,strike,sep="")		
 		primary_id <- paste(symbol, "_", clean.si, sep="")
 #		ids <- c(ids, primary_id)
+        #create option spec if we need to.
+		tmpInstr <- try(getInstrument(paste('.',symbol,sep=""),silent=TRUE),silent=TRUE)
+		if (!inherits(tmpInstr, "option")) {
+			warning(paste('Created option specs for root',paste('.',symbol,sep="")))
+			option(primary_id=paste('.',symbol,sep=""), currency=currency,
+					multiplier=multiplier, tick_size=tick_size, 
+					underlying_id=symbol)		
+		}
         instrument(primary_id=primary_id, 
 				suffix_id=clean.si, 
 				#first_trade=first_traded, 

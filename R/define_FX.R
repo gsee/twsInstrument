@@ -1,16 +1,16 @@
-define_FX <- define_exchange_rates <- function(pairs, quote_currencies=NULL, base_currencies=NULL, use.IB=TRUE) {
+define_FX <- define_exchange_rates <- function(pairs, base_currencies=NULL, quote_currencies=NULL, use.IB=TRUE) {
     if (missing(pairs)) {
-        if (is.null(quote_currencies) || is.null(base_currencies) ) { #nothing is given
+        if (is.null(base_currencies) && is.null(quote_currencies) ) { #nothing is given
             pairs <- c("EUR.USD","USD.JPY","GBP.USD","USD.CHF","AUD.USD","USD.CAD","NZD.USD","GBP.JPY","EUR.JPY")
         } else {
             pairs <- NULL
-            if (is.null(base_currencies)) {
+            if (is.null(quote_currencies)) {
                 if (length(ls_currencies())==1) {
-                    base_currencies <- ls_currencies()[1]
-                } else base_currencies <- "USD"
+                    quote_currencies <- ls_currencies()[1]
+                } else quote_currencies <- "USD"
             }
-            for (bc in base_currencies) {
-                pairs <- c(pairs, paste(quote_currencies, bc, sep="."))
+            for (qc in quote_currencies) {
+                pairs <- c(pairs, paste(base_currencies, qc, sep="."))
             }
         }    
     }
@@ -31,7 +31,7 @@ define_FX <- define_exchange_rates <- function(pairs, quote_currencies=NULL, bas
                 currency=strsplit(pair,"\\.")[[1]][2],
                 multiplier=1,
                 tick_size=0.01,
-                quote_currency = strsplit(pair,"\\.")[[1]][1],
+                symbol_currency = strsplit(pair,"\\.")[[1]][1],
                 type = c("exchange_rate","currency"), assign_i = TRUE)            
     }
     if (use.IB) update_instruments.IB(pairs)
