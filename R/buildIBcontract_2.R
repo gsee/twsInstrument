@@ -125,7 +125,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     } else primary_id <- contract$local
                     #exchange_rate(primary_id=primary_id, currency=contract$currency, second_currency=contract$symbol)
                     instrument(primary_id=primary_id, currency=contract$currency, multiplier=1, 
-                                tick_size=0.01, identifiers=NULL, quote_currency=contract$symbol, #WARNING: I use quote_currency instead of second_currency
+                                tick_size=0.01, identifiers=NULL, symbol_currency=contract$symbol, #WARNING: I use symbol_currency instead of second_currency
                                 type=c("exchange_rate","currency"), assign_i=FALSE)
                     #currency(primary_id=contract$symbol, currency=contract$currency, exchange=contract$exch, type='currency')
                 }) #End switch on sectype
@@ -143,8 +143,8 @@ buildIBcontract <- function(symbol, tws=NULL,
     	primary_id <- instr$primary_id #TODO: check for suffix_id
         if (!is.null(instr$underlying_id)) { 
             symbol <- instr$underlying_id
-        } else if (!is.null(instr$quote_currency)) {
-            symbol <- instr$quote_currency
+        } else if (!is.null(instr$symbol_currency)) {
+            symbol <- instr$symbol_currency
         } else symbol <- instr$primary_id
 	#if it was an instrument, we copied it to instr, figured out the primary_id, and the symbol 
     } else if (!is.twsContract(symbol)) { 
@@ -184,7 +184,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                         multiplier=1, 
                         tick_size=0.01, 
                         identifiers=NULL, 
-                        quote_currency=contract$symbol, #WARNING: I use quote_currency instead of second_currency
+                        symbol_currency=contract$symbol, #WARNING: I use symbol_currency instead of second_currency
                         type=c("exchange_rate","currency"), assign_i=FALSE)
         } else if (nchar(symbol) == 4 && substr(symbol,4,4) == "." ) {
             contract <-twsCASH(substr(symbol,1,3))
@@ -195,7 +195,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                         multiplier=1, 
                         tick_size=0.01, 
                         identifiers=NULL, 
-                        quote_currency=contract$symbol, #WARNING: I use quote_currency instead of second_currency
+                        symbol_currency=contract$symbol, #WARNING: I use symbol_currency instead of second_currency
                         type=c("exchange_rate","currency"), assign_i=FALSE)        
         } else { #TODO: check for suffix_id that is OSI for options, or futures codes for futures (H1, H11, JUN11)
             warning(paste("Unable to find or infer instrument, ",
@@ -218,8 +218,8 @@ buildIBcontract <- function(symbol, tws=NULL,
             if (inherits(instr,'currency') || 
 				(!is.null(instr$type) && any(instr$type == 'currency') ) ) {
                 sectype <- "CASH"
-                if (!is.null(instr$quote_currency)) {
-                    symbol <- instr$quote_currency
+                if (!is.null(instr$symbol_currency)) {
+                    symbol <- instr$symbol_currency
                 } else if (!is.null(instr$second_currency)) {
                     symbol <- instr$second_currency
                 } else if (nchar(instr$primary_id) == 7) { 
