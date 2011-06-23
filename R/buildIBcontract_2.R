@@ -109,14 +109,14 @@ buildIBcontract <- function(symbol, tws=NULL,
                     instrument(primary_id=primary_id, currency=contract$currency,
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL, 
                         identifiers=NULL, expires=contract$expiry, right=contract$right, 
-                        strike=contract$strike, exchange=contract$exchange, type='option', 
+                        strike=contract$strike, exchange=contract$exchange, type=c('option_series','option'), 
                         underlying_id=contract$symbol, assign_i=FALSE)
                 }, 
                 FUT={
                     primary_id <- symbol
                     instrument(primary_id=primary_id, currency=contract$currency, 
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL,
-                        expires=contract$expiry, exchange=contract$exch, type='future', 
+                        expires=contract$expiry, exchange=contract$exch, type=c('future_series','future'), 
                         underlying_id=contract$symbol, assign_i=FALSE) #maybe shouldn't specify exchange here
                 }, 
                 CASH={ 
@@ -197,7 +197,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                         identifiers=NULL, 
                         quote_currency=contract$symbol, #WARNING: I use quote_currency instead of second_currency
                         type=c("exchange_rate","currency"), assign_i=FALSE)        
-        } else {
+        } else { #TODO: check for suffix_id that is OSI for options, or futures codes for futures (H1, H11, JUN11)
             warning(paste("Unable to find or infer instrument, ",
                     symbol, ".\n  Trying with type = \"stock\"", sep=""))
     #        contract <- twsSTK(primary_id)        
@@ -206,7 +206,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             contract$sectype <- "STK"
             #instr is still not an instrument!
 		    instr <- NULL #Have to reset it because getInstrument gave it a value of FALSE
-        }
+        } 
     }
 
 
@@ -216,7 +216,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    if (is.null(instr$sectype) ) {
 			#currencies don't have type by FinancialInstrument default
             if (inherits(instr,'currency') || 
-				(!is.null(instr$type) && instr$type[1] == 'currency') ) {
+				(!is.null(instr$type) && any(instr$type == 'currency') ) ) {
                 sectype <- "CASH"
                 if (!is.null(instr$quote_currency)) {
                     symbol <- instr$quote_currency
@@ -228,19 +228,19 @@ buildIBcontract <- function(symbol, tws=NULL,
                     symbol <- strsplit(instr$primary_id,"/")[[1]][1]
                 } else symbol <- instr$primary_id
            } else if (inherits(instr,'option') || 
-                instr$type[1] == "option" || 
-                instr$type[1] == "OPT") {
+                any(instr$type == "option") || 
+                any(instr$type == "OPT") ) {
                     sectype <- "OPT"
                     if (!is.null(instr$underlying_id) 
                            && !instr$underlying_id == "") {
                         symbol <- instr$underlying_id
                     }
             } else if (inherits(instr,'future') || 
-                instr$type[1] == "future") {
+                any(instr$type == "future")) {
                     sectype <- "FUT"
             } else if (inherits(instr,'stock') || 
-                (instr$type[1] == "stock") || 
-                (instr$type[1] == "STK")) {
+                any((instr$type == "stock")) || 
+                any((instr$type == "STK"))) {
                     sectype <- "STK"                
             } else { 
                 stop(paste('Cannot determine sectype; \n', symbol , 
@@ -251,15 +251,15 @@ buildIBcontract <- function(symbol, tws=NULL,
         
         if (is.null(contract$conId) || contract$conId == 0) { #This if statement isn't necessary
             conId <- 0        
-            if ((sectype == "FUT" || sectype == "OPT") && is.null(instr$expires) && is.null(instr$expiry) )
+            if ((any(instr$type == "future_series") || any(instr$type == "option_series") ) && is.null(instr$expires) && is.null(instr$expiry) )
                 warning("Expiry not defined for future or option.")   
-            if (sectype == "OPT") {
+            if (any(instr$type == "option_series") ) {
 				if (is.null(instr$strike))
 					warning("strike is not defined for option.")
  				if (!is.null(instr$callput)) {
-					right <- instr$callput
+					right <- switch(instr$callput, call=,c=,C="C",put=,p=,P="P")
 				} else if (!is.null(instr$right)) {
-					right <- instr$right
+					right <- switch(instr$right, call=,c=,C="C",put=,p=,P="P") #instr$right
 				} else {
 					warning("right of option is neither call nor put.")
 				    right <- instr$right
@@ -278,16 +278,18 @@ buildIBcontract <- function(symbol, tws=NULL,
             multiplier <- instr$multiplier            
             exchange <- instr$exchange #Should exchange and primary both be the same ?        
         }
-        primary <- "" # instr$exchange #should this be "" ?
-        if (is.null(instr$expires) && !is.null(instr$expiry)) {
-            expiry <- instr$expiry
-        } else expiry <- instr$expires
+        primary <- "" # should this be instr$exchange ?
 
+        if (is.null(instr$expires) && !is.null(instr$expiry)) {
+            expiry <- paste(instr$expiry)
+        } else if (!is.null(instr$expires)) {
+            expiry <- paste(instr$expires) 
+        } else expiry <- ""
 		IBexpiry <- expiry
         #IB uses the Friday before expiration Saturday for expiry
         #except for EOM options.
-		if (!is.null(IBexpiry) && is.character(IBexpiry)) {
-            if (length(IBexpiry) == 8) {
+		if (!is.null(IBexpiry) && is.character(IBexpiry) && IBexpiry != "") {
+            if (nchar(IBexpiry) == 8) {
 			    expdate <- as.Date(IBexpiry,format="%Y%m%d")
 			    if (weekdays(expdate) == "Saturday") {
 				    IBexpiry <- format(expdate - 1,"%Y%m%d")
@@ -362,7 +364,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 cat('Contract details request complete. Disconnected.\n')
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
-            uc$include_expired <- contract$include_expired #FIXME: reqContractDetails overwrites include_expired	    
+            uc$include_expired <- contract$include_expired #FIXME: IBrokers:::reqContractDetails overwrites include_expired	    
         }
     } else {
 		warning(paste(primary_id, 'is not a tradeable currency pair.'))
@@ -418,18 +420,18 @@ buildIBcontract <- function(symbol, tws=NULL,
         instr$currency <- uc$currency
         switch(uc$sectype, 
             STK={
-                instr$type <- unique(c('stock',instr$type))
+                instr$type <- unique(c(instr$type,'stock'))
                 instr$multiplier <- 1
             }, 
             OPT={
-                instr$type <- unique(c('option',instr$type)) 
+                instr$type <- unique(c(instr$type,'option')) 
                 instr$multiplier <- as.numeric(uc$multiplier)
                 instr$expires <- uc$expiry
                 instr$strike <- uc$strike
                 instr$right <- uc$right
             }, 
             FUT={
-                instr$type <- unique(c('future',instr$type))
+                instr$type <- unique(c(instr$type,'future'))
                 instr$multiplier <- as.numeric(uc$multiplier)
                 instr$expires <- uc$expiry
                 iblocal <- uc$local
@@ -454,7 +456,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     instr$suffix_id <- gsub(" ","",si)
             },
             CASH={
-                instr$type <- unique(c('currency',instr$type))
+                instr$type <- unique(c(instr$type,'currency'))
                 instr$multiplier <- 1            
             },{} ) #End switch on sectype
         #the rest of these may not work in the future, because, as I understand it, 
