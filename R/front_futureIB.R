@@ -28,11 +28,14 @@ front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBs
                         #sep="")
                 store.to <- paste(instr$primary_id, 'fspecs', sep="_")
             } else store.to <- instr$primary_id
-
-            future(primary_id=store.to, currency=instr$currency,
+            instrument(primary_id=store.to, currency=instr$currency, 
                     multiplier=instr$multiplier, tick_size=as.numeric(instr$tick_size),
-                    identifiers=instr$identifiers, 
-                    underlying_id=instr$underlying_id)           
+                    indentifiers=instr$identifiers, type = "future",
+                    underlying_id=instr$underlying_id, assign_i = TRUE)
+             #future(primary_id=store.to, currency=instr$currency,
+#                    multiplier=instr$multiplier, tick_size=as.numeric(instr$tick_size),
+#                    identifiers=instr$identifiers, 
+#                    underlying_id=instr$underlying_id)           
             cat(paste('Futures contract specs stored in ', store.to, "\n", sep=""))    
         }
 

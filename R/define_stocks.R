@@ -1,5 +1,6 @@
 define_stocks <-
-function(x=SP500desc, currency='', file=NULL, use.yahoo=TRUE, use.IB=TRUE, addIBslot=TRUE) { #, ...) {	
+function(x=SP500desc, currency='USD', file=NULL, use.yahoo=TRUE, use.IB=TRUE, addIBslot=TRUE) { #, ...) {	
+    if (is.null(currency)) currency <- ''    
     if (currency != '' && length(currency) == 1) {
         tmpccy <- try(getInstrument(currency,silent=TRUE), silent=TRUE)      
         if (!inherits(tmpccy,'currency') || 
@@ -19,7 +20,10 @@ function(x=SP500desc, currency='', file=NULL, use.yahoo=TRUE, use.IB=TRUE, addIB
 	if (is.vector(x) & is.character(x)) {
         symbols <- x
         for (stk in symbols) {
-            stock(stk, currency, defined.by='hand', updated=Sys.time() )
+            #stock(stk, currency, defined.by='hand', updated=Sys.time() )
+            instrument(primary_id=stk, currency=currency, multiplier=1, tick_size=0.01,
+                        identifiers=NULL        , defined.by='hand', updated=Sys.time(),
+                        type = "stock", assign_i = TRUE)
         }
     } else {
         if (is.null(file)) {
@@ -30,12 +34,19 @@ function(x=SP500desc, currency='', file=NULL, use.yahoo=TRUE, use.IB=TRUE, addIB
         } else symdesc <- read.csv(file=file)	
         if (is.data.frame(symdesc)) {
           	for (i in 1:length(symdesc[,1])) {
-                stock(as.character(symdesc[i,1]),'USD',1,
+                instrument(primary_id=as.character(symdesc[i,1]),
+                    currency = currency,
+                    multiplier = 1,
+                    tick_size = 0.01,
+                    identifiers = NULL,
 	                description=as.character(symdesc[i,2]),
 	                industry.division=as.character(symdesc[i,3]),
 	                industry.group=as.character(symdesc[i,4]),
 	                industry.sector=as.character(symdesc[i,5]), 
-	                defined.by=file, updated=Sys.time() )
+	                defined.by=file, 
+                    updated=Sys.time(), 
+                    type = "stock", 
+                    assign_i = TRUE )
             }
         } 
         symbols <- as.character(symdesc[,1])

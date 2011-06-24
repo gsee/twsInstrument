@@ -66,62 +66,62 @@ function (primary_id="", ..., currency="", multiplier="", tick_size = NULL,
 }
 
 
-stock <-
-function (primary_id, currency = NULL, multiplier = 1, tick_size = 0.01, 
-    identifiers = NULL, ...) 
-{
-    stock_temp = instrument(primary_id = primary_id, currency = currency, 
-        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
-        ..., type = "stock", assign_i = TRUE)
-}
+#stock <-
+#function (primary_id, currency = NULL, multiplier = 1, tick_size = 0.01, 
+#    identifiers = NULL, ...) 
+#{
+#    stock_temp = instrument(primary_id = primary_id, currency = currency, 
+#        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
+#        ..., type = "stock", assign_i = TRUE)
+#}
 
-option <-
-function (primary_id, currency, multiplier, tick_size = NULL, 
-    identifiers = NULL, ..., underlying_id = NULL) 
-{
-    option_temp = instrument(primary_id = primary_id, currency = currency, 
-        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
-        ..., type = "option")
-    if (is.null(underlying_id)) {
-        warning("underlying_id should only be NULL for cash-settled options")
-    }
-    else {
-        if (!exists(underlying_id, where = .instrument, inherits = TRUE)) 
-            warning("underlying_id not found")
-    }
-    option_temp = instrument(primary_id = primary_id, currency = currency, 
-        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
-        ..., type = "option", underlying_id = underlying_id, 
-        assign_i = TRUE)
-}
+#option <-
+#function (primary_id, currency, multiplier, tick_size = NULL, 
+#    identifiers = NULL, ..., underlying_id = NULL) 
+#{
+#    option_temp = instrument(primary_id = primary_id, currency = currency, 
+#        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
+#        ..., type = "option")
+#    if (is.null(underlying_id)) {
+#        warning("underlying_id should only be NULL for cash-settled options")
+#    }
+#    else {
+#        if (!exists(underlying_id, where = .instrument, inherits = TRUE)) 
+#            warning("underlying_id not found")
+#    }
+#    option_temp = instrument(primary_id = primary_id, currency = currency, 
+#        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
+#        ..., type = "option", underlying_id = underlying_id, 
+#        assign_i = TRUE)
+#}
 
-future <-
-function (primary_id, currency, multiplier, tick_size = NULL, 
-    identifiers = NULL, ..., underlying_id = NULL) 
-{
-    if (is.null(underlying_id)) {
-        warning("underlying_id should only be NULL for cash-settled futures")
-    }
-    else {
-        if (!exists(underlying_id, where = .instrument, inherits = TRUE)) 
-            warning("underlying_id not found")
-    }
-    future_temp = instrument(primary_id = primary_id, currency = currency, 
-        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
-        ..., type = "future", underlying_id = underlying_id, 
-        assign_i = TRUE)
-}
+#future <-
+#function (primary_id, currency, multiplier, tick_size = NULL, 
+#    identifiers = NULL, ..., underlying_id = NULL) 
+#{
+#    if (is.null(underlying_id)) {
+#        warning("underlying_id should only be NULL for cash-settled futures")
+#    }
+#    else {
+#        if (!exists(underlying_id, where = .instrument, inherits = TRUE)) 
+#            warning("underlying_id not found")
+#    }
+#    future_temp = instrument(primary_id = primary_id, currency = currency, 
+#        multiplier = multiplier, tick_size = tick_size, identifiers = identifiers, 
+#        ..., type = "future", underlying_id = underlying_id, 
+#        assign_i = TRUE)
+#}
 
-currency <-
-function (primary_id, currency = NULL, multiplier = 1, identifiers = NULL, 
-    ...) 
-{
-    currency_temp <- list(primary_id = primary_id, currency = primary_id, 
-        multiplier = 1, tick_size = 0.01, identifiers = identifiers, type='currency')
-    currency_temp <- c(currency_temp, list(...))
-    class(currency_temp) <- c("currency", "instrument")
-    assign(primary_id, currency_temp, envir = as.environment(.instrument))
-}
+#currency <-
+#function (primary_id, currency = NULL, multiplier = 1, identifiers = NULL, 
+#    ...) 
+#{
+#    currency_temp <- list(primary_id = primary_id, currency = primary_id, 
+#        multiplier = 1, tick_size = 0.01, identifiers = identifiers, type='currency')
+#    currency_temp <- c(currency_temp, list(...))
+#    class(currency_temp) <- c("currency", "instrument")
+#    assign(primary_id, currency_temp, envir = as.environment(.instrument))
+#}
 
 
 

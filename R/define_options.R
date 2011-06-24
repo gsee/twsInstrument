@@ -1,13 +1,3 @@
-#  future('CL',currency='USD',multiplier=1000,tick_size=0.01,
-#  exchange='CME',description=paste('Crude Light Futures, BBO'),underlying_id='CL')
-#	for (i in 1:length(grep('CL',OR.symbols))) {	
-#		future(paste('CL',i,sep='_'),currency='USD',multiplier=1000,tick_size=0.01,exchange='CME',description=paste('Crude Light Futures, BAM, Term ',i,sep=''),underlying_id='CL')
-	#	future_series('CLM',paste(i))
-#	}
-  
-#r <- 'SPY110630C00115000'
-#symbol <- "SPY"
-
 
 option_id <- function(underlying_id, expiry, right, strike) {
 	#TODO: some checking to see what format expiry is (i.e. Date, character string, CCYYMMDD, CCYY-MM-DD,etc.)	
@@ -51,9 +41,12 @@ define_options.yahoo <- function(symbol, currency="USD", multiplier=100, tick_si
 		tmpInstr <- try(getInstrument(paste('.',symbol,sep=""),silent=TRUE),silent=TRUE)
 		if (!inherits(tmpInstr, "option")) {
 			warning(paste('Created option specs for root',paste('.',symbol,sep="")))
-			option(primary_id=paste('.',symbol,sep=""), currency=currency,
-					multiplier=multiplier, tick_size=tick_size, 
-					underlying_id=symbol)		
+            instrument(primary_id=paste('.',symbol,sep=""), currency=currency,
+					multiplier=multiplier, tick_size=tick_size, identifiers=NULL,
+                    type = "option", underlying_id=symbol, assign_i = TRUE)			
+            #option(primary_id=paste('.',symbol,sep=""), currency=currency,
+			#		multiplier=multiplier, tick_size=tick_size, 
+			#		underlying_id=symbol)		
 		}
         instrument(primary_id=primary_id, 
 				suffix_id=clean.si, 
