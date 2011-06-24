@@ -41,14 +41,14 @@ define_options.yahoo <- function(symbol, currency="USD", multiplier=100, tick_si
 		tmpInstr <- try(getInstrument(paste('.',symbol,sep=""),silent=TRUE),silent=TRUE)
 		if (!inherits(tmpInstr, "option")) {
 			warning(paste('Created option specs for root',paste('.',symbol,sep="")))
-            instrument(primary_id=paste('.',symbol,sep=""), currency=currency,
+            instrument.tws(primary_id=paste('.',symbol,sep=""), currency=currency,
 					multiplier=multiplier, tick_size=tick_size, identifiers=NULL,
                     type = "option", underlying_id=symbol, assign_i = TRUE)			
             #option(primary_id=paste('.',symbol,sep=""), currency=currency,
 			#		multiplier=multiplier, tick_size=tick_size, 
 			#		underlying_id=symbol)		
 		}
-        instrument(primary_id=primary_id, 
+        instrument.tws(primary_id=primary_id, 
 				suffix_id=clean.si, 
 				#first_trade=first_traded, 
 				currency=currency, 

@@ -4,7 +4,7 @@
         .instrument <<- new.env(hash=TRUE)
 }
 
-instrument <-
+instrument.tws <-
 function (primary_id="", ..., currency="", multiplier="", tick_size = NULL, 
     identifiers = NULL, type = NULL, assign_i = FALSE) 
 {

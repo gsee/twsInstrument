@@ -109,6 +109,9 @@ Often is is useful to nest these functions to get things like futures denominate
 \author{
 Garrett See
 }
+\note{
+All of these ls_ functions will probably be updated to be more like ls.  i.e use "name" and "pattern" args.
+}
 \seealso{
 ls_instruments_by, ls_by_currency, ls_by_expiry,
 ls, rm, instrument, stock, future, option, currency

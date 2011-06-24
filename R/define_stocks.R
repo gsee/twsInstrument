@@ -14,14 +14,14 @@ function(x=SP500desc, currency='USD', file=NULL, use.yahoo=TRUE, use.IB=TRUE, ad
     #the logical thing to do is create a stock without a currency, and let IB figure it out
     #but, FinancialInstrument requires a currency to be defined, so I either have to guess
     #the currency or throw an exception.  For now, I'll use a mix; if use.IB is FALSE, 
-    #throw an error, but if use.IB is TRUE I'll use MY instrument function, and then try
+    #throw an error, but if use.IB is TRUE I'll use MY instrument.tws function, and then try
     #to get the currency from IB.
                            
 	if (is.vector(x) & is.character(x)) {
         symbols <- x
         for (stk in symbols) {
             #stock(stk, currency, defined.by='hand', updated=Sys.time() )
-            instrument(primary_id=stk, currency=currency, multiplier=1, tick_size=0.01,
+            instrument.tws(primary_id=stk, currency=currency, multiplier=1, tick_size=0.01,
                         identifiers=NULL        , defined.by='hand', updated=Sys.time(),
                         type = "stock", assign_i = TRUE)
         }
@@ -34,7 +34,7 @@ function(x=SP500desc, currency='USD', file=NULL, use.yahoo=TRUE, use.IB=TRUE, ad
         } else symdesc <- read.csv(file=file)	
         if (is.data.frame(symdesc)) {
           	for (i in 1:length(symdesc[,1])) {
-                instrument(primary_id=as.character(symdesc[i,1]),
+                instrument.tws(primary_id=as.character(symdesc[i,1]),
                     currency = currency,
                     multiplier = 1,
                     tick_size = 0.01,

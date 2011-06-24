@@ -89,7 +89,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 STK={
                     primary_id <- contract$symbol                    
                     #stock(primary_id=primary_id, currency=contract$currency, exchange=contract$exchange)
-                    instrument(primary_id=primary_id, currency=contract$currency,multiplier=1,
+                    instrument.tws(primary_id=primary_id, currency=contract$currency,multiplier=1,
                                 tick_size=0.01, identifiers=NULL, type='stock', assign_i=FALSE)
                 }, 
                 OPT={
@@ -106,7 +106,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     #option(primary_id=primary_id, currency=contract$currency,
                     #    multiplier=contract$multiplier, expires=contract$expiry, right=contract$right,
                     #    strike=contract$strike, exchange=contract$exchange, underlying_id=contract$symbol)
-                    instrument(primary_id=primary_id, currency=contract$currency,
+                    instrument.tws(primary_id=primary_id, currency=contract$currency,
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL, 
                         identifiers=NULL, expires=contract$expiry, right=contract$right, 
                         strike=contract$strike, exchange=contract$exchange, type=c('option_series','option'), 
@@ -114,7 +114,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 }, 
                 FUT={
                     primary_id <- symbol
-                    instrument(primary_id=primary_id, currency=contract$currency, 
+                    instrument.tws(primary_id=primary_id, currency=contract$currency, 
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL,
                         expires=contract$expiry, exchange=contract$exch, type=c('future_series','future'), 
                         underlying_id=contract$symbol, assign_i=FALSE) #maybe shouldn't specify exchange here
@@ -124,7 +124,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                         primary_id <- paste(contract$symbol, contract$currency, sep=".") #will be contract$local after update
                     } else primary_id <- contract$local
                     #exchange_rate(primary_id=primary_id, currency=contract$currency, second_currency=contract$symbol)
-                    instrument(primary_id=primary_id, currency=contract$currency, multiplier=1, 
+                    instrument.tws(primary_id=primary_id, currency=contract$currency, multiplier=1, 
                                 tick_size=0.01, identifiers=NULL, symbol_currency=contract$symbol, #WARNING: I use symbol_currency instead of second_currency
                                 type=c("exchange_rate","currency"), assign_i=FALSE)
                     #currency(primary_id=contract$symbol, currency=contract$currency, exchange=contract$exch, type='currency')
@@ -179,7 +179,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             ccys <- strsplit(symbol, "\\.")[[1]]            
             contract <- twsCASH(ccys[1], ccys[2])
             primary_id=paste(contract$symbol, contract$currency, sep=".")
-            instr <- instrument(primary_id=primary_id, 
+            instr <- instrument.tws(primary_id=primary_id, 
                         currency=contract$currency, 
                         multiplier=1, 
                         tick_size=0.01, 
@@ -190,7 +190,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             contract <-twsCASH(substr(symbol,1,3))
             #instr <- Instr_From_Contr(contract)
             primary_id=paste(contract$symbol, contract$currency, sep=".")
-            instr <- instrument(primary_id=primary_id, 
+            instr <- instrument.tws(primary_id=primary_id, 
                         currency=contract$currency, 
                         multiplier=1, 
                         tick_size=0.01, 

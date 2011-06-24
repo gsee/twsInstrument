@@ -28,7 +28,7 @@ front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBs
                         #sep="")
                 store.to <- paste(instr$primary_id, 'fspecs', sep="_")
             } else store.to <- instr$primary_id
-            instrument(primary_id=store.to, currency=instr$currency, 
+            instrument.tws(primary_id=store.to, currency=instr$currency, 
                     multiplier=instr$multiplier, tick_size=as.numeric(instr$tick_size),
                     indentifiers=instr$identifiers, type = "future",
                     underlying_id=instr$underlying_id, assign_i = TRUE)

@@ -1,7 +1,7 @@
-\name{instrument}
+\name{instrument.tws}
 \title{instrument class constructor.}
 \usage{
-instrument(primary_id="", ..., currency="", multiplier="", tick_size=NULL, identifiers=NULL, type=NULL, assign_i=FALSE)
+instrument.tws(primary_id="", ..., currency="", multiplier="", tick_size=NULL, identifiers=NULL, type=NULL, assign_i=FALSE)
 %stock(primary_id, currency = NULL, multiplier = 1, tick_size = 0.01, identifiers = NULL, ...) 
 %option(primary_id, currency, multiplier, tick_size = NULL, identifiers = NULL, ..., underlying_id = NULL)
 %future(primary_id, currency, multiplier, tick_size = NULL, identifiers = NULL, ..., underlying_id = NULL)
@@ -14,7 +14,7 @@ Furthermore, this help page is copied almost verbatim from the instrument help p
 This function masks the instrument function from FinancialInstrument.  The main difference is thatthis version allows a blank instrument template to be created (but usually not stored)It is not necessary to define a \code{currency}, or to provide \code{primary_id}, or \code{multiplier}.
 If no primary_id is provided, the \code{assign_i} argument will be overridden, and the instrument will not be stored.
 
-Currently everything in the IBtools package will function properly with the original (FinancialInstrument) version. However, it can be inhibiting. 
+Currently everything in the twsInstrument package will function properly with the original (FinancialInstrument) version. However, it can be inhibiting. 
 
 For example, knowing only the conId, you could get all of the details of a tradeable security from Interactive Brokers.  Therefore, it would be nice to store conIds in instrument slots even before we know anything else about the instrument.  With the original instrument function you cannot do this.  In addition to having to know the primary_id, multiplier and currency of the instrument, you would have also have to have previously defined the instrument's currency. 
 
@@ -47,7 +47,7 @@ Calling with \code{assign_i=FALSE}, or not specifying it, or not specifying
 Use this option ether to wrap calls to \code{instrument}
 prior to further processing (and presumably assignment) or to test your parameters
 before assignment.}
-\alias{instrument}
+\alias{instrument.tws}
 %\alias{stock}
 %\alias{option}
 %\alias{future}
