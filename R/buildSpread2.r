@@ -100,7 +100,7 @@ butterfly <- function(primary_id, currency=NULL, members,tick_size=NULL, identif
 }
 
 
-buildSpread2 <- function(spread_id, Dates = NULL, onelot=TRUE, prefer = NULL) #overwrite=FALSE
+buildSpread2 <- function(spread_id, Dates = NULL, onelot=TRUE, prefer = NULL, auto.assign=TRUE, env=.GlobalEnv) #overwrite=FALSE
 {
 ##TODO: test something with a different currency    
     spread_instr <- try(getInstrument(spread_id))
@@ -134,53 +134,50 @@ buildSpread2 <- function(spread_id, Dates = NULL, onelot=TRUE, prefer = NULL) #o
         else {
             instr_currency <- instr$currency
 	    if (i == 1) {
-  #            if(is.null(spread_currency)) { 
-		primary_currency = instr_currency
+#            if(is.null(spread_currency)) { 
+    		primary_currency = instr_currency
 #		.instrument[[spread_instr]]$currency <- instr_currency
 #	      } else primary_currency=spread_currency	
 #the above commented out stuff is pointless b/c instrument() requires a currency, 
 #and synthetic.ratio passes whatever the first leg's currency is as the spread's currency
-            }
+        }
 	    stopifnot(is.currency(instr_currency))
-            if (!all.equal(primary_currency, instr_currency)) {
-                instr_currency <- instr$currency
-                stopifnot(is.currency(instr_currency))
-                exchange_rate <- try(get(paste(primary_currency, 
-                  instr_currency, sep = "")))
+        if (!all.equal(primary_currency, instr_currency)) {
+            instr_currency <- instr$currency
+            stopifnot(is.currency(instr_currency))
+            exchange_rate <- try(get(paste(instr_currency, primary_currency, sep = "")))
+            if (inherits(exchange_rate, "try-error")) {
+                exchange_rate <- try(get(paste(primary_currency, instr_currency, sep = "")))
                 if (inherits(exchange_rate, "try-error")) {
-                  exchange_rate <- try(get(paste(instr_currency, 
-                    primary_currency, sep = "")))
-                  if (inherits(exchange_rate, "try-error")) {
-                    stop(paste("Exchange Rate", paste(primary_currency, 
-                      instr_currency, sep = ""), "not found."))
-                  }
-                  else {
+                    stop(paste("Exchange Rate", paste(primary_currency, instr_currency, sep = ""), "not found."))
+                }
+                else {
                     exchange_rate <- 1/exchange_rate
-                  }
                 }
             }
-            else {
-                exchange_rate = 1
-            }
-            instr_mult <- as.numeric(instr$multiplier)
-            instr_ratio <- spread_instr$memberratio[i]
-            instr_prices <- try(get(as.character(spread_instr$members[i],envir=.GlobalEnv)),silent=TRUE)
+        }
+        else {
+            exchange_rate = 1
+        }
+        instr_mult <- as.numeric(instr$multiplier)
+        instr_ratio <- spread_instr$memberratio[i]
+        instr_prices <- try(get(as.character(spread_instr$members[i],envir=.GlobalEnv)),silent=TRUE)
 	    # If we were able to find instr_prices in .GlobalEnv, check to make sure there is data between from and to.
 	    #if we couldn't find it in .GlobalEnv or there's no data between from and to, getSymbols
 	    if (inherits(instr_prices, "try-error") || (!is.null(Dates) && length(instr_prices[Dates]) == 0)) {
-	      if (is.null(Dates)) {
-		  warning(paste(spread_instr$members[i],"not found in .GlobalEnv, and no Dates supplied. Trying getSymbols defaults.") )
-		  instr_prices <- getSymbols(as.character(spread_instr$members[i]),auto.assign=FALSE)
-		  from <- first(index(instr_prices))
-		  to <- last(index(instr_prices))
-              } else {
-		  warning(paste('Requested data for', spread_instr$members[i], 'not found in .GlobalEnv. Trying getSymbols.'))
-		  instr_prices <- getSymbols(as.character(spread_instr$members[i]), from = from, to = to, auto.assign=FALSE)
-	      }
+            if (is.null(Dates)) {
+                warning(paste(spread_instr$members[i],"not found in .GlobalEnv, and no Dates supplied. Trying getSymbols defaults.") )
+                instr_prices <- getSymbols(as.character(spread_instr$members[i]),auto.assign=FALSE)
+                from <- first(index(instr_prices))
+                to <- last(index(instr_prices))
+            } else {
+                warning(paste('Requested data for', spread_instr$members[i], 'not found in .GlobalEnv. Trying getSymbols.'))
+                instr_prices <- getSymbols(as.character(spread_instr$members[i]), from = from, to = to, auto.assign=FALSE)
             }
+        }
 	    if (is.null(Dates)) {
-	      from <- first(index(instr_prices))
-	      to <- last(index(instr_prices))
+	        from <- first(index(instr_prices))
+	        to <- last(index(instr_prices))
 	    }
 	    instr_prices <- instr_prices[paste(from,to,sep="::")]
 ##TODO: if length(prefer > 1), use the first value that exists in colnames(instr_prices)
@@ -216,6 +213,10 @@ buildSpread2 <- function(spread_id, Dates = NULL, onelot=TRUE, prefer = NULL) #o
     #Divide by multiplier and round according to tick_size of spread_instr
     if (is.null(spread_tick) || spread_tick == 0) ret <- spreadlevel/spread_mult
     else ret <- round((spreadlevel / spread_mult) / spread_tick, spread_tick) * spread_tick
+    if (auto.assign) {
+        assign(spread_id, ret, pos=env)
+        ret <- spread_id
+    } else 
     ret
 }
 

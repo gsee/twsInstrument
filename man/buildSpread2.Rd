@@ -8,7 +8,8 @@ build price series for pre-defined multi-leg spread instrument
 build price series for spreads, butterflies, or other synthetic instruments, using metadata of a previously defined synthetic instrument.
 }
 \usage{
-buildSpread2(spread_id, Dates = NULL, onelot = TRUE, prefer = NULL)
+buildSpread2(spread_id, Dates = NULL, onelot = TRUE, prefer = NULL,
+            auto.assign = TRUE, env = .GlobalEnv)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +25,8 @@ Should the series be divided by the first leg's ratio
   \item{prefer}{
 price column to use to build structure.
 }
+  \item{auto.assign}{assign the spread? If FALSE, the xts object will be returned}
+  \item{env}{environment to assign spread into.}
 }
 \details{
 The spread and all legs must be defined instruments.
@@ -31,7 +34,8 @@ The spread and all legs must be defined instruments.
 This function can build multileg spreads such as calendars, butterflies, condors, etc. However, the returned series will be univariate. It does not build Bid Ask Mid data like fn_SpreadBuilder2 does.
 }
 \value{
-a univariate xts object 
+If \code{auto.assign} is FALSE, a univariate xts object 
+otherwise, the xts object will be assigned to \code{spread_id} and the \code{spread_id} will be returned.
 }
 \author{
 Brian Peterson, Garrett See
