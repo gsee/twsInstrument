@@ -19,7 +19,7 @@ front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBs
             warning('underlying_id not defined.')    
         }
         #Do we need to create the root?
-        tmproot <- try(get(instr$primary_id,pos=.instrument),silent=TRUE)
+        tmproot <- try(get(root,pos=.instrument),silent=TRUE)
         if (!inherits(tmproot,'future')) {
             if (is.instrument(tmproot)) {
                 warning(paste(instr$primary_id,
@@ -27,7 +27,8 @@ front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBs
                         #"Specs will be stored in ", instr$primary_id, "_fspecs", 
                         #sep="")
                 store.to <- paste(instr$primary_id, 'fspecs', sep="_")
-            } else store.to <- instr$primary_id
+                cat(paste('Futures contract specs stored in ', store.to, "\n", sep=""))                
+            } else store.to <- root
             instrument.tws(primary_id=store.to, currency=instr$currency, 
                     multiplier=instr$multiplier, tick_size=as.numeric(instr$tick_size),
                     indentifiers=instr$identifiers, type = "future",
@@ -35,12 +36,11 @@ front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBs
              #future(primary_id=store.to, currency=instr$currency,
 #                    multiplier=instr$multiplier, tick_size=as.numeric(instr$tick_size),
 #                    identifiers=instr$identifiers, 
-#                    underlying_id=instr$underlying_id)           
-            cat(paste('Futures contract specs stored in ', store.to, "\n", sep=""))    
+#                    underlying_id=instr$underlying_id)                       
         }
 
-        instr$suffix_id <- gsub(instr$primary_id, "", instr$local)    
-        id <- paste(instr$primary_id, instr$suffix_id, sep="_")   
+        instr$suffix_id <- gsub(root, "", instr$local)    
+        id <- paste(root, instr$suffix_id, sep="_")   
         id <- gsub(" ","", id) 
         instr$primary_id <- id
         class(instr) <- c('future_series','future','instrument')
