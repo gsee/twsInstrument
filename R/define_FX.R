@@ -31,7 +31,7 @@ define_FX <- define_exchange_rates <- function(pairs, counter_currencies=NULL, s
                 currency=strsplit(pair,"\\.")[[1]][2],
                 multiplier=1,
                 tick_size=0.01,
-                symbol_currency = strsplit(pair,"\\.")[[1]][1],
+                counter_currency = strsplit(pair,"\\.")[[1]][1],
                 type = c("exchange_rate","currency"), assign_i = TRUE)            
     }
     if (use.IB) update_instruments.IB(pairs)
