@@ -9,8 +9,8 @@ exchange_rate class constructor
 Quickly define several exhange rate instruments.
 }
 \usage{
-define_FX(pairs, counter_currencies = NULL, second_currencies = NULL, use.IB = TRUE)
-define_exchange_rates(pairs, counter_currencies = NULL, second_currencies = NULL, use.IB = TRUE)
+define_FX(pairs, counter_currencies = NULL, second_currencies = NULL, use.IB = TRUE, verbose=FALSE)
+define_exchange_rates(pairs, counter_currencies = NULL, second_currencies = NULL, use.IB = TRUE, verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +27,9 @@ chr names of second currencies of pairs to define. Optional
   \item{use.IB}{
 call update_instruments.IB ?
 }
+  \item{verbose}{
+if TRUE, it will print to screen every currency and exchange_rate that it defines.
+}
 }
 \details{
 If nothing is given, 9 currency pairs will be defined: "AUD.USD" "EUR.JPY" "EUR.USD" "GBP.JPY" "GBP.USD" "NZD.USD" "USD.CAD" "USD.CHF" "USD.JPY"
@@ -39,6 +42,10 @@ Called for side-effect
 }
 \author{
 Garrett See
+}
+\note{
+Currently, this function is using a dot to separate the 2 currencies in the exchange_rate primary_id. FinancialInstrument and blotter do not use (expect) a separator.
+In the near future, either this function will create primary_ids for exchange_rates that look like "EURUSD", or FinancialInstrument/blotter will be updated to expect primary_ids that look like "EUR.USD"
 }
 \seealso{
 exchange_rate, ls_exchange_rates(), twsInstrument

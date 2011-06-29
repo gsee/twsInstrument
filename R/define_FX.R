@@ -1,4 +1,4 @@
-define_FX <- define_exchange_rates <- function(pairs, counter_currencies=NULL, second_currencies=NULL, use.IB=TRUE) {
+define_FX <- define_exchange_rates <- function(pairs, counter_currencies=NULL, second_currencies=NULL, use.IB=TRUE, verbose=FALSE) {
     if (missing(pairs)) {
         if (is.null(counter_currencies) && is.null(second_currencies) ) { #nothing is given
             pairs <- c("EUR.USD","USD.JPY","GBP.USD","USD.CHF","AUD.USD","USD.CAD","NZD.USD","GBP.JPY","EUR.JPY")
@@ -27,11 +27,21 @@ define_FX <- define_exchange_rates <- function(pairs, counter_currencies=NULL, s
         }
     }
     for (pair in pairs) {
+        Ccy <- strsplit(pair,"\\.")[[1]][2]
+        cCcy <- strsplit(pair,"\\.")[[1]][1]
+        for (ccy in c(Ccy,cCcy)) {
+            tmp <- try(getInstrument(ccy,silent=TRUE))
+            if (inherits(tmp,'try-error') || !inherits(tmp,'currency')) {
+                if (verbose) cat(paste("Created currency ", ccy, ". \n", sep=""))             
+                currency(ccy)
+            }
+        }
+        if (verbose) cat('Created exchange_rate ', pair, "\n", sep="")
         instrument.tws(primary_id=pair, 
-                currency=strsplit(pair,"\\.")[[1]][2],
+                currency=Ccy,
                 multiplier=1,
                 tick_size=0.01,
-                counter_currency = strsplit(pair,"\\.")[[1]][1],
+                counter_currency = cCcy,
                 type = c("exchange_rate","currency"), assign_i = TRUE)            
     }
     if (use.IB) update_instruments.IB(pairs)
