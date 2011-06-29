@@ -294,6 +294,11 @@ buildIBcontract <- function(symbol, tws=NULL,
 			    if (weekdays(expdate) == "Saturday") {
 				    IBexpiry <- format(expdate - 1,"%Y%m%d")
 			    }
+            } else if (nchar(IBexpiry) == 10) {
+                expdate <- as.Date(IBexpiry,format="%Y-%m-%d")
+                if (weekdays(expdate) == "Saturday") {
+                    IBexpiry <- format(expdate - 1, "%Y%m%d")
+                }
             }
 		} else IBexpiry = ""
 
