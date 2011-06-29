@@ -27,7 +27,7 @@ update_instruments.all <- function(symbols='all', ...) {
 #getInstrument('SPY')
 
 #TODO: Add support for indexes
-update_instruments.yahoo <- function(symbols=c('stocks','all') ) {
+update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) {
     sym.options <- c('all','stocks')
     symkey <- sym.options[pmatch(symbols,sym.options)]
     symkey <- na.omit(symkey)[1]
@@ -38,8 +38,10 @@ update_instruments.yahoo <- function(symbols=c('stocks','all') ) {
         } 
     }
     #make sure it's a vector of instrument names
-    if (!is.character(symbols)) 
-        stop('symbols must be a vector of instrument names, or one of "all", "stocks"')    
+    if (!is.character(symbols)) {
+        if (verbose) cat('No stocks found to update.\n') 
+        return(NULL) #stop('symbols must be a vector of instrument names, or one of "all", "stocks"')    
+    }
     yahoo.syms <- paste(symbols, collapse=";")
 	if (is.null(yahoo.syms) || length(yahoo.syms) == 0) 
         stop('error with symbol names; no symbols supplied?')

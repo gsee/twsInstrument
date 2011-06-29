@@ -54,8 +54,9 @@ The second legs new values are multiplied by the ratio. Then the difference is t
 \value{
 an xts object with
 Bid, Ask, Mid columns, 
-or Open, High, Close, Adjusted columns, 
-or Open, High, Close columns.
+or Open, Close, Adjusted columns, 
+or Open, Close columns.
+or Price column.
 }
 \author{
 Lance Levenson, Brian Peterson, Garrett See

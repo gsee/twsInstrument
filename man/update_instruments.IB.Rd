@@ -10,7 +10,7 @@ Adds/updates information in instrument with data downloaded from IB or yahoo
 }
 \usage{
 update_instruments.IB(symbols = c("all", "stocks", "futures", "options", "currencies"), addIBslot = TRUE, updateInstrument = TRUE, assign_i=TRUE, assign_c=TRUE)
-update_instruments.yahoo(symbols=c('stocks','all') )
+update_instruments.yahoo(symbols=c('stocks','all'), verbose=FALSE)
 update_instruments.all(symbols='all', ...)
 }
 \arguments{
@@ -33,6 +33,8 @@ should the instrument be stored in .instrument environment.
 If a new currency is discovered, should it be created
 }  
   \item{...}{anything to pass through it update_instruments.IB
+}
+  \item{verbose}{ be verbose?
 }
 }
 \details{

@@ -214,7 +214,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    primary_id <- instr$primary_id
 	    #figure out sectype
 	    if (is.null(instr$sectype) ) {
-			#currencies don't have type by FinancialInstrument default
+			#currencies don't have type by FinancialInstrument default. #FIXME: They do now; this can be updated
             if (inherits(instr,'currency') || 
 				(!is.null(instr$type) && any(instr$type == 'currency') ) ) {
                 sectype <- "CASH"
@@ -222,6 +222,8 @@ buildIBcontract <- function(symbol, tws=NULL,
                     symbol <- instr$counter_currency
                 } else if (!is.null(instr$second_currency)) {
                     symbol <- instr$second_currency
+                } else if (nchar(instr$primary_id) == 6) { #TODO: make sure it's 6 letters
+                    symbol <- substr(instr$primary_id,1,3)
                 } else if (nchar(instr$primary_id) == 7) { 
                     symbol <- strsplit(instr$primary_id,"\\.")[[1]][1]                 
                 } else if (nchar(instr$primary_id) == 7) { #e.g. if it was EUR/USD, then the last line didn't change it
