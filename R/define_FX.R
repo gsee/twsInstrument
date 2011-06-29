@@ -1,7 +1,7 @@
 define_FX <- define_exchange_rates <- function(pairs, counter_currencies=NULL, second_currencies=NULL, use.IB=TRUE, verbose=FALSE) {
     if (missing(pairs)) {
         if (is.null(counter_currencies) && is.null(second_currencies) ) { #nothing is given
-            pairs <- c("EUR.USD","USD.JPY","GBP.USD","USD.CHF","AUD.USD","USD.CAD","NZD.USD","GBP.JPY","EUR.JPY")
+            pairs <- c("EUR.USD","USD.JPY","GBP.USD","USD.CHF","AUD.USD","USD.CAD","NZD.USD","USD.HKD","USD.SGD","GBP.JPY","EUR.JPY")
         } else {
             pairs <- NULL
             if (is.null(second_currencies)) {

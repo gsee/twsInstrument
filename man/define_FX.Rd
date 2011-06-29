@@ -32,7 +32,7 @@ if TRUE, it will print to screen every currency and exchange_rate that it define
 }
 }
 \details{
-If nothing is given, 9 currency pairs will be defined: "AUD.USD" "EUR.JPY" "EUR.USD" "GBP.JPY" "GBP.USD" "NZD.USD" "USD.CAD" "USD.CHF" "USD.JPY"
+If nothing is given, 11 currency pairs will be defined: "EUR.USD", "USD.JPY", "GBP.USD", "USD.CHF", "AUD.USD", "USD.CAD", "NZD.USD", "USD.HKD", "USD.SGD", "GBP.JPY", "EUR.JPY"
 If \code{pairs} is given, it should be a vector of pair names formatted in the same manner as above.
 If \code{pairs} is not given, but \code{base_currencies} and \code{quote_currencies} are, then it will make all base/quote pairs possible using those.
 If only \code{counter_currencies} are given, then if only one currency exists in the .instrument environment, it will be used as the counter_currency. Otherwise, "USD" will be used.
