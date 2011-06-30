@@ -28,6 +28,7 @@ update_instruments.all <- function(symbols='all', ...) {
 
 #TODO: Add support for indexes
 update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) {
+    if (is.null(symbols) || is.na(symbols) || missing(symbols)) symbols <- 'stocks'
     sym.options <- c('all','stocks')
     symkey <- sym.options[pmatch(symbols,sym.options)]
     symkey <- na.omit(symkey)[1]
