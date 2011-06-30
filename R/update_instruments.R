@@ -97,7 +97,7 @@ update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) 
 }
 
 update_instruments.IB <- function(symbols=c('all','stocks','futures','options','currencies'),
-            addIBslot=TRUE, updateInstrument=TRUE, assign_i=TRUE, assign_c=TRUE) 
+            addIBslot=TRUE, updateInstrument=TRUE, include_expired='1', assign_i=TRUE, assign_c=TRUE) 
 {
     sym.options <- c('all','stocks','futures','options','cash')
     symkey <- sym.options[pmatch(symbols,sym.options)]
@@ -123,7 +123,7 @@ update_instruments.IB <- function(symbols=c('all','stocks','futures','options','
         #TODO: If there is a problem with clientId, make note of it, and don't use it again
         #FIXME: passing tws to buildIBcontract doesn't work/isn't implemented correctly. 
         try(buildIBcontract(symbol,addIBslot=addIBslot,updateInstrument=updateInstrument,
-            output='nothing', assign_i=assign_i, assign_c=assign_c)) 
+            output='nothing', include_expired=include_expired, assign_i=assign_i, assign_c=assign_c)) 
 	}       
 }
 

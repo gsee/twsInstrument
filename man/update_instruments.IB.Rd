@@ -9,7 +9,8 @@ updates instrument metadata with data from IB or yahoo
 Adds/updates information in instrument with data downloaded from IB or yahoo
 }
 \usage{
-update_instruments.IB(symbols = c("all", "stocks", "futures", "options", "currencies"), addIBslot = TRUE, updateInstrument = TRUE, assign_i=TRUE, assign_c=TRUE)
+update_instruments.IB(symbols=c('all','stocks','futures','options','currencies'),
+            addIBslot=TRUE, updateInstrument=TRUE, include_expired='1', assign_i=TRUE, assign_c=TRUE)
 update_instruments.yahoo(symbols=c('stocks','all'), verbose=FALSE)
 update_instruments.all(symbols='all', ...)
 }
@@ -25,6 +26,9 @@ Boolean. should an IB slot be added to the instrument, making it a twsInstrument
 }
   \item{updateInstrument}{
 Boolean. Should data outside the IB slot also be updated?
+}
+  \item{include_expired}{
+Should expired contracts be included in reqContractDetails call? "0" for no, "1" for yes (default).
 }
   \item{assign_i}{
 should the instrument be stored in .instrument environment.
