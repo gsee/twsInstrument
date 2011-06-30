@@ -240,6 +240,11 @@ buildIBcontract <- function(symbol, tws=NULL,
             } else if (inherits(instr,'future') || 
                 any(instr$type == "future")) {
                     sectype <- "FUT"
+                    if (!identical(integer(0),grep("_",instr$primary_id))) { #if there is an underscore in primary_id
+                        symbol <- strsplit(instr$primary_id,"_")[[1]][1]
+                    } else if (!is.null(instr$underlying_id)) {
+                        symbol <- instr$underlying_id
+                    }
             } else if (inherits(instr,'stock') || 
                 any((instr$type == "stock")) || 
                 any((instr$type == "STK"))) {
@@ -288,6 +293,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             expiry <- paste(instr$expires) 
         } else expiry <- ""
 		IBexpiry <- expiry
+        if(sectype == "FUT" && nchar(IBexpiry) == 10) IBexpiry <- format(as.Date(IBexpiry,format="%Y-%m-%d"),"%Y%m")
         #IB uses the Friday before expiration Saturday for expiry
         #except for EOM options.
 		if (!is.null(IBexpiry) && is.character(IBexpiry) && IBexpiry != "") {
