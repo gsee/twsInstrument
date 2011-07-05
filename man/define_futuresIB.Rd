@@ -9,12 +9,12 @@ futures contract contstructor
 Define one or many futures contracts for a given underlying.
 }
 \usage{
-define_futures.IB(symbol, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", ...)
-define_futures(symbol, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", src = "IB", ...)
+define_futures.IB(symbols, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", ...)
+define_futures(symbols, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", src = "IB", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{symbol}{
+  \item{symbols}{
 chr name of underlying
 }
   \item{exch}{
@@ -34,9 +34,10 @@ any other parameters to pass to twsFuture:
 \details{
 \code{define_futures} is currently just a wrapper that calls \code{define_futures.IB}
 
-\code{define_futures.IB} is just a wrapper that loops through all of the expiries, calling twsInstrument.
+\code{define_futures.IB} loops through all of the symbols and expiries calling twsInstrument.  The exchange has to be the same for all of the futures you are trying to define.  If you want to define futures from different exchanges, you must make a separate call for each.
+
 The name of the future contract will usually be the value of \sQuote{local} (retrieved with a call to reqContractDetails) with an underscore separating the root symbol and the suffix_id. 
-If \code{symbol} is not found in \sQuote{local} (e.g. \sQuote{VIX} is not in \sQuote{VXU1}) the suffix_id will be of format MMMYY 
+If \code{symbol} is not found in \sQuote{local} (e.g. \sQuote{VIX} is not in \sQuote{VXU1}) the suffix_id will be of format MMMYY (e.g. JUN11)
 }
 \value{
 names of instruments that were created.
@@ -58,6 +59,8 @@ months <- c(paste("0",1:9,sep=""),paste(10:12))
 define_futures("VIX","CFE",paste("2010",months,sep=""),include_expired="1")
 
 define_futures("YM","eCBOT","201109")
+
+define_futures(c("NKD","NQ"), "GLOBEX", "201109")
 }
 }
 
