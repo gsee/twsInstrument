@@ -174,22 +174,33 @@ buildIBcontract <- function(symbol, tws=NULL,
 
     if (inherits(instr,'try-error') || !is.instrument(instr)) {
         #TODO: allow for EUR/USD format also.
-        if (!identical(grep('\\.',symbol), integer(0)) && nchar(symbol) == 7) {
-            #if it has 7 characters and one of them is a period, treat it as an FX pair (e.g. EUR.USD)            
-            ccys <- strsplit(symbol, "\\.")[[1]]            
+        if ( (nchar(symbol) == 6 ) && !identical(integer(0), grep(symbol, toupper(symbol))) ) { #6 letters, all uppercase
+            ccys <- c(substr(symbol, 1, 3),substr(symbol,4,6))         
             contract <- twsCASH(ccys[1], ccys[2])
-            primary_id=paste(contract$symbol, contract$currency, sep=".")
+            primary_id=paste(contract$symbol, contract$currency, sep="") #consistent with blotter, but I think it should be sep="."
             instr <- instrument.tws(primary_id=primary_id, 
                         currency=contract$currency, 
                         multiplier=1, 
                         tick_size=0.01, 
                         identifiers=NULL, 
-                        counter_currency=contract$symbol, #WARNING: I use counter_currency instead of second_currency
+                        counter_currency=contract$symbol,
+                        type=c("exchange_rate","currency"), assign_i=FALSE)
+        } else if (!identical(grep('\\.',symbol), integer(0)) && nchar(symbol) == 7) {
+            #if it has 7 characters and one of them is a period, treat it as an FX pair (e.g. EUR.USD)            
+            ccys <- strsplit(symbol, "\\.")[[1]]            
+            contract <- twsCASH(ccys[1], ccys[2])
+            primary_id=paste(contract$symbol, contract$currency, sep="") #consistent with blotter, but I think it should be sep="."
+            instr <- instrument.tws(primary_id=primary_id, 
+                        currency=contract$currency, 
+                        multiplier=1, 
+                        tick_size=0.01, 
+                        identifiers=NULL, 
+                        counter_currency=contract$symbol,
                         type=c("exchange_rate","currency"), assign_i=FALSE)
         } else if (nchar(symbol) == 4 && substr(symbol,4,4) == "." ) {
             contract <-twsCASH(substr(symbol,1,3))
             #instr <- Instr_From_Contr(contract)
-            primary_id=paste(contract$symbol, contract$currency, sep=".")
+            primary_id=paste(contract$symbol, contract$currency, sep="") #consistent with blotter, but I think it should be sep="."
             instr <- instrument.tws(primary_id=primary_id, 
                         currency=contract$currency, 
                         multiplier=1, 
@@ -377,7 +388,8 @@ buildIBcontract <- function(symbol, tws=NULL,
                 cat('Contract details request complete. Disconnected.\n')
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
-            uc$include_expired <- contract$include_expired #FIXME: IBrokers:::reqContractDetails overwrites include_expired	    
+            uc$include_expired <- contract$include_expired #FIXME: IBrokers:::reqContractDetails overwrites include_expired	
+            if (uc$sectype != 'FUT' || uc$sectype != 'OPT') uc$include_expired <- ""    
         }
     } else {
 		warning(paste(primary_id, 'is not a tradeable currency pair.'))
