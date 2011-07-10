@@ -170,7 +170,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 ####
 #Now unless we were given a string, we have value for symbol, primary_id, instr, and contract. 
 #if it was a string, we only have primary_id, and probably have instr
-#(if we got instr from a string, it may not have succeed. we'll check for that next.)
+#(if we got instr from a string, it may not have succeeded. we'll check for that next.)
 
     if (inherits(instr,'try-error') || !is.instrument(instr)) {
         #TODO: allow for EUR/USD format also.
