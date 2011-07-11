@@ -389,7 +389,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
             uc$include_expired <- contract$include_expired #FIXME: IBrokers:::reqContractDetails overwrites include_expired	
-            if (uc$sectype != 'FUT' || uc$sectype != 'OPT') uc$include_expired <- ""    
+            if (uc$sectype != 'FUT' && uc$sectype != 'OPT') uc$include_expired <- ""    
         }
     } else {
 		warning(paste(primary_id, 'is not a tradeable currency pair.'))
