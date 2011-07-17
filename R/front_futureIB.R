@@ -1,3 +1,7 @@
+front_future <- function(roots, currency='USD', underlying_id = NULL, addIBslot=TRUE, src='IB') {
+    do.call(paste('front_future',src,sep="."),list(roots=roots,currency=currency, underlying_id=underlying_id, addIBslot=addIBslot))
+}
+
 front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBslot=TRUE) 
 {
     if (!is.character(roots)) stop("roots should be a chr vector.")    

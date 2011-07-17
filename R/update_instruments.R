@@ -8,19 +8,9 @@
 #}
 
 update_instruments.all <- function(symbols='all', ...) {
-#    arg <- list(...)
-#    if (is.list(arg[["..."]])) {
-#        if (length(arg) == 1) 
-#            arg <- arg[["..."]]
-#        else {
-#            targ <- arg[["..."]]
-#            arg[["..."]] <- NULL
-#            arg <- c(arg, targ)
-#        }
-#    }
-    update_instruments.yahoo(symbols)
-    update_instruments.IB(symbols,...)
-#    update_instruments.yahoo
+    updated <- update_instruments.yahoo(symbols)
+    updated <- unique(c(updated, update_instruments.IB(symbols,...)))
+    updated
 }
 
 #update_instruments.all('SPY')
@@ -58,7 +48,7 @@ update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) 
                         "52-week Range")))  
 #    sym.length <- length(unlist(strsplit(symbols,";")))    	
     #see yahooQF for available whats
-	for (i in 1:length(symbols)) {
+    for (i in 1:length(symbols)) {
         instr <- getInstrument(symbols[i])
 		#Only update stocks from yahoo		
 		if (inherits(instr,'stock')) {
@@ -94,6 +84,7 @@ update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) 
 		    assign(symbols[i], instr, pos=.instrument)
 		}
     }        
+    symbols
 }
 
 update_instruments.IB <- function(symbols=c('all','stocks','futures','options','currencies'),
@@ -119,12 +110,14 @@ update_instruments.IB <- function(symbols=c('all','stocks','futures','options','
     }
     if (!is.character(symbols)) 
         stop('symbols must be a vector of instrument names, or one of "all", "all.symbols"')    
+    symout <- NULL
     for (symbol in symbols) {
         #TODO: If there is a problem with clientId, make note of it, and don't use it again
         #FIXME: passing tws to buildIBcontract doesn't work/isn't implemented correctly. 
-        try(buildIBcontract(symbol,addIBslot=addIBslot,updateInstrument=updateInstrument,
-            output='nothing', include_expired=include_expired, assign_i=assign_i, assign_c=assign_c)) 
-	}       
+        symout <- c(symout, try(buildIBcontract(symbol,addIBslot=addIBslot,updateInstrument=updateInstrument,
+            output='symbol', include_expired=include_expired, assign_i=assign_i, assign_c=assign_c))) 
+	}    
+    symout   
 }
 
 
