@@ -51,14 +51,14 @@ function(x=SP500desc, currency='USD', file=NULL, use.yahoo=TRUE, use.IB=TRUE, ad
         } 
         symbols <- as.character(symdesc[,1])
     }
-    if (use.yahoo || use.IB) symbols <- NULL
+    if (use.yahoo || use.IB) symout <- NULL
     if (use.yahoo) {
-        symbols <- update_instruments.yahoo(symbols)	    
+        symout <- update_instruments.yahoo(symbols)	    
     }
     if (use.IB) {
-        symbols <- unique(symbols, update_instruments.IB(symbols,addIBslot=addIBslot))
+        symout <- unique(symout, update_instruments.IB(symbols,addIBslot=addIBslot))
     }
-    symbols
+    symout
 }
 
 
