@@ -9,8 +9,8 @@ futures contract contstructor
 Define one or many futures contracts for a given underlying.
 }
 \usage{
-define_futures.IB(symbols, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", ...)
-define_futures(symbols, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "0", src = "IB", ...)
+define_futures.IB(symbols, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "1", ...)
+define_futures(symbols, exch, expiries = as.Date(Sys.time()), currency="USD", include_expired = "1", src = "IB", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

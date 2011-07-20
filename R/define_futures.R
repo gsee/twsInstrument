@@ -1,4 +1,4 @@
-define_futures.IB <- function(symbols, exch, expiries=as.Date(Sys.time()), currency="USD", include_expired = "0", ...) {
+define_futures.IB <- function(symbols, exch, expiries=as.Date(Sys.time()), currency="USD", include_expired = "1", ...) {
     symout <- NULL    
     for (expiry in expiries) {
         for (symbol in symbols) {        
@@ -8,7 +8,7 @@ define_futures.IB <- function(symbols, exch, expiries=as.Date(Sys.time()), curre
     symout
 }
 
-define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currency="USD", include_expired="0", src='IB', ...) {
+define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currency="USD", include_expired="1", src='IB', ...) {
     do.call(paste("define_futures.",src,sep=""),list(symbols=symbols,exch=exch,expiries=expiries, currency=currency, include_expired=include_expired, ...))
 }
 
