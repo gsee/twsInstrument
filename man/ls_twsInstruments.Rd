@@ -27,7 +27,7 @@ rm_twsInstruments(x, keep.currencies=TRUE)
 rm_non_twsInstruments(x, keep.currencies=TRUE)
 }
 \arguments{
-  \item{pattern}{an optional regular expression.  Only names matching sQuote{pattern} are returned.}
+  \item{pattern}{an optional regular expression.  Only names matching \code{pattern} are returned.}
 %  \item{match}{return only exact matches?}
   
   \item{x}{
@@ -74,7 +74,7 @@ currency('JPY')
 stock("S","USD")
 stock('SPY','USD',1)
 twsInstrument('XOM') #requires Interactive Brokers
-twsInstrument(option(primary_id='.XOM', currency='USD', multiplier=100,
+twsInstrument(option(primary_id='XOM', currency='USD', multiplier=100,
     tick_size=0.01, expiry='201106', right='P', strike=80, underlying_id='XOM'))
 
 # Now, the examples
