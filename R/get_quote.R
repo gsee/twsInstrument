@@ -3,9 +3,9 @@
 
 #' @export
 get_quote <- function(Symbols, verbose=FALSE, src='IB', ...) {
-    if (src != 'IB' && src != 'yahoo') stop("\"IB\" and \"yahoo\" are the only valid values for src.")
+#    if (src != 'IB' && src != 'yahoo') stop("\"IB\" and \"yahoo\" are the only valid values for src.")
     if (src == 'yahoo') getQuote(Symbols)
-    else if (src =='IB') get_quote.IB(Symbols,verbose)
+    else do.call(paste('get_quote', src, sep='.'), list(Symbols,verbose))
 }
 
 #' Download current instrument quote from IBrokers
