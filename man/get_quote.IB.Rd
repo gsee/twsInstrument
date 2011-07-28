@@ -1,9 +1,8 @@
 \name{get_quote.IB}
-\title{Download current instrument quote from IBrokers...}
+\title{Download current instrument quote using IBrokers...}
 \usage{get_quote.IB(Symbols, verbose=FALSE, tws)}
-\description{Download current instrument quote from IBrokers}
-\details{\code{get_quote} can be called with \code{src="yahoo"} or \code{src="IB"}
-If called with \code{src="yahoo"}, \code{\link{getQuote}} from the quantmod package will be called. 
+\description{Download current instrument quote using IBrokers}
+\details{\code{get_quote} can be called with \code{src="yahoo"} or \code{src="IB"}.  
 
 \code{get_quote.IB} is an adaptation of code that Jeff sent to the r-sig-finance mailing list.
 This function will connect to IBrokers and download recent market data for one or many instruments.
@@ -23,7 +22,7 @@ exchange_rates, it will also contain the columns \sQuote{Last}, \sQuote{LastSize
 \alias{get_quote.IB}
 \references{\url{http://www.mail-archive.com/r-sig-finance@stat.math.ethz.ch/msg00927.html}}
 \author{Garrett See, but the bulk of this comes from Jeff Ryan. See references.}
-\seealso{\code{\link{getQuote}}}
+\seealso{\code{\link{get_quote.yahoo}}}
 \arguments{\item{Symbols}{Can be a vector of instrument names, or a character string of symbols, separated by semi-colons.}
 \item{verbose}{boolean. If TRUE, user will be informed that connection is established, and what is being downloaded.}
 \item{tws}{Currently not implemented.}}
