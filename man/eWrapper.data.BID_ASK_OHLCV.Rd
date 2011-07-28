@@ -1,0 +1,11 @@
+\name{eWrapper.data.BID_ASK_OHLCV}
+\alias{eWrapper.data.BID_ASK_OHLCV}
+\title{eWrapper for getting BID, ASK, LAST and OHLCV values from IB...}
+\usage{eWrapper.data.BID_ASK_OHLCV(n)}
+\description{eWrapper for getting BID, ASK, LAST and OHLCV values from IB}
+\details{This is \code{eWrapper.data} modified to include
+the Open, High, Low, and Close columns.}
+\author{Samo Pahor}
+\value{list of functions}
+\seealso{\code{eWrapper.data}}
+\arguments{\item{n}{number of contracts being watched}}
