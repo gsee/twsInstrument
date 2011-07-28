@@ -28,6 +28,7 @@ get_quote <- function(Symbols, src='IB', ...) {
 #' @param Symbols Can be a vector of instrument names, or a character string of symbols, separated by semi-colons.
 #' @param verbose boolean. If TRUE, user will be informed that connection is established, and what is being downloaded.
 #' @param tws Currently not implemented.
+#' @param \dots other arguments such as \sQuote{eWrapper}
 #' @return data.frame with columns: \sQuote{BidSize}, \sQuote{BidPrice}, \sQuote{AskPrice}, \sQuote{AskSize}.  If none of the quotes are for
 #' exchange_rates, it will also contain the columns \sQuote{Last}, \sQuote{LastSize}, and \sQuote{Volume} 
 #' @aliases get_quote get_quote.IB
@@ -44,7 +45,7 @@ get_quote <- function(Symbols, src='IB', ...) {
 #' get_quote(ls_twsInstruments()) #will not include trade related data because EURUSD doesn't have it
 #' }
 #' @export
-get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL) {
+get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
     if (length(Symbols) == 1) Symbols <- strsplit(Symbols,";")[[1]]
     snapShot <- function (twsCon, eWrapper, timestamp, file, playback = 1, ...)
     {
@@ -137,8 +138,11 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL) {
             cat(paste("Connected with clientId ", tws$clientId, 
                         ".\n Requesting ", Symbols, "\n", sep = ""))
         if (tws$clientId == 9999) warning("IB TWS should be restarted.")
-
-        ew <- if(is.null(ls_FX(Symbols))) #if any are FX, don't include Last or LastSize columns
+        
+        if (hasArg(eWrapper)) {
+            eW <- list(...)$eWrapper
+            ew <- eW(length(Symbols))
+        } else ew <- if(is.null(ls_FX(Symbols))) #if any are FX, don't include Last or LastSize columns
                     eWrapper.data(length(Symbols))
               else eWrapper.FXdata(length(Symbols))
       

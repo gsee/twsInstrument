@@ -1,6 +1,6 @@
 \name{get_quote.IB}
 \title{Download current instrument quote using IBrokers...}
-\usage{get_quote.IB(Symbols, verbose=FALSE, tws)}
+\usage{get_quote.IB(Symbols, verbose=FALSE, tws, ...)}
 \description{Download current instrument quote using IBrokers}
 \details{\code{get_quote} can be called with \code{src="yahoo"} or \code{src="IB"}.  
 
@@ -25,7 +25,8 @@ exchange_rates, it will also contain the columns \sQuote{Last}, \sQuote{LastSize
 \seealso{\code{\link{get_quote.yahoo}}}
 \arguments{\item{Symbols}{Can be a vector of instrument names, or a character string of symbols, separated by semi-colons.}
 \item{verbose}{boolean. If TRUE, user will be informed that connection is established, and what is being downloaded.}
-\item{tws}{Currently not implemented.}}
+\item{tws}{Currently not implemented.}
+\item{\dots}{other arguments such as \sQuote{eWrapper}}}
 \examples{\dontrun{
 define_stocks(c("SPY","DIA"))
 fut <- front_future(c("ES","YM"))
