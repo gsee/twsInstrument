@@ -1,6 +1,5 @@
-#ls_instruments_by is probably a better name
 
-ls_instruments_by <- function (what, value, pattern=NULL, match=TRUE) {
+ls_instruments_by <- function (what, value, pattern=NULL, match=TRUE, in.IBslot=FALSE) {
     if (length(pattern) > 1 && !match) {
         warning("Using match because length of pattern > 1.")
         match <- TRUE
@@ -17,8 +16,10 @@ ls_instruments_by <- function (what, value, pattern=NULL, match=TRUE) {
     tmp_symbols <- NULL 
     for (symbol in symbols) {
         tmp_instr <- try(get(symbol, pos = .instrument),silent=TRUE)
-        if (is.instrument(tmp_instr) && !is.null(tmp_instr[[what]])) {
-            if (any(tmp_instr[[what]] == value)){    
+        if (is.instrument(tmp_instr)) {
+            if (in.IBslot && !is.null(tmp_instr$IB[[what]]) && any(tmp_instr$IB[[what]] == value)) {
+                tmp_symbols <- c(tmp_symbols,symbol)
+            } else if (!is.null(tmp_instr[[what]]) && any(tmp_instr[[what]] == value)){    
                 tmp_symbols <- c(tmp_symbols,symbol)
             }
         }    

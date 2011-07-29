@@ -440,7 +440,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    #else instr$identifiers <- list(IB=uc$local)        
         instr$primary_id <- primary_id
         instr$local <- uc$local
-#        instr$exchange <- uc$primary
+        instr$IB.primary.exch <- uc$primary
         instr$exchange <- uc$exch #ok to overwrite 'SMART' ? 
         instr$currency <- uc$currency
         switch(uc$sectype, 

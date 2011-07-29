@@ -8,7 +8,7 @@ Subset names of instruments
 list names of instruments that have an attribute that matches some value
 }
 \usage{
-ls_instruments_by(what, value, pattern = NULL, match = TRUE)
+ls_instruments_by(what, value, pattern = NULL, match = TRUE, in.IBslot = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +24,10 @@ only return instruments with \code{pattern} in the name
   \item{match}{
 should pattern match names exactly?
 }
+  \item{in.IBslot}{
+Is the attribute you're looking for stored inside the IBslot?
+}
+
 }
 \details{
 list instruments that have a given attribute level with a given value.
