@@ -3,10 +3,8 @@
 #TODO: ls_instruments()[match(c('GS','SEE'),ls_instruments())]
 
 
-ls_twsInstruments <- function(pattern=NULL) {
-    if (!is.null(pattern)) {
-        symbols <- ls(.instrument, all.names=TRUE, pattern=pattern)
-    } else symbols <- ls(.instrument, all.names=TRUE)
+ls_twsInstruments <- function(pattern=NULL, match=TRUE) {
+    symbols <- ls_instruments(pattern, match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
@@ -17,9 +15,7 @@ ls_twsInstruments <- function(pattern=NULL) {
     tmp_symbols
 }
 ls_non_twsInstruments <- function(pattern=NULL) {
-    if (!is.null(pattern)) {
-        symbols <- ls(.instrument, all.names=TRUE, pattern=pattern)
-    } else symbols <- ls(.instrument, all.names=TRUE)
+    symbols <- ls_instruments(pattern, match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)

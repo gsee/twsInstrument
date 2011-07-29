@@ -16,7 +16,7 @@ ls functions return the names of all the instruments of the class implied by the
 rm functions remove the instruments of the class implied by the function name
 }
 \usage{
-ls_twsInstruments(pattern=NULL)
+ls_twsInstruments(pattern=NULL,match=TRUE)
 ls_non_twsInstruments(pattern=NULL)
 ls_defined.by(x,pattern=NULL)
 ls_yahoo(pattern=NULL)
@@ -28,7 +28,7 @@ rm_non_twsInstruments(x, keep.currencies=TRUE)
 }
 \arguments{
   \item{pattern}{an optional regular expression.  Only names matching \code{pattern} are returned.}
-%  \item{match}{return only exact matches?}
+  \item{match}{return only exact matches?}
   
   \item{x}{
 For the rm_ functions: x is what to remove. if not supplied all instruments of relevent class will be removed
