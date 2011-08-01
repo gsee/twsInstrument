@@ -4,6 +4,7 @@ Title: Improves ease of use of IBrokers and FinacialInstrument
 Version: 1.0
 Date: 2011-06-02
 Depends: IBrokers, FinancialInstrument, quantmod
+Suggests: qmao
 Author: Garrett See
 Maintainer: Garrett See <gsee000@gmail.com>
 Description: Integrates IBrokers and FinancialInstrument.

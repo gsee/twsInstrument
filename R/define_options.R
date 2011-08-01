@@ -4,10 +4,10 @@ option_id <- function(underlying_id, expiry, right, strike) {
     #si <- gsub(symbol,"",r)
 	#id <- paste(primary_id,suffix_id,sep="_")
     #expiry <- paste('20',substr(si,1,6),sep="")
-	if (right == 'call' || right == 'Call' || right == 'CALL' || right == 'c') right<-'C'
+    underlying_id <- ifelse(missing(underlying_id), "", paste(underlying_id,"_",sep="")) 	
+    if (right == 'call' || right == 'Call' || right == 'CALL' || right == 'c') right<-'C'
 	if (right == 'put' || right == 'Put' || right == "PUT" || right == 'p') right <- 'P'    
-   
-	paste(".", underlying_id, "_", expiry, right, strike, sep="")
+    paste(underlying_id, expiry, right, strike, sep="")
 }
 
 

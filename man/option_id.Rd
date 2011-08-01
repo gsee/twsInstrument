@@ -16,7 +16,7 @@ option_id(underlying_id, expiry, right, strike)
 ticker symbol of underying. character string.
 }
   \item{expiry}{
-exiry
+expiry
 }
   \item{right}{
 call or put
