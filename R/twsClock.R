@@ -7,13 +7,15 @@
 #' @usage twsClock(format = "\%H:\%M:\%S", refresh = 1, verbose=TRUE)
 #' @return live updating current time as reported by \code{reqCurrentTime}. Press escape to exit clock utility.
 #' @references
-#' http://stackoverflow.com/questions/5953718/overwrite-current-output-in-the-r-console
-#' http://4dpiecharts.com/2011/05/11/a-clock-utility-via-console-hackery/
-#' http://www.asciitable.com/
+#' \url{http://stackoverflow.com/questions/5953718/overwrite-current-output-in-the-r-console}
+#'
+#' \url{http://4dpiecharts.com/2011/05/11/a-clock-utility-via-console-hackery/}
+#'
+#' \url{http://www.asciitable.com/}
 #' @examples
 #' \dontrun{
 #' twsClock()
-#' twsClock("%A %d %B %Y %I:%M:%OS3 %p", 1e-3)
+#' twsClock("\%A \%d \%B \%Y \%I:\%M:\%OS3 \%p", 1e-3)
 #' }
 twsClock <- function(format = "%H:%M:%S", refresh = 1, verbose=TRUE)
 {
