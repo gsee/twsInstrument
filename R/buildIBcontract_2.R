@@ -94,15 +94,31 @@ buildIBcontract <- function(symbol, tws=NULL,
                 }, 
                 OPT={
 #                   primary_id <- paste('.', contract$symbol,sep="")
-					ylocal <- gsub("   ","",contract$local)#take out the triple space
-					si <- gsub(contract$symbol,"",ylocal) #suffix_id
-					#id <- paste(primary_id,suffix_id,sep="_")
-					expiry <- substr(si,1,6)
-					right <- substr(si,7,7)
-					strike <- as.numeric(substr(si,8,15))/1000
-					#local <- paste(symbol, si, sep="   ")      
-					primary_id <- paste(contract$symbol, "_", expiry, right, strike, sep="")
-		
+                    if (!is.null(contract$local) && contract$local != "") {
+                        ylocal <- gsub("   ","",contract$local)#take out the triple space
+                        si <- gsub(contract$symbol,"",ylocal) #suffix_id
+					    #id <- paste(primary_id,suffix_id,sep="_")
+					    expiry <- substr(si,1,6)
+					    right <- substr(si,7,7)
+					    strike <- as.numeric(substr(si,8,15))/1000
+					    #local <- paste(symbol, si, sep="   ")      
+					    primary_id <- paste(contract$symbol, "_", expiry, right, strike, sep="")
+                    } else {
+                        if (any(nchar(contract$expiry) == c(6,10))) {
+                            m <- substr(contract$expiry,5,6)
+                            y <- substr(contract$expiry,1,4)
+                        } else if (!identical(integer(0),grep('-',contract$expiry))) {
+                            ss <- strsplit(contract$expiry,"-")[[1]]
+                            m <- ss[2]
+                            y <- ss[1]    
+                        }
+                        expiry <- paste(y,sprintf("%02d",as.numeric(m)),sep="")                        
+                        right <- contract$right    
+                        strike <- contract$strike
+                        primary_id <- option_id(underlying_id=contract$symbol, strike=strike, 
+                                                month=m, year=y, right=right)
+                    }
+                    
                     #option(primary_id=primary_id, currency=contract$currency,
                     #    multiplier=contract$multiplier, expires=contract$expiry, right=contract$right,
                     #    strike=contract$strike, exchange=contract$exchange, underlying_id=contract$symbol)

@@ -1,22 +1,142 @@
-
-option_id <- function(underlying_id, expiry, right, strike) {
-	#TODO: some checking to see what format expiry is (i.e. Date, character string, CCYYMMDD, CCYY-MM-DD,etc.)	
-    #si <- gsub(symbol,"",r)
-	#id <- paste(primary_id,suffix_id,sep="_")
-    #expiry <- paste('20',substr(si,1,6),sep="")
-    underlying_id <- ifelse(missing(underlying_id), "", paste(underlying_id,"_",sep="")) 	
-    if (right == 'call' || right == 'Call' || right == 'CALL' || right == 'c') right<-'C'
-	if (right == 'put' || right == 'Put' || right == "PUT" || right == 'p') right <- 'P'    
-    paste(underlying_id, expiry, right, strike, sep="")
+#' make primary_ids for options
+#' 
+#' create a primary_id for options. The only difference between the ids this generates, and
+#' those of the Option Symbology Initiative (OSI) is that these have an underscore separating 
+#' the primary_id from the suffix_id.
+#'
+#' @param underlying_id chr vector of names of underlyings.
+#' @param strike vector of strike prices
+#' @param month numeric vector of months (partial matches to \code{month.name} will also work)
+#' @param year numeric vector of years (can be 1 digit, 2 digit, or 4 digit years)
+#' @param right \sQuote{C} or \sQuote{P} (\sQuote{call} and \sQuote{put} will also work)
+#' @return chr vector of primary_ids (or suffix_ids if underlying_id is missing, NULL, or \dQuote{}) for option_series
+#' @author Garrett See
+#' @note the expiration _day_ is calculated as the Saturday following the 3rd Friday of the month.
+#' @seealso future_id, build_series_symbols, build_spread_symbols
+#' @examples
+#' option_id("SPY",125,'Sep',2011,'C')
+#' option_id("SPY",130,1:12,11,'C')
+#' option_id(c("SPY","DIA"),seq(120,130,5))
+#' @export
+option_id <- function(underlying_id, 
+                    strike,
+                    month, 
+                    year,
+                    right=c("C","P"))
+{
+    if (missing(month)) month=format(Sys.Date(),"%m")
+    if (missing(year)) year=format(Sys.Date(),"%Y")  
+    m <- suppressWarnings(if (all(!is.na(as.numeric(month)))) {
+            as.numeric(month)
+         } else pmatch(toupper(month),toupper(month.name)))
+    y <- if (all(nchar(year) == 2)) {
+                as.numeric(year)+2000
+            } else if (all(nchar(year) == 1)) {
+                as.numeric(year)+2010
+            } else as.numeric(year)
+    DT <- as.Date(paste(outer(y,sprintf("%02d",m),paste,sep="-"),01,sep="-"),format='%Y-%m-%d')
+    #for each of these dates, get expiration Saturday
+    ExpSat <- sort(as.Date(sapply(DT, 
+                                  FUN=function(x) { 
+                                        DS <- x+0:22; 
+                                        ds <- which(weekdays(DS)=="Friday")[3]+1; 
+                                        DS[ds]})))
+    right <- toupper(gsub("call","C",right,ignore.case=TRUE)) #replace 'call' and 'put' with "C" and "P"
+    right <- toupper(gsub("put","P",right,ignore.case=TRUE))
+    suff <- as.character(outer(format(ExpSat,"%y%m%d"),right,paste,sep=""))
+    SUFF <- do.call(c,lapply(strike, FUN=function(x) paste(suff,x,sep="")))
+    #sapply(underlying_id,FUN=function(x) paste(x,SUFF,sep="_"))
+    if (missing(underlying_id) || is.null(underlying_id) || underlying_id=="") {
+         do.call(c, lapply(underlying_id,FUN=function(x) paste(x,SUFF,sep="")))
+    } else do.call(c, lapply(underlying_id,FUN=function(x) paste(x,SUFF,sep="_")))
 }
 
 
-define_options <- function(symbol, Exp, currency="USD", multiplier=100, tick_size=NULL, first_traded=NULL, src='yahoo') { 
-    if (src == 'yahoo')	
-    do.call('define_options.yahoo', list(symbol=symbol, currency=currency, 
-		multiplier=multiplier, tick_size)) #,first_traded=first_traded,
+#' define option_series with IB
+#'
+#' define option_series instruments using IBrokers
+#'
+#' a wrapper for twsInstrument to define multiple options contracts.
+#' 
+#' @param underlying_id vector of underlying_ids
+#' @param strike vector of strike prices
+#' @param expiries vector of expiration dates of format YYYYMM
+#' @param right \code{"C"}, \code{"P"}, or \code{c("C","P")}
+#' @param currency name of currency
+#' @param multiplier contract multiplier (usually 100 for equity options)
+#' @param include_expired \dQuote{0} if you do not want to define expired contracts
+#' @param \dots other arguments to pass through to \code{\link{twsInstrument}}
+#' @return called for side-effect
+#' @author Garrett See
+#' @seealso \code{\link{define_options}}, \code{\link{option_series.yahoo}}
+#' @examples
+#' \dontrun{
+#' define_options.IB('SPY',125)
+#' define_options.IB(c("SPY","DIA"),seq(120,130,5))
+#' define_options('GOOG',600,c('201109','201112'),'C',src='IB')
+#' }
+#' @export
+define_options.IB <- 
+function(underlying_id, 
+            strike,
+            expiries,
+            right=c("C","P"),
+            currency="USD", 
+            multiplier=100,
+            include_expired='1',
+            ...) 
+{
+    if (missing(expiries)) expiries <- format(Sys.Date(),"%Y%m")
+    symout <- NULL
+    for (id in underlying_id) {
+        for (expiry in expiries) {
+            for (k in strike) {
+                for (rt in right) {
+                    symout <- c(symout, 
+                                twsInstrument(twsOPT(local="",expiry=expiry,strike=k, 
+                                                right=rt, symbol=id, multiplier=as.character(multiplier),
+                                                include_expired=include_expired),output='symbol', ...))
+                }
+            }
+        }
+    }
+    symout
 }
 
+#' create twsInstruments for options on a given underlying
+#'
+#' define option_series instruments.
+#'
+#' wrapper to call either \code{\link{define_options.IB}} or \code{\link{define_options.yahoo}}
+#' @return called for side-effect
+#' @author Garrett See
+#' @seealso \code{\link{define_options.IB}}, \code{\link{define_options.yahoo}}
+#' option_series.yahoo,
+#' option, option_series, twsInstrument
+#' @param \dots arguments to pass to other methods
+#' @param src where to get option_series metadata; currently only \dQuote{IB} and \dQuote{yahoo} are implemented
+#' @examples
+#' \dontrun{
+#' define_options("SPY",strike=125, src='IB')
+#' define_options("SPY",src='yahoo')
+#' }
+define_options <- function(..., src='IB') { 
+    do.call(paste('define_options',src,sep="."), list(...))
+}
+
+#' define option_series instruments using yahoo
+#' @param symbol chr name of underlying instrument
+#' @param currency chr name of currency
+#' @param multiplier contract multiplier (usually 100 for equity options)
+#' @param tick_size minimum price change
+#' @return called for side-effect
+#' @author Garrett See
+#' @seealso option_series.yahoo, \code{\link{define_options}}, \code{\link{define_options.IB}}
+#' @examples
+#' \dontrun{
+#' define_options("SPY",src='yahoo')
+#' }
+#' @export
 define_options.yahoo <- function(symbol, currency="USD", multiplier=100, tick_size=NULL) { 
 #    primary_id <- paste(".",symbol,sep="")
     
@@ -68,20 +188,4 @@ define_options.yahoo <- function(symbol, currency="USD", multiplier=100, tick_si
 #    }
 }
 
-		
 
-
-
-
-#rm_options()
-#define_options(symbol='SPY')
-#define_options(symbol='DIA')
-
-
-#reqContractDetails(tws, twsOPT(local=paste('SPY','110630C00115000',sep="   "))) 
-
-
-  
-    
-  
-  

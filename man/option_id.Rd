@@ -1,43 +1,20 @@
 \name{option_id}
 \alias{option_id}
-
-\title{
-make an option_id
-}
-\description{
-create a primary_id for an option
-}
-\usage{
-option_id(underlying_id, expiry, right, strike)
-}
-%- maybe also 'usage' for other objects documented here.
-\arguments{
-  \item{underlying_id}{
-ticker symbol of underying. character string.
-}
-  \item{expiry}{
-expiry
-}
-  \item{right}{
-call or put
-}
-  \item{strike}{
-  strike price
-}
-}
-\details{
-puts the inputs into a string formatted like the primary_id of an option
-}
-\value{
-primary_id of a \code{right} option on \code{underying_id} expiring on \code{expiry} struck at \code{strike} 
-}
-\author{
-Garrett See
-}
-\examples{
-option_id('SPY','20110630','C',130)
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\title{make primary_ids for options...}
+\usage{option_id(underlying_id, strike, month, year, right=c("C", "P"))}
+\description{make primary_ids for options}
+\details{create a primary_id for options. The only difference between the ids this generates, and
+those of the Option Symbology Initiative (OSI) is that these have an underscore separating 
+the primary_id from the suffix_id.}
+\value{chr vector of primary_ids (or suffix_ids if underlying_id is missing, NULL, or \dQuote{}) for option_series}
+\author{Garrett See}
+\note{the expiration _day_ is calculated as the Saturday following the 3rd Friday of the month.}
+\seealso{future_id, build_series_symbols, build_spread_symbols}
+\arguments{\item{underlying_id}{chr vector of names of underlyings.}
+\item{strike}{vector of strike prices}
+\item{month}{numeric vector of months (partial matches to \code{month.name} will also work)}
+\item{year}{numeric vector of years (can be 1 digit, 2 digit, or 4 digit years)}
+\item{right}{\sQuote{C} or \sQuote{P} (\sQuote{call} and \sQuote{put} will also work)}}
+\examples{option_id("SPY",125,'Sep',2011,'C')
+option_id("SPY",130,1:12,11,'C')
+option_id(c("SPY","DIA"),seq(120,130,5))}

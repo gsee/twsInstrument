@@ -1,61 +1,19 @@
 \name{define_options}
 \alias{define_options}
-\alias{define_options.yahoo}
-\title{
-create twsInstruments for options on a given underlying
-}
-\description{
-Get option chains for a given underlying and create instruments (or twsInstruments)
-}
-\usage{
-define_options(symbol, Exp, currency = "USD", multiplier = 100, tick_size = NULL, first_traded = NULL, src = "yahoo")
-}
-%- maybe also 'usage' for other objects documented here.
-\arguments{
-  \item{symbol}{
-ticker symbol. character string
-}
-  \item{Exp}{expiration dates. optional. If not given, front month will be used. If Exp=NULL, all expiries will be used}
-  \item{currency}{
-base currency. character string
-}
-  \item{multiplier}{
-contract multiplier (usually 100 for stocks)
-}
-  \item{tick_size}{
-minimum price change
-}
-  \item{first_traded}{
-first date it is tradeable 
-}
-%  \item{use.IB}{
-%Should IBrokers be used to get twsContracts?
-%}
-  \item{src}{
-where to get the options_chain. Currently only yahoo is implemented
-}
-}
-\details{
-will automatically create currency if it doesn't exist.
+\title{create twsInstruments for options on a given underlying...}
+\usage{define_options(..., src="IB")}
+\description{create twsInstruments for options on a given underlying}
+\details{define option_series instruments.
 
-only works for stock options
-}
-\value{
-called for side-effect
-}
-\author{
-Garrett See
-}
-\note{
-at some point, define_options will operate similarly to getSymbols by implementing src and Defaults.
-}
-\seealso{
-option, option_series, twsInstrument
-}
-\examples{
-\dontrun{
-define_options("SPY")
-update_instruments.IB(ls_options("SPY",match=FALSE))
-}
-}
-
+wrapper to call either \code{\link{define_options.IB}} or \code{\link{define_options.yahoo}}}
+\value{called for side-effect}
+\author{Garrett See}
+\seealso{\code{\link{define_options.IB}}, \code{\link{define_options.yahoo}}
+option_series.yahoo,
+option, option_series, twsInstrument}
+\arguments{\item{\dots}{arguments to pass to other methods}
+\item{src}{where to get option_series metadata; currently only \dQuote{IB} and \dQuote{yahoo} are implemented}}
+\examples{\dontrun{
+define_options("SPY",strike=125, src='IB')
+define_options("SPY",src='yahoo')
+}}
