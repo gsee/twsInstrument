@@ -2,7 +2,9 @@
 #' 
 #' create a primary_id for options. The only difference between the ids this generates, and
 #' those of the Option Symbology Initiative (OSI) is that these have an underscore separating 
-#' the primary_id from the suffix_id.
+#' the primary_id from the suffix_id. The format for a 125 strike call on SPY expiring in 
+#' December of 2011 would be \sQuote{SPY_111217C120}.  The first 6 digits of the suffix correspond 
+#' to the expiration YYMMDD where DD is calculated as the Saturday following the 3rd Friday of the month.
 #'
 #' @param underlying_id chr vector of names of underlyings.
 #' @param strike vector of strike prices
@@ -11,7 +13,8 @@
 #' @param right \sQuote{C} or \sQuote{P} (\sQuote{call} and \sQuote{put} will also work)
 #' @return chr vector of primary_ids (or suffix_ids if underlying_id is missing, NULL, or \dQuote{}) for option_series
 #' @author Garrett See
-#' @note the expiration _day_ is calculated as the Saturday following the 3rd Friday of the month.
+#' @note does not support weekly or EOM options
+#' @TODO support weekly and EOM options
 #' @seealso future_id, build_series_symbols, build_spread_symbols
 #' @examples
 #' option_id("SPY",125,'Sep',2011,'C')
@@ -60,7 +63,7 @@ option_id <- function(underlying_id,
 #' 
 #' @param underlying_id vector of underlying_ids
 #' @param strike vector of strike prices
-#' @param expiries vector of expiration dates of format YYYYMM
+#' @param expires vector of expiration dates of format YYYYMM
 #' @param right \code{"C"}, \code{"P"}, or \code{c("C","P")}
 #' @param currency name of currency
 #' @param multiplier contract multiplier (usually 100 for equity options)
@@ -68,34 +71,41 @@ option_id <- function(underlying_id,
 #' @param \dots other arguments to pass through to \code{\link{twsInstrument}}
 #' @return called for side-effect
 #' @author Garrett See
+#' @note the date in the primary_id will correspond to Expiration Saturday, however, the Date in the 
+#' $expires slot (and in $IB$expiry) will correspond to the Friday prior, which is the last day trading occurs.
 #' @seealso \code{\link{define_options}}, \code{\link{option_series.yahoo}}
 #' @examples
 #' \dontrun{
-#' define_options.IB('SPY',125)
-#' define_options.IB(c("SPY","DIA"),seq(120,130,5))
+#' define_options.IB('SPY',stike=125)
+#' define_options.IB(c("SPY","DIA"),strike=seq(120,130,5))
 #' define_options('GOOG',600,c('201109','201112'),'C',src='IB')
 #' }
 #' @export
 define_options.IB <- 
 function(underlying_id, 
             strike,
-            expiries,
+            expires,
             right=c("C","P"),
             currency="USD", 
             multiplier=100,
             include_expired='1',
             ...) 
 {
-    if (missing(expiries)) expiries <- format(Sys.Date(),"%Y%m")
+    if (missing(expires)) expires <- format(Sys.Date(),"%Y%m")
     symout <- NULL
     for (id in underlying_id) {
-        for (expiry in expiries) {
+        for (expiry in expires) {
             for (k in strike) {
                 for (rt in right) {
                     symout <- c(symout, 
-                                twsInstrument(twsOPT(local="",expiry=expiry,strike=k, 
-                                                right=rt, symbol=id, multiplier=as.character(multiplier),
-                                                include_expired=include_expired),output='symbol', ...))
+                                twsInstrument(twsOPT(local="",
+                                                    expiry=expiry,
+                                                    strike=k, 
+                                                    right=rt, 
+                                                    symbol=id, 
+                                                    multiplier=as.character(multiplier),
+                                                    include_expired=include_expired),
+                                                    output='symbol', ...))
                 }
             }
         }

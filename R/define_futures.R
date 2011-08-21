@@ -22,15 +22,17 @@ define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currenc
 #' @examples
 #' future_id(root=c("ES","YM"), month=c(3,6,9,12), year=2010:2011)
 #' #getSymbols(future_id("VX",1:12,10:11),src='cfe')
+#' future_id('VX',M2C(),10)
+#' #future_id('VX',paste(M2C(),collapse=','),10)
 #' @export
 future_id <- function(root, month, year) {
-    if (!("package:qmao" %in% search() || require("qmao",quietly=TRUE))) {
-        stop("Please install qmao before using this function.")
-    }
     m <- suppressWarnings(if (all(!is.na(as.numeric(month)))) { 
             M2C()[month] 
         } else if (toupper(month) %in% toupper(C2M())) {
             M2C(month)
+        } else if(!identical(integer(0), grep(",",month))) {
+            #if month is a comma-delimited string of month codes (like $month_cycle)
+            strsplit(month, ",")[[1]]
         } else month)
     y <- if (all(nchar(year) == 4)) {
             substr(year,3,4)

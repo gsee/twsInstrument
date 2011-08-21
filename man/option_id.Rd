@@ -5,10 +5,13 @@
 \description{make primary_ids for options}
 \details{create a primary_id for options. The only difference between the ids this generates, and
 those of the Option Symbology Initiative (OSI) is that these have an underscore separating 
-the primary_id from the suffix_id.}
+the primary_id from the suffix_id. The format for a 125 strike call on SPY expiring in 
+December of 2011 would be \sQuote{SPY_111217C120}.  The first 6 digits of the suffix correspond 
+to the expiration YYMMDD where DD is calculated as the Saturday following the 3rd Friday of the month.}
 \value{chr vector of primary_ids (or suffix_ids if underlying_id is missing, NULL, or \dQuote{}) for option_series}
 \author{Garrett See}
-\note{the expiration _day_ is calculated as the Saturday following the 3rd Friday of the month.}
+\note{does not support weekly or EOM options}
+\section{TODO}{support weekly and EOM options}
 \seealso{future_id, build_series_symbols, build_spread_symbols}
 \arguments{\item{underlying_id}{chr vector of names of underlyings.}
 \item{strike}{vector of strike prices}
