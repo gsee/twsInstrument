@@ -2,7 +2,9 @@
 \alias{ls_instruments}
 \alias{ls_stocks}
 \alias{ls_options}
+\alias{ls_option_series}
 \alias{ls_futures}
+\alias{ls_future_series}
 \alias{ls_currencies}
 \alias{ls_non_currencies}
 \alias{ls_exchange_rates}
@@ -22,7 +24,9 @@
 \alias{rm_instruments}
 \alias{rm_stocks}
 \alias{rm_options}
+\alias{rm_option_series}
 \alias{rm_futures}
+\alias{rm_future_series}
 \alias{rm_currencies}
 \alias{rm_exchange_rates}
 \alias{rm_FX}
@@ -97,7 +101,8 @@ rm_instruments and rm_non_derivatives will not delete currencies
 unless the keep.currencies argument is FALSE.
 
 For the rm functions, x can be a vector of instrument names, or nothing. 
-If x is missing, all instruments of the relevant type will be removed.  
+If x is missing, all instruments of the relevant type will be removed.
+(if x is not missing, there is currently no check to make sure x refers to a instrument of the appropriate type.)
 
 Often is is useful to nest these functions to get things like futures denominated in USD.
 

@@ -52,12 +52,36 @@ ls_options <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+ls_option_series <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)    
+    tmp_symbols <- NULL            
+    for (instr in symbols) {
+        tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
+        if (inherits(tmp_instr, 'option_series') && inherits(tmp_instr, 'instrument')) {
+            tmp_symbols <- c(tmp_symbols,instr)
+        }    
+    }
+    tmp_symbols
+}
+
 ls_futures <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
         if (inherits(tmp_instr, 'future') && inherits(tmp_instr, 'instrument')) {
+            tmp_symbols <- c(tmp_symbols,instr)
+        }    
+    }
+    tmp_symbols
+}
+
+ls_future_series <- function(pattern=NULL,match=TRUE) {
+    symbols <- ls_instruments(pattern,match)
+    tmp_symbols <- NULL            
+    for (instr in symbols) {
+        tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
+        if (inherits(tmp_instr, 'future_series') && inherits(tmp_instr, 'instrument')) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
@@ -311,9 +335,23 @@ rm_options <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+rm_option_series <- function(x) {
+    if (missing(x)) {
+        x <- ls_option_series()
+    }
+    rm(list=x,pos=.instrument)
+}
+
 rm_futures <- function(x) {
     if (missing(x)) {
         x <- ls_futures()
+    }
+    rm(list=x,pos=.instrument)
+}
+
+rm_future_series <- function(x) {
+    if (missing(x)) {
+        x <- ls_future_series()
     }
     rm(list=x,pos=.instrument)
 }
