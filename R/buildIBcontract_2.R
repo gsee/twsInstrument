@@ -2,8 +2,8 @@
 #these functions will create a twsInstrument with as much information
 #as can be found.
 
-#implemented: STK,OPT,FUT,CASH
-#not implemented: IND,FOP
+#implemented: STK,OPT,FUT,CASH,IND
+#not implemented: FOP
 
 is.twsInstrument <- function(x) {
     if (inherits(x, 'twsInstrument')) {
@@ -86,6 +86,11 @@ buildIBcontract <- function(symbol, tws=NULL,
         #FIXME: these instrument constructor wrappers assign_i=TRUE; 
         #       I need to replace wrappers with direct call to instrument    
         instr <- switch(contract$sectype, 
+                IND={
+                    primary_id <- contract$symbol
+                    instrument.tws(primary_id=primary_id, exchange=contract$exch, currency=contract$currency, multiplier=1,
+                                    tick_size=NULL, identifiers=NULL, type='synthetic', assign_i=FALSE)
+                },
                 STK={
                     primary_id <- contract$symbol                    
                     #stock(primary_id=primary_id, currency=contract$currency, exchange=contract$exchange)
@@ -125,7 +130,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     instrument.tws(primary_id=primary_id, currency=contract$currency,
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL, 
                         identifiers=NULL, expires=contract$expiry, right=contract$right, 
-                        strike=contract$strike, exchange=contract$exchange, type=c('option_series','option'), 
+                        strike=contract$strike, exchange=contract$exch, type=c('option_series','option'), 
                         underlying_id=contract$symbol, assign_i=FALSE)
                 }, 
                 FUT={
@@ -276,6 +281,10 @@ buildIBcontract <- function(symbol, tws=NULL,
                 any((instr$type == "stock")) || 
                 any((instr$type == "STK"))) {
                     sectype <- "STK"                
+            } else if (inherits(instr,'synthetic') ||
+                any((instr$type == 'synthetic')) ||
+                any((instr$type == 'IND'))) {
+                    sectype <- 'IND'
             } else { 
                 stop(paste('Cannot determine sectype; \n', symbol , 
                     'does not appear to be a stock, \noption, future or currency.',
@@ -301,13 +310,15 @@ buildIBcontract <- function(symbol, tws=NULL,
 			}        
 		} else conId <- contract$conId
 
+
         #set multiplier
+        multiplier <- ""
         if (sectype == "STK") { # || sectype == "CASH") {
-            multiplier <- ""
             exchange <- 'SMART'
         } else if (sectype == "CASH") {
-            multiplier <- ""
             exchange <- "IDEALPRO"
+        } else if (sectype == 'IND') {
+            exchange <- instr$exchange
         } else {
             multiplier <- instr$multiplier            
             exchange <- instr$exchange #Should exchange and primary both be the same ?        
@@ -459,7 +470,11 @@ buildIBcontract <- function(symbol, tws=NULL,
         instr$IB.primary.exch <- uc$primary
         instr$exchange <- uc$exch #ok to overwrite 'SMART' ? 
         instr$currency <- uc$currency
-        switch(uc$sectype, 
+        switch(uc$sectype,
+            IND={
+                instr$type <- unique(c(instr$type,'synthetic'))
+                instr$multiplier <- 1
+            }, 
             STK={
                 instr$type <- unique(c(instr$type,'stock'))
                 instr$multiplier <- 1
