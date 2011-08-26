@@ -43,7 +43,7 @@ Instr_From_Contr<- function(contract, tws=NULL,
 
 twsInstrument <- function(symbol, tws=NULL, 
         addIBslot=TRUE, updateInstrument=TRUE, 
-        output=c('nothing','symbol','instrument','contract'), 
+        output=c('symbol','nothing','instrument','contract'), 
         include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE)
 {
     if (is.numeric(output)) 
