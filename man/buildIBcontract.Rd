@@ -23,7 +23,7 @@ buildIBcontract(symbol, tws=NULL,
     	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE)
 twsInstrument(symbol, tws=NULL, 
         addIBslot=TRUE, updateInstrument=TRUE, 
-        output=c('nothing','symbol','instrument','contract'), 
+        output=c('symbol','nothing','instrument','contract'), 
         include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE)
 Instr_From_Contr(contract, tws=NULL, 
     	addIBslot=FALSE, updateInstrument=TRUE, 

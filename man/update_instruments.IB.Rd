@@ -17,8 +17,8 @@ update_instruments.all(symbols='all', ...)
 \arguments{
   \item{symbols}{
 can be a vector of instrument names, 
-or, for update_instruments.IB, can be \sQuote{all} or \sQuote{stocks}
-or, for update_instruments.yahoo, can be \sQuote{all} or \sQuote{stocks}, 
+or, for update_instruments.yahoo, can be \sQuote{all} or \sQuote{stocks}
+or, for update_instruments.IB, can be \sQuote{all} or \sQuote{stocks}, 
 \sQuote{futures}, \sQuote{options}, \sQuote{currencies}
 }
   \item{addIBslot}{
@@ -69,11 +69,8 @@ twsInstrument, define_stocks, getIBEquities, instrument, stock, future, option, 
 }
 \examples{
 \dontrun{	
-	currency('USD')
-	stock('GS','USD',1)
-	option('GS','USD',100,right='P',strike=135,
-         expiry=201112,underlying_id="GS")
-  update_instruments.yahoo('GS')
+	stock('GS',currency('USD'))
+    update_instruments.yahoo('GS')
 	getInstrument('GS')
 	update_instruments.IB('GS') 
 }

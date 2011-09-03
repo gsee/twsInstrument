@@ -24,7 +24,7 @@ ls_instruments <- function(pattern=NULL, match=TRUE, verbose=TRUE) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 
@@ -37,7 +37,7 @@ ls_stocks <- function(pattern=NULL,match=TRUE) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 ls_options <- function(pattern=NULL,match=TRUE) {
@@ -49,7 +49,7 @@ ls_options <- function(pattern=NULL,match=TRUE) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 ls_option_series <- function(pattern=NULL,match=TRUE) {
@@ -61,7 +61,7 @@ ls_option_series <- function(pattern=NULL,match=TRUE) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 ls_futures <- function(pattern=NULL,match=TRUE) {
@@ -73,7 +73,7 @@ ls_futures <- function(pattern=NULL,match=TRUE) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 ls_future_series <- function(pattern=NULL,match=TRUE) {
@@ -85,7 +85,7 @@ ls_future_series <- function(pattern=NULL,match=TRUE) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 ls_currencies <- function(pattern=NULL, match=TRUE) {
@@ -109,7 +109,7 @@ ls_non_currencies <- function(pattern=NULL, includeFX=TRUE, match=TRUE) {
             tmp_symbols <- c(tmp_symbols,instr)
         }
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 ls_exchange_rates <- ls_FX <- function(pattern=NULL,match=TRUE) {
@@ -281,7 +281,7 @@ ls_calls <- function(pattern=NULL,match=TRUE) {
 			}			
 		}
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 ls_puts <- function(pattern=NULL,match=TRUE) {
@@ -301,7 +301,7 @@ ls_puts <- function(pattern=NULL,match=TRUE) {
 			}			
 		}
     }
-    tmp_symbols
+    sort_ids(tmp_symbols)
 }
 
 
