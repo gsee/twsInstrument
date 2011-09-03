@@ -570,9 +570,12 @@ buildIBcontract <- function(symbol, tws=NULL,
 }
 
 
-#contract <- twsContract(conId=0,symbol="XOM", sectype="STK",exch="SMART",primary="NYSE", 
-#    expiry="",strike="",currency="USD", right="",local="",multiplier=1,
-#    combo_legs_desc="",comboleg="",include_expired="0")
-#reqContractDetails(tws,contract)
+#' twsInstrument class print method
+#' 
+#' @method print twsInstrument
+#' @S3method print twsInstrument
+#' @keywords internal
+print.twsInstrument <- function(x, ...) str(unclass(x))
+
 
 
