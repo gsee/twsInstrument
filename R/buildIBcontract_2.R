@@ -570,12 +570,6 @@ buildIBcontract <- function(symbol, tws=NULL,
 }
 
 
-#' twsInstrument class print method
-#' 
-#' @method print twsInstrument
-#' @S3method print twsInstrument
-#' @keywords internal
-print.twsInstrument <- function(x, ...) str(unclass(x))
 
 
 

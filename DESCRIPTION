@@ -3,7 +3,7 @@ Type: Package
 Title: Improves ease of use of IBrokers and FinacialInstrument 
 Version: 1.0-3
 Date: 2011-08-07
-Depends: IBrokers, FinancialInstrument, quantmod
+Depends: IBrokers, FinancialInstrument (>= 0.5.2), quantmod
 Suggests: qmao
 Author: Garrett See
 Maintainer: Garrett See <gsee000@gmail.com>
