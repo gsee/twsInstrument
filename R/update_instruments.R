@@ -8,9 +8,12 @@
 #}
 
 update_instruments.all <- function(Symbols='all', ...) {
-    updated <- update_instruments.yahoo(Symbols)
-    updated <- unique(c(updated, update_instruments.TTR(Symbols, ...)))
-    updated <- unique(c(updated, update_instruments.IB(Symbols,...)))
+    tu <- try(update_instruments.yahoo(Symbols))
+    updated <- if (!inherits(tu, 'try-error')) tu
+    tu <- try(update_instruments.TTR(Symbols, ...))
+    updated <- if (!inherits(tu, 'try-error')) unique(c(updated, tu))
+    tu <- try(update_instruments.IB(Symbols,...))
+    updated <- if (!inherits(tu, 'try-error')) unique(c(updated, tu))
     updated
 }
 
@@ -76,7 +79,7 @@ update_instruments.yahoo <- function(Symbols=c('stocks','all'), verbose=FALSE ) 
             db <- instr$defined.by
 		    if (!is.null(db)) {
 		        db <- unlist(strsplit(db,";"))
-		        db <- unique(c(db,"yahoo"))
+		        db <- rev(unique(c("yahoo", rev(db))))
 		        db <- paste(db,collapse=";") 
 		    } else db <- "yahoo"
 			instr$defined.by=db 
@@ -115,8 +118,9 @@ update_instruments.IB <- function(Symbols=c('all','stocks','futures','options','
     for (symbol in Symbols) {
         #TODO: If there is a problem with clientId, make note of it, and don't use it again
         #FIXME: passing tws to buildIBcontract doesn't work/isn't implemented correctly. 
-        symout <- c(symout, try(buildIBcontract(symbol,addIBslot=addIBslot,updateInstrument=updateInstrument,
-            output='symbol', include_expired=include_expired, assign_i=assign_i, assign_c=assign_c))) 
+        tu <- try(buildIBcontract(symbol,addIBslot=addIBslot,updateInstrument=updateInstrument,
+            output='symbol', include_expired=include_expired, assign_i=assign_i, assign_c=assign_c))        
+        symout <- if (!inherits(tu, 'try-error')) c(symout, tu) 
 	}    
     symout   
 }
@@ -140,7 +144,10 @@ update_instruments.TTR <- function(Symbols = c("stocks", "all"), exchange=c("AME
     df <- stockSymbols(exchange=exchange)    
     if (!is.null(Symbols) && !(any(Symbols == c("stocks","all")))) {
         df <- df[match(Symbols,df$Symbol),]
-        if (all(is.na(df))) stop(paste(paste(Symbols,collapse=","), "not found among those listed on", paste(exchange,collapse=", ")))
+        if (all(is.na(df))) {
+            warning(paste(paste(Symbols,collapse=","), "not found among those listed on", paste(exchange,collapse=", ")))
+            return(invisible(NULL))        
+        }
     } else if (!is.null(Symbols)) df <- df[match(ls_stocks(),df$Symbol),]
     cat('defining stocks...\n')
     symout <- NULL    
@@ -159,14 +166,20 @@ update_instruments.TTR <- function(Symbols = c("stocks", "all"), exchange=c("AME
                           "is already defined, but not as stock.",
                           "A new instrument", primary_id ,"will be created"))
         } else if (is.instrument(instr)) {
-            arg$defined.by <- unique("TTR", instr$defined.by)
+            db <- instr$defined.by
+		    if (!is.null(db)) {
+		        db <- unlist(strsplit(db,";"))
+		        db <- rev(unique(c("TTR", rev(db))))
+		        db <- paste(db,collapse=";") 
+		    } else db <- "TTR"
+			arg$defined.by=db 
         }
         arg$primary_id <- primary_id
         arg$currency <- "USD"
         arg$updated <- Sys.time()
         symout <- c(symout, do.call("stock", arg))
     }
-    symout
+    symout 
 }
 
 

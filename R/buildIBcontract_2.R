@@ -539,7 +539,12 @@ buildIBcontract <- function(symbol, tws=NULL,
         } else tclass <- unique(c(tmptype,"instrument")) 
         #update info about where & when the instrument was updated
         instr$defined.by <- paste(c(instr$defined.by, "IB"), collapse=";")
-        # ^ Maybe only unique defined.by should be kept?        
+        db <- instr$defined.by
+	    if (!is.null(db)) {
+	        db <- unlist(strsplit(db,";"))
+	        db <- rev(unique(c("IB", rev(db))))
+	        db <- paste(db,collapse=";") 
+	    } else db <- "IB"
         instr$updated <- Sys.time()    
         
         class(instr) <- tclass 
