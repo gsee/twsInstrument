@@ -143,8 +143,10 @@ update_instruments.TTR <- function(Symbols = c("stocks", "all"), exchange=c("AME
     if (!suppressWarnings(is.currency("USD"))) currency("USD")
     df <- stockSymbols(exchange=exchange)    
     if (!is.null(Symbols) && !(any(Symbols == c("stocks","all")))) {
-        df <- df[match(Symbols,df$Symbol),]
-        if (all(is.na(df))) {
+        cols <- try( match(Symbols,df$Symbol) )
+        if (!inherits(cols, 'try-error')) {
+            df <- df[cols,]
+        } else {
             warning(paste(paste(Symbols,collapse=","), "not found among those listed on", paste(exchange,collapse=", ")))
             return(invisible(NULL))        
         }
