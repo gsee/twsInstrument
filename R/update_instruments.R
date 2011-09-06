@@ -7,9 +7,10 @@
 #
 #}
 
-update_instruments.all <- function(symbols='all', ...) {
-    updated <- update_instruments.yahoo(symbols)
-    updated <- unique(c(updated, update_instruments.IB(symbols,...)))
+update_instruments.all <- function(Symbols='all', ...) {
+    updated <- update_instruments.yahoo(Symbols)
+    updated <- unique(c(updated, update_instruments.TTR(Symbols, ...)))
+    updated <- unique(c(updated, update_instruments.IB(Symbols,...)))
     updated
 }
 
@@ -17,25 +18,25 @@ update_instruments.all <- function(symbols='all', ...) {
 #getInstrument('SPY')
 
 #TODO: Add support for indexes
-update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) {
-    if (is.null(symbols) || is.na(symbols) || missing(symbols)) symbols <- 'stocks'
+update_instruments.yahoo <- function(Symbols=c('stocks','all'), verbose=FALSE ) {
+    if (is.null(Symbols) || is.na(Symbols) || !hasArg(Symbols)) Symbols <- 'stocks'
     sym.options <- c('all','stocks')
-    symkey <- sym.options[pmatch(symbols,sym.options)]
+    symkey <- sym.options[pmatch(Symbols,sym.options)]
     symkey <- na.omit(symkey)[1]
     if (!is.na(symkey)) {
-	    if (symkey == 'all' || symkey == 'stocks' || is.null(symbols)){
+	    if (symkey == 'all' || symkey == 'stocks' || is.null(Symbols)){
             if (symkey == 'all') warning('yahoo can only update stocks.')            
-            symbols <- ls_stocks()
+            Symbols <- ls_stocks()
         } 
     }
     #make sure it's a vector of instrument names
-    if (!is.character(symbols)) {
+    if (!is.character(Symbols)) {
         if (verbose) cat('No stocks found to update.\n') 
-        return(NULL) #stop('symbols must be a vector of instrument names, or one of "all", "stocks"')    
+        return(NULL) #stop('Symbols must be a vector of instrument names, or one of "all", "stocks"')    
     }
-    yahoo.syms <- paste(symbols, collapse=";")
+    yahoo.syms <- paste(Symbols, collapse=";")
 	if (is.null(yahoo.syms) || length(yahoo.syms) == 0) 
-        stop('error with symbol names; no symbols supplied?')
+        stop('error with symbol names; no Symbols supplied?')
     yahooStuff <- getQuote.yahoo(yahoo.syms,
 					  what=yahooQF(c("Name", 
                         "Stock Exchange",
@@ -46,10 +47,10 @@ update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) 
 					    "EPS Estimate Next Year", 
             			"Book Value", "EBITDA",	
                         "52-week Range")))  
-#    sym.length <- length(unlist(strsplit(symbols,";")))    	
+#    sym.length <- length(unlist(strsplit(Symbols,";")))    	
     #see yahooQF for available whats
-    for (i in 1:length(symbols)) {
-        instr <- getInstrument(symbols[i])
+    for (i in 1:length(Symbols)) {
+        instr <- getInstrument(Symbols[i])
 		#Only update stocks from yahoo		
 		if (inherits(instr,'stock')) {
 		    instr$name=as.character(yahooStuff[i,2])
@@ -81,43 +82,91 @@ update_instruments.yahoo <- function(symbols=c('stocks','all'), verbose=FALSE ) 
 			instr$defined.by=db 
 		    instr$updated=Sys.time()
             
-		    assign(symbols[i], instr, pos=.instrument)
+		    assign(Symbols[i], instr, pos=.instrument)
 		}
     }        
-    symbols
+    Symbols
 }
 
-update_instruments.IB <- function(symbols=c('all','stocks','futures','options','currencies'),
+update_instruments.IB <- function(Symbols=c('all','stocks','futures','options','currencies'),
             addIBslot=TRUE, updateInstrument=TRUE, include_expired='1', assign_i=TRUE, assign_c=TRUE) 
 {
     sym.options <- c('all','stocks','futures','options','cash')
-    symkey <- sym.options[pmatch(symbols,sym.options)]
+    symkey <- sym.options[pmatch(Symbols,sym.options)]
     symkey <- na.omit(symkey)[1]
     if (!is.na(symkey)) {
         switch(symkey, 
-                all={symbols <- ls_instruments()}, 
-                stocks={symbols <- ls_stocks()}, 
-                futures={symbols <- ls_futures()}, 
-                options={symbols <- ls_options()}, 
-                currencies={symbols <- ls_exchange_rates()} ) #end symbols switch    
+                all={Symbols <- ls_instruments()}, 
+                stocks={Symbols <- ls_stocks()}, 
+                futures={Symbols <- ls_futures()}, 
+                options={Symbols <- ls_options()}, 
+                currencies={Symbols <- ls_exchange_rates()} ) #end Symbols switch    
     }
     #make sure it's a vector of instrument names
-    if (is.null(symbols)) {
-        #e.g., if symbols=ls_stocks() and there are no stocks
-        warning(paste(deparse(substitute(symbols)), 
-                'does not appear to contain any symbols.') )
+    if (is.null(Symbols)) {
+        #e.g., if Symbols=ls_stocks() and there are no stocks
+        warning(paste(deparse(substitute(Symbols)), 
+                'does not appear to contain any Symbols.') )
         return()    
     }
-    if (!is.character(symbols)) 
-        stop('symbols must be a vector of instrument names, or one of "all", "all.symbols"')    
+    if (!is.character(Symbols)) 
+        stop('Symbols must be a vector of instrument names, or one of "all", "all.symbols"')    
     symout <- NULL
-    for (symbol in symbols) {
+    for (symbol in Symbols) {
         #TODO: If there is a problem with clientId, make note of it, and don't use it again
         #FIXME: passing tws to buildIBcontract doesn't work/isn't implemented correctly. 
         symout <- c(symout, try(buildIBcontract(symbol,addIBslot=addIBslot,updateInstrument=updateInstrument,
             output='symbol', include_expired=include_expired, assign_i=assign_i, assign_c=assign_c))) 
 	}    
     symout   
+}
+
+#' update metadata for stocks
+#'
+#' update stock metadata using the \code{stockSymbols} function from TTR.
+#' 
+#' If \code{Symbols} is a character vector, those \code{Symbols} will be updated or 
+#' defined if they do not already exist.
+#' If \code{Symbols} is NULL all stocks found with \code{stockSymbols} will be updated/defined.
+#' If \code{Symbols} is \dQuote{stocks} or \dQuote{all} all stocks that are already defined wil be updated.
+#' @param Symbols names of instruments to update.
+#' @param exchange \dQuote{AMEX}, \dQuote{NASDAQ}, or \dQuote{NYSE}
+#' @return names of instruments that were updated/defined
+update_instruments.TTR <- function(Symbols = c("stocks", "all"), exchange=c("AMEX","NASDAQ","NYSE")) {
+    if (!("package:TTR" %in% search() || require("TTR", quietly = TRUE))) {
+        stop("Please install TTR before using this function.")
+    }
+    if (!suppressWarnings(is.currency("USD"))) currency("USD")
+    df <- stockSymbols(exchange=exchange)    
+    if (!is.null(Symbols) && !(any(Symbols == c("stocks","all")))) {
+        df <- df[match(Symbols,df$Symbol),]
+        if (all(is.na(df))) stop(paste(paste(Symbols,collapse=","), "not found among those listed on", paste(exchange,collapse=", ")))
+    } else if (!is.null(Symbols)) df <- df[match(ls_stocks(),df$Symbol),]
+    cat('defining stocks...\n')
+    symout <- NULL    
+    for (i in 1:nrow(df)) {
+        primary_id <- as.character(df$Symbol[i])
+        instr <- try(getInstrument(primary_id, silent = TRUE), silent = TRUE) 
+        args <- list()
+        arg <- as.list(df[i, ])
+        arg$defined.by <- 'TTR'
+        if (is.instrument(instr) && !inherits(instr, 'stock')) {
+            #make a unique primary_id
+            primary_id <- make.names(c(instr$primary_id, 
+                                    ls(.instrument)),unique=TRUE)[-match(ls(.instrument),
+                                        make.names(c(instr$primary_id, ls(.instrument)),unique=TRUE))]            
+            warning(paste("instrument",instr$primary_id,
+                          "is already defined, but not as stock.",
+                          "A new instrument", primary_id ,"will be created"))
+        } else if (is.instrument(instr)) {
+            arg$defined.by <- unique("TTR", instr$defined.by)
+        }
+        arg$primary_id <- primary_id
+        arg$currency <- "USD"
+        arg$updated <- Sys.time()
+        symout <- c(symout, do.call("stock", arg))
+    }
+    symout
 }
 
 

@@ -1,6 +1,7 @@
 \name{update_instruments.IB}
 \alias{update_instruments.IB}
 \alias{update_instruments.yahoo}
+\alias{update_instruments.TTR}
 \alias{update_instruments.all}
 \title{
 updates instrument metadata with data from IB or yahoo
@@ -9,17 +10,21 @@ updates instrument metadata with data from IB or yahoo
 Adds/updates information in instrument with data downloaded from IB or yahoo
 }
 \usage{
-update_instruments.IB(symbols=c('all','stocks','futures','options','currencies'),
+update_instruments.IB(Symbols=c('all','stocks','futures','options','currencies'),
             addIBslot=TRUE, updateInstrument=TRUE, include_expired='1', assign_i=TRUE, assign_c=TRUE)
-update_instruments.yahoo(symbols=c('stocks','all'), verbose=FALSE)
-update_instruments.all(symbols='all', ...)
+update_instruments.TTR(Symbols = c("stocks", "all"), exchange=c("AMEX","NASDAQ","NYSE"))
+update_instruments.yahoo(Symbols=c('stocks','all'), verbose=FALSE)
+update_instruments.all(Symbols='all', ...)
 }
 \arguments{
-  \item{symbols}{
+  \item{Symbols}{
 can be a vector of instrument names, 
-or, for update_instruments.yahoo, can be \sQuote{all} or \sQuote{stocks}
-or, for update_instruments.IB, can be \sQuote{all} or \sQuote{stocks}, 
-\sQuote{futures}, \sQuote{options}, \sQuote{currencies}
+or, can be \sQuote{all} or \sQuote{stocks}
+or, for update_instruments.TTR, can be NULL in which case all stocks found with \code{stockSymbols} will be defined, 
+or, for update_instruments.IB, can also be \sQuote{futures}, \sQuote{options}, \sQuote{currencies}
+}
+  \item{exchange}{
+character vector of names of exchanges. Used in \sQuote{TTR} method. Can be \dQuote{AMEX}, \dQuote{NASDAQ}, or \dQuote{NYSE}
 }
   \item{addIBslot}{
 Boolean. should an IB slot be added to the instrument, making it a twsInstrument?
