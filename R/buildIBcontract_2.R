@@ -269,14 +269,17 @@ buildIBcontract <- function(symbol, tws=NULL,
                            && !instr$underlying_id == "") {
                         symbol <- instr$underlying_id
                     }
-            } else if (inherits(instr,'future') || 
-                any(instr$type == "future")) {
-                    sectype <- "FUT"
-                    if (!identical(integer(0),grep("_",instr$primary_id))) { #if there is an underscore in primary_id
-                        symbol <- strsplit(instr$primary_id,"_")[[1]][1]
-                    } else if (!is.null(instr$underlying_id)) {
-                        symbol <- instr$underlying_id
-                    }
+                #TODO: treat option and option_series differently
+            } else if (inherits(instr,'future_series') || 
+                any(instr$type == "future_series")) {
+                    sectype <- "FUT" 
+                    if(is.null(instr$root_id)) instr$root_id <- parse_id(primary_id)$root
+                    if(is.null(instr$suffix_id)) instr$suffix_id <- parse_id(primary_id)$suffix        
+                    symbol <- instr$root_id
+            } else if (inherits(instr,'future') ||
+                any(instr$type == 'future')) {
+                    sectype <- 'FUT'
+                    symbol <- primary_id <- gsub("\\.","",primary_id)
             } else if (inherits(instr,'stock') || 
                 any((instr$type == "stock")) || 
                 any((instr$type == "STK"))) {
@@ -294,17 +297,23 @@ buildIBcontract <- function(symbol, tws=NULL,
         
         if (is.null(contract$conId) || contract$conId == 0) { #This if statement isn't necessary
             conId <- 0        
-            if ((any(instr$type == "future_series") || any(instr$type == "option_series") ) && is.null(instr$expires) && is.null(instr$expiry) )
-                warning("Expiry not defined for future or option.")   
+            pid <- parse_id(primary_id)
+            if ((any(instr$type == "future_series") || any(instr$type == "option_series") ) && is.null(instr$expires) && is.null(instr$expiry)) {
+                if (verbose) warning("Expiry not defined for future or option... Inferring from id.") 
+                instr$expires <- format(as.Date(paste(pid$month,pid$year),format='%b%Y'),format='%Y%m')
+            }
             if (any(instr$type == "option_series") ) {
-				if (is.null(instr$strike))
-					warning("strike is not defined for option.")
- 				if (!is.null(instr$callput)) {
+				if (is.null(instr$strike)) {
+					if (verbose) warning("strike is not defined for option... Inferring from id.")
+                    instr$strike <- pid$strike
+                } 				
+                if (!is.null(instr$callput)) {
 					right <- switch(instr$callput, call=,c=,C="C",put=,p=,P="P")
 				} else if (!is.null(instr$right)) {
 					right <- switch(instr$right, call=,c=,C="C",put=,p=,P="P") #instr$right
 				} else {
-					warning("right of option is neither call nor put.")
+                    right <- pid$right
+					if (verbose) warning("right of option is neither call nor put... Inferring from id.")
 				    right <- instr$right
 				}
 			}        
@@ -331,7 +340,11 @@ buildIBcontract <- function(symbol, tws=NULL,
             expiry <- paste(instr$expires) 
         } else expiry <- ""
 		IBexpiry <- expiry
-        if(sectype == "FUT" && nchar(IBexpiry) == 10) IBexpiry <- format(as.Date(IBexpiry,format="%Y-%m-%d"),"%Y%m")
+        if(sectype == "FUT") {
+            if (nchar(IBexpiry) == 10) {
+                IBexpiry <- format(as.Date(IBexpiry,format="%Y-%m-%d"),"%Y%m")
+            } else if (nchar(IBexpiry) == 7) IBexpiry <- gsub("-","",IBexpiry)
+        } 
         #IB uses the Friday before expiration Saturday for expiry
         #except for EOM options.
 		if (!is.null(IBexpiry) && is.character(IBexpiry) && IBexpiry != "") {
@@ -386,7 +399,7 @@ buildIBcontract <- function(symbol, tws=NULL,
         # || is.exchange_rate(instr) #no function for this
 		tryCatch(
 		{    
-            tryCatch( 		        
+            tryCatch(
             {
                 if (is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
                     tws <- try(twsConnect(),silent=TRUE)
@@ -489,27 +502,17 @@ buildIBcontract <- function(symbol, tws=NULL,
             FUT={
                 instr$type <- unique(c(instr$type,'future'))
                 instr$multiplier <- as.numeric(uc$multiplier)
-                instr$expires <- uc$expiry
+                instr$expires <- if (nchar(uc$expiry) == 8) { 
+                        paste(substr(uc$expiry,1,4),substr(uc$expiry,5,6),substr(uc$expiry,7,8),sep="-")
+                    } else uc$expiry
                 iblocal <- uc$local
-                    si <- gsub(uc$symbol,"",iblocal) #suffix_id
-                    if (identical(iblocal, si))  #i.e. if the symbol is not in local        
-                    #FIXME: below may be overkill. At this point in the code, expiry should be of format CCYYMMDD
-                    si <- if(nchar(uc$expiry)==8) { #20110614
-                            paste(toupper(format(as.Date(uc$expiry,format="%Y%m%d"),"%b")),
-                            format(as.Date(uc$expiry,format="%Y%m%d"),"%y"),sep="") 
-                        } else if (nchar(uc$expiry)==6) { #201106
-                            paste(toupper(format(as.Date(paste(uc$expiry,'01',sep=""),format="%Y%m%d"),"%b")),
-                            format(as.Date(paste(uc$expiry,'01',sep=""),format="%Y%m%d"),"%y"),sep="")
-                        } else { #JUN11, JUN, M1, etc.
-                            #contract$expiry 
-                        }
-                    
-                    #e.g. if symbol is "VIX" and local is "VXM1", primary_id would be VIX_JUN11
-                    #e.g. if symbol is "ES" and local is "ESM1", primary_id wold be ES_M1
-                    primary_id <- paste(contract$symbol,si,sep="_")
-                    primary_id <- gsub(" ","",primary_id)
-                    instr$primary_id <- primary_id
-                    instr$suffix_id <- gsub(" ","",si)
+                si <- if (is.null(instr$suffix_id)) {
+                        parse_id(iblocal)$suffix
+                    } else instr$suffix_id
+                primary_id <- paste(contract$symbol,si,sep="_")
+                primary_id <- gsub(" ","",primary_id)
+                instr$primary_id <- primary_id
+                instr$suffix_id <- gsub(" ","",si)
             },
             CASH={
                 instr$type <- unique(c(instr$type,'currency'))

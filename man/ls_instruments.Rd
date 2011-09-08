@@ -101,10 +101,10 @@ rm_instruments and rm_non_derivatives will not delete currencies
 unless the keep.currencies argument is FALSE.
 
 For the rm functions, x can be a vector of instrument names, or nothing. 
-If x is missing, all instruments of the relevant type will be removed.
-(if x is not missing, there is currently no check to make sure x refers to a instrument of the appropriate type.)
+If \code{x} is missing, all instruments of the relevant type will be removed.
+(if \code{x} is not missing, there is currently no check to make sure x refers to an instrument of the appropriate type.)
 
-Often is is useful to nest these functions to get things like futures denominated in USD.
+It can be useful to nest these functions to get things like futures denominated in USD.
 
 %ls_yahoo and ls_IB look for instruments with \sQuote{yahoo} or \sQuote{IB} in the defined.by slot, respectively 
 %Equivalently, \code{ls_defined.by("yahoo")} or \code{ls_defined.by("IB")} could be used. Note that being 
