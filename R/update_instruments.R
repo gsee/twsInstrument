@@ -29,7 +29,7 @@ update_instruments.yahoo <- function(Symbols=c('stocks','all'), verbose=FALSE ) 
     if (!is.na(symkey)) {
 	    if (symkey == 'all' || symkey == 'stocks' || is.null(Symbols)){
             if (symkey == 'all') warning('yahoo can only update stocks.')            
-            Symbols <- ls_stocks()
+            Symbols <- unique(c(ls_stocks(), ls_instruments_by('src','yahoo')))
         } 
     }
     #make sure it's a vector of instrument names
@@ -37,7 +37,15 @@ update_instruments.yahoo <- function(Symbols=c('stocks','all'), verbose=FALSE ) 
         if (verbose) cat('No stocks found to update.\n') 
         return(NULL) #stop('Symbols must be a vector of instrument names, or one of "all", "stocks"')    
     }
-    yahoo.syms <- paste(Symbols, collapse=";")
+    yahoo.syms <- Symbols
+    for (i in 1:length(Symbols)) {
+        tmp_instr <- try(getInstrument(Symbols[i]),silent=TRUE)
+        yahoo.syms[i] <- if (!inherits(tmp_instr, 'try-error') 
+                            && !is.null(tmp_instr$src) 
+                            && any(names(tmp_instr$src) == 'name')) 
+                         { tmp_instr$src$name } else Symbols[i]
+    }
+    yahoo.syms <- paste(yahoo.syms, collapse=";")
 	if (is.null(yahoo.syms) || length(yahoo.syms) == 0) 
         stop('error with symbol names; no Symbols supplied?')
     yahooStuff <- getQuote.yahoo(yahoo.syms,
@@ -53,28 +61,25 @@ update_instruments.yahoo <- function(Symbols=c('stocks','all'), verbose=FALSE ) 
 #    sym.length <- length(unlist(strsplit(Symbols,";")))    	
     #see yahooQF for available whats
     for (i in 1:length(Symbols)) {
+        noNA <- function(x) {
+            if (x == 'N/A' || is.na(x)) {NULL} else {x}
+        }
         instr <- getInstrument(Symbols[i])
 		#Only update stocks from yahoo		
-		if (inherits(instr,'stock')) {
-		    instr$name=as.character(yahooStuff[i,2])
-			instr$exchange=as.character(yahooStuff[i,3])
-			instr$market.cap=yahooStuff[i,4]
-			instr$avg.volume=as.numeric(yahooStuff[i,5])
-			instr$EPS=as.numeric(yahooStuff[i,6])
-			instr$EPS.current.year.est = as.numeric(yahooStuff[i,7])
-			instr$EPS.next.year.est = as.numeric(yahooStuff[i,8])
-			instr$book.value=as.numeric(yahooStuff[i,9])
-			instr$EBITDA=yahooStuff[i,10]
-			instr$range.52wk=yahooStuff[i,11]
+		if (inherits(instr,'stock') || any(instr$src == 'yahoo')) {
+		    instr$name=noNA(as.character(yahooStuff[i,2]))
+			instr$exchange=noNA(as.character(yahooStuff[i,3]))
+			instr$market.cap=noNA(yahooStuff[i,4])
+			instr$avg.volume=noNA(suppressWarnings(as.numeric(yahooStuff[i,5])))
+			instr$EPS=noNA(suppressWarnings(as.numeric(yahooStuff[i,6])))
+			instr$EPS.current.year.est = noNA(suppressWarnings(as.numeric(yahooStuff[i,7])))
+			instr$EPS.next.year.est = noNA(suppressWarnings(as.numeric(yahooStuff[i,8])))
+			instr$book.value=noNA(suppressWarnings(as.numeric(yahooStuff[i,9])))
+			instr$EBITDA=noNA(yahooStuff[i,10])
+			instr$range.52wk=noNA(yahooStuff[i,11])
 	#		instr$IB=twsSTK(as.character(symdesc[i,1]),'SMART'),
 
-			#FIXME: The lapply strips the names of the twsContract 
-			#(and presumably any other lists in the instrument)
-			if (!is.null(instr$IB)) tmpIB <- instr$IB  #unstable fix           
-            instr <- lapply(instr,FUN=function(x) {gsub('N/A','',x)})		    
-			if (!is.null(instr$IB)) instr$IB <- tmpIB  #unstable fix          
-
-            tclass <- unique(c(class(instr),'stock','instrument'))
+            tclass <- unique(c(class(instr),'instrument'))
             class(instr) <- tclass        
             db <- instr$defined.by
 		    if (!is.null(db)) {
