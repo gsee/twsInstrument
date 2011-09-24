@@ -119,7 +119,8 @@ All of these ls_ functions will probably be updated to be more like ls.  i.e use
 }
 \seealso{
 ls_instruments_by, ls_by_currency, ls_by_expiry,
-ls, rm, instrument, stock, future, option, currency
+ls, rm, instrument, stock, future, option, currency,
+FinancialInstrument::sort_ids
 }
 
 \examples{

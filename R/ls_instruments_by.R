@@ -17,10 +17,11 @@ ls_instruments_by <- function (what, value, pattern=NULL, match=TRUE, in.slot=NU
     for (symbol in symbols) {
         tmp_instr <- try(get(symbol, pos = .instrument),silent=TRUE)
         if (is.instrument(tmp_instr)) {
-            if (!is.null(in.slot) && !is.null(tmp_instr[[in.slot]][[what]]) && any(tmp_instr[[in.slot]][[what]] == value)) {
-                tmp_symbols <- c(tmp_symbols,symbol)
-            } else if (!is.null(tmp_instr[[what]]) && any(tmp_instr[[what]] == value)){    
-                tmp_symbols <- c(tmp_symbols,symbol)
+            if ( (is.null(value) && (!is.null(tmp_instr[[what]]) 
+                    || (!is.null(in.slot) && !is.null(tmp_instr[[in.slot]][[what]])) )) 
+              || (!is.null(in.slot) && !is.null(tmp_instr[[in.slot]][[what]]) && any(tmp_instr[[in.slot]][[what]] == value)) 
+              || (!is.null(tmp_instr[[what]]) && any(tmp_instr[[what]] == value))){    
+                    tmp_symbols <- c(tmp_symbols,symbol)
             }
         }    
     }
