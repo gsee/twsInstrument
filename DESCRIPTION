@@ -1,7 +1,7 @@
 Package: twsInstrument
 Type: Package
 Title: Improves ease of use of IBrokers and FinacialInstrument 
-Version: 1.0-5
+Version: 1.0-6
 Date: 2011-09-05
 Depends: IBrokers, FinancialInstrument (>= 0.5.2), quantmod
 Suggests: qmao, TTR

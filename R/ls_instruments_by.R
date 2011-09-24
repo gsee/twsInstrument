@@ -16,12 +16,16 @@ ls_instruments_by <- function (what, value, pattern=NULL, match=TRUE, in.slot=NU
     tmp_symbols <- NULL 
     for (symbol in symbols) {
         tmp_instr <- try(get(symbol, pos = .instrument),silent=TRUE)
+        #TODO: clean this up
         if (is.instrument(tmp_instr)) {
-            if ( (is.null(value) && (!is.null(tmp_instr[[what]]) 
-                    || (!is.null(in.slot) && !is.null(tmp_instr[[in.slot]][[what]])) )) 
-              || (!is.null(in.slot) && !is.null(tmp_instr[[in.slot]][[what]]) && any(tmp_instr[[in.slot]][[what]] == value)) 
-              || (!is.null(tmp_instr[[what]]) && any(tmp_instr[[what]] == value))){    
-                    tmp_symbols <- c(tmp_symbols,symbol)
+            if (is.null(value)) {
+                if (!is.null(tmp_instr[[what]])) {
+                    tmp_symbols <- c(tmp_symbols,symbol)        
+                } else if (!inherits(try(tmp_instr[[in.slot]][[what]],silent=TRUE),'try-error') && !is.null(tmp_instr[[in.slot]][[what]])) tmp_symbols <- c(tmp_symbols,symbol)
+            } else if (!is.null(in.slot) && !inherits(try(tmp_instr[[in.slot]][[what]],silent=TRUE),'try-error') && !is.null(tmp_instr[[in.slot]][[what]]) && any(tmp_instr[[in.slot]][[what]] == value)) {
+                tmp_symbols <- c(tmp_symbols,symbol)
+            } else if (!is.null(tmp_instr[[what]]) && any(tmp_instr[[what]] == value)){    
+                tmp_symbols <- c(tmp_symbols,symbol)
             }
         }    
     }
