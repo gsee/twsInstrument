@@ -2,20 +2,31 @@
 \alias{getContract}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-get a twsContract from twsInstrument
+get a twsContract object
 }
 \description{
-get twsContract
+get a twsContract object
 }
 \usage{
-getContract(primary_id)
+getContract(x, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{primary_id}{name of twsInstrument}
+  \item{x}{
+can be an instrument, twsInstrument, name of an instrumen or twsInstrument, 
+numeric or character \sQuote{conId}
+}
+  \item{...}{
+passthrough parameters
+}
 }
 \details{
-returns the twsContract stored in the IB slot of an instrument
+If \code{x} is a twsInstrument, or if it can find a twsInstrument named \code{x} in the .instrument 
+environment, it will return the twsContract found in the $IB slot of that object.  If not, then if \code{x}
+is numeric, or if it is a character string of numbers, it will treat that as the conId in a newly created 
+twsContract shell.  Then it will call \code{reqContractDetails} to get the contract object.  Otherwise, 
+\code{x} will be passed to \code{Contr_From_Instr} which will use what information it can to create a
+twsContract shell that can/will be updated with \code{reqContractDetails} 
 }
 \value{
 an object of class twsContract
@@ -23,18 +34,17 @@ an object of class twsContract
 \author{
 Garrett See
 }
-\note{
-Very simple function. In the future, I will update this to have an option to allow a call to Contr_From_Instr (which, is essentially an alias for buildIBcontract), if the contract can't be found locally.
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 Contr_From_Instr, getInstrument, twsInstrument
 }
 \examples{
 \dontrun{
-twsInstrument('SEE') #have to have a twsInstrument
-getContract('SEE')
+getContract("4082282") #uses reqContractDetails
+getContract(4082282) #same
+twsInstrument('SEE') 
+getContract("SEE") # == .instrument$SEE$IB
+getContract("DIA") # will use reqContractDetails if "DIA" is not already defined
+instr <- getInstrument("SEE")
+getContract(instr)
 }
 }

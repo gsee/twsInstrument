@@ -5,6 +5,15 @@
 #implemented: STK,OPT,FUT,CASH,IND
 #not implemented: FOP
 
+#---------------------------------------------------#
+# FinancialInstrument.type  |  twsContract.sectype  #
+#    stock                  |       STK             #
+#    synthetic              |       IND             #
+#    option_series          |       OPT             #
+#    future_series          |       FUT             #
+#    exchange_rate          |       CASH            #
+#---------------------------------------------------#
+
 is.twsInstrument <- function(x) {
     if (inherits(x, 'twsInstrument')) {
         TRUE    
@@ -83,8 +92,6 @@ buildIBcontract <- function(symbol, tws=NULL,
 		}        
 	    #primary_id <- symbol
         #TODO: Include conId as an identifier
-        #FIXME: these instrument constructor wrappers assign_i=TRUE; 
-        #       I need to replace wrappers with direct call to instrument    
         instr <- switch(contract$sectype, 
                 IND={
                     primary_id <- contract$symbol
@@ -479,10 +486,11 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    #if (is.list(instr$identifiers)) instr$identifiers <- c(IB=uc$local,,instr$identifiers)
 	    #else instr$identifiers <- list(IB=uc$local)        
         instr$primary_id <- primary_id
+        instr$currency <- uc$currency
+        instr$identifiers <- c(instr$identifiers, list(conId=uc$conId)) #, local=uc$local))
         instr$local <- uc$local
         instr$IB.primary.exch <- uc$primary
-        instr$exchange <- uc$exch #ok to overwrite 'SMART' ? 
-        instr$currency <- uc$currency
+        instr$exchange <- uc$exch #ok to overwrite 'SMART' ?         
         switch(uc$sectype,
             IND={
                 instr$type <- unique(c(instr$type,'synthetic'))

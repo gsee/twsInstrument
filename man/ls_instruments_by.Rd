@@ -8,7 +8,7 @@ Subset names of instruments
 list names of instruments that have an attribute that matches some value
 }
 \usage{
-ls_instruments_by(what, value, pattern = NULL, match = TRUE, in.slot = NULL)
+ls_instruments_by(what, value, in.slot = NULL, pattern = NULL, match = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
