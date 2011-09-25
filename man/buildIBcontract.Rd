@@ -37,7 +37,7 @@ Contr_From_Instr(instrument, tws=NULL,
 is.twsInstrument(x)
 }
 \arguments{
-  \item{symbol}{An instrument, The name of an instrument, or a twsContract.} 
+  \item{symbol}{An instrument, The name of an instrument, a twsContract, or a conId.} 
   \item{tws}{twsconn object. Not required.}
   \item{addIBslot}{Boolean. Should an IB slot be created in the instrument object?)}
   \item{updateInstrument}{Should all the attributes of the instrument be updated with the information retrieved from IB?}
@@ -55,8 +55,9 @@ is.twsInstrument(x)
 \details{
 buildIBcontract is the main function; the rest are wrappers.
 
-symbol can be the name of an instrument, an instrument, a twsContract, or a 
-twsInstrument.  Using the information given, it will create an instrument 
+symbol can be the name of an instrument, an instrument, a twsContract,  
+twsInstrument or a conId (unique numeric contract identifier used by Interactive Brokers).  
+Using the information given, it will create an instrument 
 and a twsContract.  It will then make a call to reqContractDetails to fill in 
 any missing information. (If you give it a string and there is no instrument
 by that name, then: (a) If the string ends in a period, it will treat it as a currency pair 

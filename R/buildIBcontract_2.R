@@ -71,6 +71,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 {
     #TODO: Allow for vector of symbols, instruments, or contracts
     if (is.xts(symbol)) stop('symbol can be the name of an xts object, but not the object itself.')    
+    if (!is.list(symbol) && (is.numeric(symbol) || !is.na(suppressWarnings(as.numeric(symbol))))) symbol <- getContract(symbol)    
     primary_id <- NULL
     right <- NULL    
     contract <- NULL
@@ -418,7 +419,17 @@ buildIBcontract <- function(symbol, tws=NULL,
                     if (verbose) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
                     if (tws$clientId == 50) warning("IB Trader Workstation should be restarted.")                    
                     #request that IB fill in missing info.                
-                    details <- try(reqContractDetails(tws,contract),silent=TRUE)                
+                    details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
+                    if (length(details) == 0) {
+                        if (contract$include_expired == 0 ||
+                            contract$include_expired == "0" ||
+                            !isTRUE(contract$include_expired)) 
+                        {
+                            if (verbose) cat("Trying to resolve error in contract details. Using include_expired=1\n")              
+                            contract$include_expired <- "1"
+                            details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
+                        }
+                    }                
                 } else cat('Could not connect to tws.')
             }) #end nested tryCatch  
 	    },finally=twsDisconnect(tws)) #End outer tryCatch 
@@ -487,7 +498,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    #else instr$identifiers <- list(IB=uc$local)        
         instr$primary_id <- primary_id
         instr$currency <- uc$currency
-        instr$identifiers <- c(instr$identifiers, list(conId=uc$conId)) #, local=uc$local))
+        instr$identifiers <- c(instr$identifiers, list(conId=uc$conId, local=uc$local))
         instr$local <- uc$local
         instr$IB.primary.exch <- uc$primary
         instr$exchange <- uc$exch #ok to overwrite 'SMART' ?         
