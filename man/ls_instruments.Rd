@@ -48,8 +48,8 @@ rm functions remove the instruments of the class implied by the function name
 }
 \usage{
 ls_stocks(pattern=NULL, match=TRUE)
-ls_options(pattern=NULL, match=TRUE)
-ls_futures(pattern=NULL, match=TRUE)
+ls_options(pattern=NULL, match=TRUE, include.series=TRUE)
+ls_futures(pattern=NULL, match=TRUE, include.series=TRUE)
 ls_currencies(pattern=NULL, match=TRUE)
 ls_non_currencies(pattern=NULL, includeFX=TRUE, match=TRUE)
 ls_exchange_rates(pattern=NULL, match=TRUE)
@@ -84,7 +84,8 @@ rm_non_derivatives(x, keep.currencies=TRUE)
   \item{pattern}{an optional regular expression.  Only names matching \sQuote{pattern} are returned.}
   \item{match}{return only exact matches?}
   \item{verbose}{be verbose?}
-  
+  \item{include.series}{should future_series or option_series instruments be included.}
+
   \item{x}{what to remove. if not supplied all instruments of relevent class will be removed
 %For \code{ls_defined.by} x is the string describing how the instrument was defined.
 }  

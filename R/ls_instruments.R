@@ -40,13 +40,14 @@ ls_stocks <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
-ls_options <- function(pattern=NULL,match=TRUE) {
+ls_options <- function(pattern=NULL,match=TRUE, include.series=TRUE) {
     symbols <- ls_instruments(pattern,match)    
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
         if (inherits(tmp_instr, 'option') && inherits(tmp_instr, 'instrument')) {
-            tmp_symbols <- c(tmp_symbols,instr)
+            if (!inherits(tmp_instr, 'option_series') || include.series)
+                tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
     tmp_symbols
@@ -64,13 +65,14 @@ ls_option_series <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
-ls_futures <- function(pattern=NULL,match=TRUE) {
+ls_futures <- function(pattern=NULL,match=TRUE, include.series=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
         tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
         if (inherits(tmp_instr, 'future') && inherits(tmp_instr, 'instrument')) {
-            tmp_symbols <- c(tmp_symbols,instr)
+            if (!inherits(tmp_instr, 'future_series') || include.series)
+                tmp_symbols <- c(tmp_symbols,instr)
         }    
     }
     tmp_symbols
