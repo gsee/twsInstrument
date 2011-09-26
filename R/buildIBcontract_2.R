@@ -92,18 +92,18 @@ buildIBcontract <- function(symbol, tws=NULL,
             } else stop (paste(contract$currency, 'cannot be found, and assign_c=FALSE'))
 		}        
 	    #primary_id <- symbol
-        #TODO: Include conId as an identifier
+        identifiers <- list(conId=contract$conId, local=gsub(" ","",contract$local))                    
         instr <- switch(contract$sectype, 
                 IND={
                     primary_id <- contract$symbol
                     instrument.tws(primary_id=primary_id, exchange=contract$exch, currency=contract$currency, multiplier=1,
-                                    tick_size=NULL, identifiers=NULL, type='synthetic', assign_i=FALSE)
+                                    tick_size=NULL, identifiers=identifiers, type='synthetic', assign_i=FALSE)
                 },
                 STK={
                     primary_id <- contract$symbol                    
                     #stock(primary_id=primary_id, currency=contract$currency, exchange=contract$exchange)
                     instrument.tws(primary_id=primary_id, currency=contract$currency,multiplier=1,
-                                tick_size=0.01, identifiers=NULL, type='stock', assign_i=FALSE)
+                                tick_size=0.01, identifiers=identifiers, type='stock', assign_i=FALSE)
                 }, 
                 OPT={
 #                   primary_id <- paste('.', contract$symbol,sep="")
@@ -137,7 +137,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     #    strike=contract$strike, exchange=contract$exchange, underlying_id=contract$symbol)
                     instrument.tws(primary_id=primary_id, currency=contract$currency,
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL, 
-                        identifiers=NULL, expires=contract$expiry, right=contract$right, 
+                        identifiers=identifiers, expires=contract$expiry, right=contract$right, 
                         strike=contract$strike, exchange=contract$exch, type=c('option_series','option'), 
                         underlying_id=contract$symbol, assign_i=FALSE)
                 }, 
@@ -145,7 +145,8 @@ buildIBcontract <- function(symbol, tws=NULL,
                     primary_id <- symbol
                     instrument.tws(primary_id=primary_id, currency=contract$currency, 
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL,
-                        expires=contract$expiry, exchange=contract$exch, type=c('future_series','future'), 
+                        identifiers=identifiers, expires=contract$expiry, 
+                        exchange=contract$exch, type=c('future_series','future'), 
                         underlying_id=contract$symbol, assign_i=FALSE) #maybe shouldn't specify exchange here
                 }, 
                 CASH={ 
@@ -154,7 +155,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     } else primary_id <- contract$local
                     #exchange_rate(primary_id=primary_id, currency=contract$currency, second_currency=contract$symbol)
                     instrument.tws(primary_id=primary_id, currency=contract$currency, multiplier=1, 
-                                tick_size=0.01, identifiers=NULL, counter_currency=contract$symbol, 
+                                tick_size=0.01, identifiers=identifiers, counter_currency=contract$symbol, 
                                 type=c("exchange_rate","currency"), assign_i=FALSE)
                     #currency(primary_id=contract$symbol, currency=contract$currency, exchange=contract$exch, type='currency')
                 }) #End switch on sectype
@@ -506,13 +507,9 @@ buildIBcontract <- function(symbol, tws=NULL,
 
 
     if (updateInstrument) { # && assign_i) {
-#	    if (is.null(instr$identifiers) || !is.list(instr$identifiers)) instr$identifiers <- list()
-	    ##FIXME: implement identifiers
-	    #if (is.list(instr$identifiers)) instr$identifiers <- c(IB=uc$local,,instr$identifiers)
-	    #else instr$identifiers <- list(IB=uc$local)        
         instr$primary_id <- primary_id
         instr$currency <- uc$currency
-        instr$identifiers <- unique(c(instr$identifiers, list(conId=uc$conId, local=uc$local)))
+        instr$identifiers <- unique(c(instr$identifiers, list(conId=uc$conId, local=gsub(" ","",uc$local))))
         instr$local <- uc$local
         instr$IB.primary.exch <- uc$primary
         instr$exchange <- uc$exch #ok to overwrite 'SMART' ?         
