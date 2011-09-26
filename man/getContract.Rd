@@ -8,13 +8,16 @@ get a twsContract object
 get a twsContract object
 }
 \usage{
-getContract(x, ...)
+getContract(x, silent = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
 can be an instrument, twsInstrument, name of an instrumen or twsInstrument, 
 numeric or character \sQuote{conId}
+}
+  \item{silent}{
+silence warnings and progress updates?
 }
   \item{...}{
 passthrough parameters

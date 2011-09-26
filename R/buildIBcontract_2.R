@@ -150,7 +150,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 }, 
                 CASH={ 
                     if (contract$local == "") {
-                        primary_id <- paste(contract$symbol, contract$currency, sep=".") #will be contract$local after update
+                        primary_id <- paste(contract$symbol, contract$currency, sep="") #will be contract$local after update
                     } else primary_id <- contract$local
                     #exchange_rate(primary_id=primary_id, currency=contract$currency, second_currency=contract$symbol)
                     instrument.tws(primary_id=primary_id, currency=contract$currency, multiplier=1, 
@@ -421,9 +421,10 @@ buildIBcontract <- function(symbol, tws=NULL,
                     #request that IB fill in missing info.                
                     details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
                     if (length(details) == 0) {
-                        if (contract$include_expired == 0 ||
-                            contract$include_expired == "0" ||
-                            !isTRUE(contract$include_expired)) 
+                        if ( (contract$include_expired == 0 ||
+                                contract$include_expired == "0" ||
+                                !isTRUE(contract$include_expired)) && 
+                             any(contract$sectype == c("FUT","OPT","FOP","BAG"))) 
                         {
                             if (verbose) cat("Trying to resolve error in contract details. Using include_expired=1\n")              
                             contract$include_expired <- "1"
@@ -438,7 +439,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             uc <- contract
             details <- NULL
             addIBslot <- FALSE                        
-            cat(paste('Could not create valid twsContract.\n', 
+            stop(paste('Could not create valid twsContract.\n', 
                 contract$symbol, ' may not be a valid ', contract$sectype, 
                 '. Disconnected.\n', sep=""))
         } else { 
@@ -498,7 +499,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    #else instr$identifiers <- list(IB=uc$local)        
         instr$primary_id <- primary_id
         instr$currency <- uc$currency
-        instr$identifiers <- c(instr$identifiers, list(conId=uc$conId, local=uc$local))
+        instr$identifiers <- unique(c(instr$identifiers, list(conId=uc$conId, local=uc$local)))
         instr$local <- uc$local
         instr$IB.primary.exch <- uc$primary
         instr$exchange <- uc$exch #ok to overwrite 'SMART' ?         
@@ -526,7 +527,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     } else uc$expiry
                 iblocal <- uc$local
                 si <- if (is.null(instr$suffix_id)) {
-                        parse_id(iblocal)$suffix
+                        parse_id(gsub(" ","",iblocal))$suffix
                     } else instr$suffix_id
                 primary_id <- paste(contract$symbol,si,sep="_")
                 primary_id <- gsub(" ","",primary_id)

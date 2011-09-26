@@ -106,8 +106,8 @@ update_instruments.IB <- function(Symbols=c('all','stocks','futures','options','
         switch(symkey, 
                 all={Symbols <- ls_instruments()}, 
                 stocks={Symbols <- ls_stocks()}, 
-                futures={Symbols <- ls_futures()}, 
-                options={Symbols <- ls_options()}, 
+                futures={Symbols <- ls_future_series()}, 
+                options={Symbols <- ls_option_series()}, 
                 currencies={Symbols <- ls_exchange_rates()} ) #end Symbols switch    
     }
     #make sure it's a vector of instrument names
@@ -119,6 +119,12 @@ update_instruments.IB <- function(Symbols=c('all','stocks','futures','options','
     }
     if (!is.character(Symbols)) 
         stop('Symbols must be a vector of instrument names, or one of "all", "all.symbols"')    
+    #take future roots out of the list
+    Symbols <- Symbols[!Symbols %in% ls_futures()[!ls_futures() %in% ls_future_series()]]
+    #take option roots out of the list    
+    Symbols <- Symbols[!Symbols %in% ls_options()[!ls_options() %in% ls_option_series()]]
+    #take out non-FX currencies
+    Symbols <- Symbols[!Symbols %in% ls_currencies()[!ls_currencies() %in% ls_exchange_rates()]]
     symout <- NULL
     for (symbol in Symbols) {
         #TODO: If there is a problem with clientId, make note of it, and don't use it again
