@@ -316,7 +316,7 @@ rm_instruments <- function(x, keep.currencies=TRUE) {
     if (keep.currencies && !is.null(x)) {
         if(any(is.na(match(x,ls_currencies())))) { #are any of them not a currency
             if (!all(is.na(match(x,ls_currencies())))) #are some of them a currency
-                x <- x[-match(ls_currencies(),x)] #then take them out of to-be-removed
+                x <- x[!x %in% ls_currencies()] #then take them out of to-be-removed
         } else stop('Use keep.currencies=FALSE to delete a currency')    
     }
 
