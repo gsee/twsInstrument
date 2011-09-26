@@ -254,6 +254,12 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    primary_id <- instr$primary_id
 	    #figure out sectype
 	    if (is.null(instr$sectype) ) {
+            if (is.null(instr$type)) { #future_series or option_series created with instrument.auto when no root existed
+                pid <- parse_id(instr$primary_id)
+                if (any(pid$type == 'future')) instr$type <- 'future_series' #a future object would parse out to 'root', not 'future'
+                if (any(pid$type == 'option')) instr$type <- 'option_series' #an option object would parse out to 'root', not 'option'
+                instr$multiplier <- ""
+            } else pid <- NULL
 			#currencies don't have type by FinancialInstrument default. #FIXME: They do now; this can be updated
             if (inherits(instr,'currency') || 
 				(!is.null(instr$type) && any(instr$type == 'currency') ) ) {
@@ -308,7 +314,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             pid <- parse_id(primary_id)
             if ((any(instr$type == "future_series") || any(instr$type == "option_series") ) && is.null(instr$expires) && is.null(instr$expiry)) {
                 if (verbose) warning("Expiry not defined for future or option... Inferring from id.") 
-                instr$expires <- format(as.Date(paste(pid$month,pid$year),format='%b%Y'),format='%Y%m')
+                instr$expires <- format(as.Date(paste(pid$month,pid$year,15),format='%b%Y%d'),format='%Y%m')
             }
             if (any(instr$type == "option_series") ) {
 				if (is.null(instr$strike)) {
