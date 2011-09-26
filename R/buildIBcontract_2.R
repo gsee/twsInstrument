@@ -1,6 +1,6 @@
-#given a symbol, twsInstrument, instrument, instrument name, or twsContract,
-#these functions will create a twsInstrument with as much information
-#as can be found.
+## Given a symbol, conId (chr or numeric), twsInstrument, instrument, 
+## instrument name, or twsContract, these functions will create a 
+## twsInstrument with as much information as can be found.
 
 #implemented: STK,OPT,FUT,CASH,IND
 #not implemented: FOP
@@ -283,12 +283,13 @@ buildIBcontract <- function(symbol, tws=NULL,
                 } else symbol <- instr$primary_id
            } else if (inherits(instr,'option') || 
                 any(instr$type == "option") || 
+                any(instr$type == "option_series") ||
                 any(instr$type == "OPT") ) {
                     sectype <- "OPT"
                     if (!is.null(instr$underlying_id) 
                            && !instr$underlying_id == "") {
                         symbol <- instr$underlying_id
-                    }
+                    } else symbol <- instr$root_id
                 #TODO: treat option and option_series differently
             } else if (inherits(instr,'future_series') || 
                 any(instr$type == "future_series")) {
