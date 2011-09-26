@@ -237,15 +237,13 @@ buildIBcontract <- function(symbol, tws=NULL,
                         identifiers=NULL, 
                         counter_currency=contract$symbol, 
                         type=c("exchange_rate","currency"), assign_i=FALSE)        
-        } else { #TODO: check for suffix_id that is OSI for options, or futures codes for futures (H1, H11, JUN11)
-            warning(paste("Unable to find or infer instrument, ",
-                    symbol, ".\n  Trying with type = \"stock\"", sep=""))
-    #        contract <- twsSTK(primary_id)        
-            contract <- twsContract() #blank twsContract shell
-            contract$symbol <- primary_id #symbol #fill in the only info we have
-            contract$sectype <- "STK"
-            #instr is still not an instrument!
-		    instr <- NULL #Have to reset it because getInstrument gave it a value of FALSE
+        } else { 
+            #warning(paste("Unable to find or infer instrument, ",
+            #        symbol, ".\n  Trying with type = \"stock\"", sep=""))
+            instr.name <- instrument.auto(primary_id=primary_id, silent=TRUE)
+            instr <- getInstrument(instr.name) #workaround because instrument.auto calls wrappers that don't allow assign_i=FALSE
+            rm_instruments(instr.name)
+            instr$currency <- "" # since we don't know it, we'll have to let IB guess for us (IB may be wrong!)
         } 
     }
 
@@ -256,9 +254,17 @@ buildIBcontract <- function(symbol, tws=NULL,
 	    if (is.null(instr$sectype) ) {
             if (is.null(instr$type)) { #future_series or option_series created with instrument.auto when no root existed
                 pid <- parse_id(instr$primary_id)
-                if (any(pid$type == 'future')) instr$type <- 'future_series' #a future object would parse out to 'root', not 'future'
-                if (any(pid$type == 'option')) instr$type <- 'option_series' #an option object would parse out to 'root', not 'option'
                 instr$multiplier <- ""
+                if (any(pid$type == 'future')) {
+                    instr$type <- 'future_series' #a future object would parse out to 'root', not 'future'
+                } else if (any(pid$type == 'option')) {
+                    instr$type <- 'option_series' #an option object would parse out to 'root', not 'option'
+                } else if (any(pid$type == 'root')) {
+                    instr$type <- 'STK'
+                    warning(paste(instr$primary_id, "is of an ambiguous format.\n",
+                                "Trying with type = \"stock\""))
+                    instr$multiplier <- 1
+                }
             } else pid <- NULL
 			#currencies don't have type by FinancialInstrument default. #FIXME: They do now; this can be updated
             if (inherits(instr,'currency') || 
