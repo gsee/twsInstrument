@@ -95,13 +95,19 @@ function(underlying_id,
     symout <- NULL
     for (id in underlying_id) {
         for (expiry in expires) {
+            expiry <- gsub("-","",expiry)
+            if (nchar(expiry) == 8) {
+                expiry <- as.Date(expiry,format='%Y%m%d')            
+                if (weekdays(expiry) == "Saturday") expiry <- format(expiry - 1,"%Y%m%d")
+            }
             for (k in strike) {
                 for (rt in right) {
                     symout <- c(symout, 
                                 twsInstrument(twsOPT(local="",
                                                     expiry=expiry,
                                                     strike=k, 
-                                                    right=rt, 
+                                                    right=switch(rt, C=,c=,call=,Call=,CALL='C',
+                                                                     P=,p=,put=,Put=,PUT='P'), 
                                                     symbol=id, 
                                                     multiplier=as.character(multiplier),
                                                     include_expired=include_expired),

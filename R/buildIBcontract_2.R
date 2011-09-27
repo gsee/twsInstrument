@@ -92,7 +92,8 @@ buildIBcontract <- function(symbol, tws=NULL,
             } else stop (paste(contract$currency, 'cannot be found, and assign_c=FALSE'))
 		}        
 	    #primary_id <- symbol
-        identifiers <- list(conId=contract$conId, local=gsub(" ","",contract$local))                    
+        identifiers <- list(conId=contract$conId, local=gsub(" ","",contract$local))
+        identifiers <- identifiers[identifiers != c("0","")]                    
         instr <- switch(contract$sectype, 
                 IND={
                     primary_id <- contract$symbol
@@ -117,7 +118,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 					    #local <- paste(symbol, si, sep="   ")      
 					    primary_id <- paste(contract$symbol, "_", expiry, right, strike, sep="")
                     } else {
-                        if (any(nchar(contract$expiry) == c(6,10))) {
+                        if (any(nchar(contract$expiry) == c(6,8))) {
                             m <- substr(contract$expiry,5,6)
                             y <- substr(contract$expiry,1,4)
                         } else if (!identical(integer(0),grep('-',contract$expiry))) {
@@ -131,13 +132,13 @@ buildIBcontract <- function(symbol, tws=NULL,
                         primary_id <- option_id(underlying_id=contract$symbol, strike=strike, 
                                                 month=m, year=y, right=right)
                     }
-                    
+                    callput <- switch(right, C=,c=,call='call', P=,p=,put='put')
                     #option(primary_id=primary_id, currency=contract$currency,
                     #    multiplier=contract$multiplier, expires=contract$expiry, right=contract$right,
                     #    strike=contract$strike, exchange=contract$exchange, underlying_id=contract$symbol)
                     instrument.tws(primary_id=primary_id, currency=contract$currency,
                         multiplier=as.numeric(contract$multiplier), tick_size=NULL, 
-                        identifiers=identifiers, expires=contract$expiry, right=contract$right, 
+                        identifiers=identifiers, expires=contract$expiry, right=right, callput=callput,
                         strike=contract$strike, exchange=contract$exch, type=c('option_series','option'), 
                         underlying_id=contract$symbol, assign_i=FALSE)
                 }, 
@@ -439,7 +440,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                                 contract$include_expired == "0" ||
                                 !isTRUE(contract$include_expired)) && 
                              (is.null(contract$sectype) ||
-                                any(contract$sectype == c("FUT","OPT","FOP","BAG"))) ) 
+                                (!is.null(contract$sectype) && any(contract$sectype == c("FUT","OPT","FOP","BAG")))) ) 
                         {
                             if (verbose) cat("Trying to resolve error in contract details. Using include_expired=1\n")              
                             contract$include_expired <- "1"
@@ -526,7 +527,9 @@ buildIBcontract <- function(symbol, tws=NULL,
             OPT={
                 instr$type <- unique(c(instr$type,'option')) 
                 instr$multiplier <- as.numeric(uc$multiplier)
-                instr$expires <- uc$expiry
+                instr$expires <- if (nchar(uc$expiry) == 8) {
+                        paste(substr(uc$expiry,1,4),substr(uc$expiry,5,6),substr(uc$expiry,7,8),sep="-")
+                    } else uc$expiry
                 instr$strike <- uc$strike
                 instr$right <- uc$right
             }, 
