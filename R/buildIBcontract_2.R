@@ -205,7 +205,8 @@ buildIBcontract <- function(symbol, tws=NULL,
 
     if (inherits(instr,'try-error') || !is.instrument(instr)) {
         #TODO: allow for EUR/USD format also.
-        if ( (nchar(symbol) == 6 ) && !identical(integer(0), grep(symbol, toupper(symbol))) ) { #6 letters, all uppercase
+        pid <- parse_id(symbol)
+        if ( (nchar(symbol) == 6 ) && any(pid$type == 'root') && !identical(integer(0), grep(symbol, toupper(symbol))) ) { #6 letters, all uppercase
             ccys <- c(substr(symbol, 1, 3),substr(symbol,4,6))         
             contract <- twsCASH(ccys[1], ccys[2])
             primary_id=paste(contract$symbol, contract$currency, sep="") #consistent with blotter, but I think it should be sep="."
