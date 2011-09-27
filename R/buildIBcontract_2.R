@@ -438,7 +438,8 @@ buildIBcontract <- function(symbol, tws=NULL,
                         if ( (contract$include_expired == 0 ||
                                 contract$include_expired == "0" ||
                                 !isTRUE(contract$include_expired)) && 
-                             any(contract$sectype == c("FUT","OPT","FOP","BAG"))) 
+                             (is.null(contract$sectype) ||
+                                any(contract$sectype == c("FUT","OPT","FOP","BAG"))) ) 
                         {
                             if (verbose) cat("Trying to resolve error in contract details. Using include_expired=1\n")              
                             contract$include_expired <- "1"
