@@ -95,7 +95,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		}        
 	    #primary_id <- symbol
         identifiers <- list(conId=contract$conId, local=gsub(" ","",contract$local))
-        identifiers <- identifiers[identifiers != c("0","")]                    
+        identifiers <- identifiers[!identifiers %in% c("0","")]                    
         instr <- switch(contract$sectype, 
                 IND={
                     primary_id <- contract$symbol

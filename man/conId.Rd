@@ -25,6 +25,10 @@ character conId
 \author{
 gsee
 }
+\note{
+unless you call \code{conId} with a \code{twsContract} or \code{twsInstrument}, it will call
+getContract which will, as a last resort, download the contract details from IBrokers. 
+}
 \seealso{
 \code{\link{twsInstrument}}, \code{\link{twsContract}}
 }
@@ -34,6 +38,8 @@ stk <- twsInstrument("GOOG")
 conId(stk)
 conId(getInstrument(stk))
 conId(getContract(stk))
+
+conId(stock("AAPL","USD")) #uses reqContractDetails
 }
 }
 
