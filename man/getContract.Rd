@@ -38,7 +38,7 @@ an object of class twsContract
 Garrett See
 }
 \note{
-To ensure you get the contract you're after, you should define your instruments before uing this function.
+To ensure you get the contract you're after, you should define your instruments before using this function.
 }
 \seealso{
 \code{\link{conId}},

@@ -17,7 +17,9 @@
 is.twsInstrument <- function(x) {
     if (inherits(x, 'twsInstrument')) {
         TRUE    
-    } else if (inherits(x, 'instrument') && !is.null(x$IB)) {
+    } else if (inherits(x, 'instrument') && 
+                !is.null(x$IB) && 
+                inherits(x$IB, 'twsContract') ) {
         TRUE 
     } else FALSE
 }
@@ -251,7 +253,7 @@ buildIBcontract <- function(symbol, tws=NULL,
     }
 
 
-	if (is.instrument(instr) && is.null(instr$IB) && is.null(contract)) { #make contract
+	if (is.instrument(instr) && !is.twsContract(instr$IB) && is.null(contract)) { #make contract
 	    primary_id <- instr$primary_id
 	    #figure out sectype
 	    if (is.null(instr$sectype) ) {

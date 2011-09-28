@@ -36,9 +36,11 @@ addIBslot(symbols,
 }
 
 \details{
-It's essentially a wrapper for twsContract.  Currently, the instrument must be defined before a slot can be
-added, although in the future this function may create the instrument if it does not already exist.
-A currency should be defined before defining any other instrument.
+This is an old function that is not terribly useful anymore.  It should probably be deprecated
+It is essentially a wrapper for twsContract, but it doesn't check to make sure
+the twsContract is valid.
+
+The instrument must be defined before calling this function.
 
 adds twsInstrument class to the instrument
 }
@@ -49,6 +51,7 @@ TODO: create instrument if it doesn't already exist
 }
 
 \seealso{
+see instead: \code{\link{twsInstrument}}
 twsContract, instrument
 }
 \examples{
@@ -56,5 +59,14 @@ twsContract, instrument
 currency('USD')
 stock('XOM','USD',1)
 addIBslot('XOM')
+
+# This is BETTER:
+stock("CVX","USD")
+instrument_attr("CVX","IB",getContract("CVX"))
+# the above will add the twsInstrument class 
+# if you have FinancialInstrument version 0.7.2 or greater
+
+# So is this:
+twsInstrument(stock("BP","USD")) #will update other details of instrument by default
 }
 }
