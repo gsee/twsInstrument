@@ -13,7 +13,7 @@ getContract(x, silent = TRUE, ...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-can be an instrument, twsInstrument, name of an instrumen or twsInstrument, 
+can be an instrument, twsInstrument, name of an instrument or twsInstrument, or a
 numeric or character \sQuote{conId}
 }
   \item{silent}{
@@ -24,12 +24,12 @@ passthrough parameters
 }
 }
 \details{
-If \code{x} is a twsInstrument, or if it can find a twsInstrument named \code{x} in the .instrument 
+If \code{x} is a twsInstrument, or if it can find a twsInstrument with the same name as \code{x} in the .instrument 
 environment, it will return the twsContract found in the $IB slot of that object.  If not, then if \code{x}
 is numeric, or if it is a character string of numbers, it will treat that as the conId in a newly created 
-twsContract shell.  Then it will call \code{reqContractDetails} to get the contract object.  Otherwise, 
-\code{x} will be passed to \code{Contr_From_Instr} which will use what information it can to create a
-twsContract shell that can/will be updated with \code{reqContractDetails} 
+twsContract shell.  Then it will call \code{\link{reqContractDetails}} to get the contract object.  Otherwise, 
+\code{x} will be passed to \code{\link{Contr_From_Instr}} which will use what information it can to create a
+twsContract shell that can/will be updated with \code{\link{reqContractDetails}} 
 }
 \value{
 an object of class twsContract
@@ -37,8 +37,14 @@ an object of class twsContract
 \author{
 Garrett See
 }
+\note{
+To ensure you get the contract you're after, you should define your instruments before uing this function.
+}
 \seealso{
-Contr_From_Instr, getInstrument, twsInstrument
+\code{\link{conId}},
+\code{\link{define_stocks}}, \code{\link{define_options}}, \code{\link{define_futures}},
+\code{\link{Contr_From_Instr}}, \code{\link{twsInstrument}},
+\code{\link{getInstrument}}
 }
 \examples{
 \dontrun{

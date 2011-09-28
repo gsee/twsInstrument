@@ -18,7 +18,7 @@ See \code{?buildIBcontract} for the twsInstrument function help page
 \tabular{ll}{
 Package: \tab twsInstrument\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
+Version: \tab 1.0-13\cr
 Depends: \tab FinancialInstrument, IBrokers, quantmod\cr
 Date: \tab 2011-05-27\cr
 License: \tab GPL-3\cr
@@ -27,25 +27,38 @@ LazyLoad: \tab yes\cr
 An instrument object that has a slot called IB containing a twsContract will be classed 
 as twsInstrument.
 
-The \code{twsInstrument} function makes it easy to create twsContracts (for the IBrokers package) or instruments (for the FinancialInstrument package) or both. You can give it a twsContract, a twsInstrument, an instrument, or the name of an instrument, and get back an instrument, a twsContract, or both, updated with information from the other. Most functions have an \code{addIBslot} to control whether to add a slot with the twsContract to (and add twsInstrument class to) the instrument you're dealing with.
+The \code{twsInstrument} function makes it easy to create twsContracts (for the IBrokers package) or instruments (for the FinancialInstrument package) or both. You can give it a twsContract, a twsInstrument, an instrument, the name of an instrument, or an Interactive Brokers conId, and get back an instrument, a twsContract, or both, updated with information from the other. Most functions have an \code{addIBslot} to control whether to add a slot with the twsContract (and add twsInstrument class) to the instrument you're dealing with.
 
 \code{update_instruments.yahoo} can be called with a vector of instrument names or with
-\sQuote{all} in which case all stocks will be update. (Currently, yahoo is only implemented
-for stocks.)
-
+\sQuote{all} in which case all stocks will be updated. (Currently, yahoo is only implemented
+for stocks and synthetics (e.g. stock indexes).
+\code{update_instruments.TTR} uses the data frame given by \code{TTR:::stockSymbols} to define/update stocks.
 \code{update_instruments.IB} can accept a vector of instrument names, or sQuote{all} or 
 sQuote{stocks}, but it also accepts one of, sQuote{futures}, sQuote{options}, or sQuote{currencies}
 
-\code{reqTBBO} will download and merge the closing price of Bid, Ask, Trade, and Midpoint
+\code{\link{define_stocks}}, \code{\link{define_options}}, \code{\link{define_futures}} and code{\link{define_FX}} make it easy to define several of instruments of the same type.  \code{\link{front_future}} attempts to define the near term liquid futures contract of a given future_series.
 
-\code{instrument.table} creates a data.frame with instruments in rows and attributes in columns. It is a wrapper for \code{buildHierarchy} that requires less input from the user.
+\code{get_quote} will return a recent quote snapshot using IBrokers by default (although if called with src='yahoo', it will call \code{quantmod::getQuote}.  
+
+\code{getBAT} will download and merge the closing price of Bid, Ask, Trade, and Midpoint
+
+\code{getContract} will get a twsContract. It will search the .instrument environment for an instrument that holds the contract.  If not found,
+it will download it with a call to \code{\link{reqContractDetails}}
+
+\code{conId} is a generic that will get the conId.  If it cannot find it easily, it will call getContract and extract the conId from that.
+
+The following will eventually be moved to the FinancialInstrument package
+\code{\link{saveInstruments}} and \code{\link{loadInstruments}} allow you to save your .instrument environment. \code{loadInstruments} will add to your \code{.instrument} environment all the instruments found in a file that was created with \code{saveInstruments}.
+
+\code{\link{ls_instruments}} and the several related functions (\code{\link{ls_stocks}}, \code{\link{ls_synthetics}}, etc) help you see the names of your defined instruments.
+\code{\link{ls_instruments_by}} help you subset the names of your instruments based on values of attributes they have.
+
+\code{\link{rm_instruments}} and related functions remove instruments from your .instrument environment.
 
 
 Before using, enable ActiveX and socket clients and add your computer 
 to trusted IP addresses in your IB TWS global configuration.
 Read the IBrokers documentation before using.
-
-Most of the examples were tested on a paper trading account. You should not use this package with a live trading account, but if you do, you need a market data subscription for the exchanges with the contracts you're interested in.
 
 Use a paper trading account.
 

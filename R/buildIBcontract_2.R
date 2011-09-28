@@ -447,7 +447,15 @@ buildIBcontract <- function(symbol, tws=NULL,
                             contract$include_expired <- "1"
                             details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
                         }
-                    }                
+                    }   
+                    if (length(details) == 0) {
+                        if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (contract$sectype == 'STK')))
+                        {
+                            if (verbose) cat("Trying to resolve error in contract details. Using sectype='IND'\n")
+                            contract$sectype <- 'IND'
+                            details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
+                        }
+                    }             
                 } else cat('Could not connect to tws.')
             }) #end nested tryCatch  
 	    },finally=twsDisconnect(tws)) #End outer tryCatch 

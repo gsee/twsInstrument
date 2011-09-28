@@ -41,7 +41,7 @@ is.twsInstrument(x)
   \item{tws}{twsconn object. Not required.}
   \item{addIBslot}{Boolean. Should an IB slot be created in the instrument object?)}
   \item{updateInstrument}{Should all the attributes of the instrument be updated with the information retrieved from IB?}
-  \item{output}{what should be return. one of 'nothing','symbol','instrument','contract'}
+  \item{output}{what should be returned. one of 'nothing','symbol','instrument','contract'}
   \item{include_expired}{is the requested contract expired?}
   \item{assign_i}{boolean. Should the instrument be stored in the instrument environment?}
   \item{assign_c}{boolean. If a currency isn't defined, should it be?}
@@ -61,8 +61,18 @@ Using the information given, it will create an instrument
 and a twsContract.  It will then make a call to reqContractDetails to fill in 
 any missing information. (If you give it a string and there is no instrument
 by that name, then: (a) If the string ends in a period, it will treat it as a currency pair 
-using "USD" as the base currency. (b) If the string does not end in a period, it will
-assume it is a stock.) 
+using "USD" as the base currency. (b) if the string can be coerced to numeric, it will
+be used as the conId in a call to \code{\link{getContract}} (which in turn calls 
+\code{\link{reqContractDetails}} to get a twsContract object.  (c) Otherwise, it will
+be passed to \code{\link{instrument.auto}} which will try to create an instrument that
+can be updated.  If the string is something other than the name of a \code{FUT},
+\code{OPT}, or \code{CASH} -- for example, if it is the name of a \code{STK} or \code{IND} --
+it will be assumed that it is a \code{STK}.  If the request for contract details fails, it will
+be tried again as an \code{IND} (Note that if you want an index, but request a stock,
+it is more likely that you will get a stock of a different currency than that the request 
+will fail. Therefore, you should always define your instruments first.  Wrapping the
+symbol with something like \code{synthetic('SPX','USD')} or \code{stock('SPY','USD')} 
+will ensure that you get the \code{sectype} of \code{twsContract} you are after).
 
 if addIBslot is TRUE it will store the contract in the IB slot of the instrument 
 (creating the slot if necessary.)  If updateInstrument is TRUE it will add/replace 
@@ -89,7 +99,7 @@ not add the twsInstrument class to it.
 Instr_From_Contr and Contr_From_Instr are essentially the same functions, but
 with different default outputs.
 
-ouput should be a character string describing what to return. Valid values are c(\sQuote{"nothing}, \sQuote{symbol}, \sQuote{instrument}, \sQuote{contract}
+\code{ouput} should be a character string describing what to return. Valid values are c(\sQuote{"nothing}, \sQuote{symbol}, \sQuote{instrument}, \sQuote{contract}
 }
 \value{
 Usually called for its side-effect. It will return what is defined by the output
@@ -111,11 +121,9 @@ twsInstrument('SPY') #assumes it's a stock
 twsInstrument(twsFUT(symbol='NIY',exch='GLOBEX',expiry='201109',
                      currency='JPY'))
 
-#As a wrapper for contract wrappers
-Contr_From_Instr(option(primary_id='.SPY', currency='USD', 
-    multiplier=100,tick_size=0.01,expiry='201106',callput='call',
-    strike=135,underlying_id='SPY'))
-Instr_From_Contr(twsFUT(symbol='ES',exch='GLOBEX',expiry='201106', currency='USD'))
+#As a wrapper for instrument wrappers
+Contr_From_Instr(synthetic('SPX','USD'))
+Instr_From_Contr(twsFUT(symbol='ES',exch='GLOBEX',expiry='201112', currency='USD'))
 
 buildIBcontract(twsSTK("GOOG"),updateInstrument=TRUE, addIBslot=FALSE, output='nothing')
 
