@@ -315,9 +315,9 @@ buildIBcontract <- function(symbol, tws=NULL,
                 any((instr$type == 'IND'))) {
                     sectype <- 'IND'
             } else { 
-                stop(paste('Cannot determine sectype; \n', symbol , 
-                    'does not appear to be a stock, \noption, future or currency.',
-                    sep=""))
+                stop(paste('Cannot determine sectype; ', symbol , 
+                    ' does not appear to be a stock, ',
+                    'option, future or currency.', sep=""))
             }     
         } else sectype = instr$sectype
         
@@ -455,6 +455,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                         {
                             if (verbose) cat("Trying to resolve error in contract details. Using sectype='IND'\n")
                             contract$sectype <- 'IND'
+                            contract$exch <- ""
                             details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
                         }
                     }             
