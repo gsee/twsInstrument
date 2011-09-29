@@ -10,15 +10,15 @@ reqTBBO is an alias for getBAT.
 }
 
 \usage{
-getBAT(symbol, endDateTime, tws=NULL, barSize='1 min', 
+getBAT(Symbols, endDateTime, tws=NULL, barSize='1 min', 
 duration='5 D', useRTH="1", auto.assign=TRUE, env=.GlobalEnv)
-reqTBBO(symbol, endDateTime, tws=NULL, barSize='1 min', 
+reqTBBO(Symbols, endDateTime, tws=NULL, barSize='1 min', 
 duration='5 D', useRTH="1", auto.assign=TRUE, env=.GlobalEnv)
 }
 
 \arguments{
-  \item{symbol}{can be a twsInstrument, a twsContract, an instrumnet
-or the name of an instrument. }
+  \item{Symbols}{can be a twsInstrument, a twsContract, an instrumnet
+or the name of an instrument. (you can give it a character vector to get multiple Symbols) }
   \item{endDateTime}{ end date/time for request. See details.}
   \item{tws}{a twsConnection object. optional.}
   \item{barSize}{ bar size to retrieve. default='1 min'}

@@ -8,59 +8,63 @@
 #it can be an instrument
 
 getBAT <- reqTBBO <-
-function(symbol, endDateTime, tws=NULL, barSize='1 min', 
+function(Symbols, endDateTime, tws=NULL, barSize='1 min', 
 	duration='5 D', useRTH="1", auto.assign=TRUE, env=.GlobalEnv) {
-	#TODO: use dots. check for tws, symbol, contract, endDateTime, barSize, duration, clientId
-	
-	contract <- Contr_From_Instr(symbol,verbose=FALSE)
-    
-    if (missing(endDateTime)) endDateTime <- Sys.time()
-    if (!is.null(contract$expiry) && contract$expiry != "") {
-        endDate <- min(as.Date(contract$expiry,format="%Y%m%d"), Sys.Date())
-        endDateTime <- as.POSIXct(paste(endDate, "23:59:59"))    
-    }
-    endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
-    
-    if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
-        tws <- try(twsConnect(120))
-    if (inherits(tws,'try-error')) tws <- try(twsConnect(121)) #try another clientId
-    if (inherits(tws,'try-error')) tws <- twsConnect(150) #a last attempt for an available clientId
-    if (isConnected(tws)) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
-    
-    fields <- c("BID","ASK","TRADES")
-    BID <- ASK <- TRADES <- NULL
-    tryCatch(
-    {
-        for (field in fields) {
-            assign(field, reqHistoricalData(tws,contract,endDateTime=endDateTime,
-                        barSize=barSize,duration=duration,useRTH=useRTH, whatToShow=field))
-            if (!is.null(get(field))) {
-                cat("Pausing 10 seconds between requests ...\n")
-                Sys.sleep(10) #to avoid IB pacing violation.
+    #TODO: use dots. check for tws, symbol, contract, endDateTime, barSize, duration, clientId
+    if (length(Symbols) > 1 && !auto.assign) stop('auto.assign must be TRUE if using multiple Symbols')
+    symout <- NULL	
+    for (symbol in Symbols) {
+	    contract <- Contr_From_Instr(symbol,verbose=FALSE)
+        
+        if (missing(endDateTime)) endDateTime <- Sys.time()
+        if (!is.null(contract$expiry) && contract$expiry != "") {
+            endDate <- min(as.Date(contract$expiry,format="%Y%m%d"), Sys.Date())
+            endDateTime <- as.POSIXct(paste(endDate, "23:59:59"))    
+        }
+        endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
+        
+        if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
+            tws <- try(twsConnect(120))
+        if (inherits(tws,'try-error')) tws <- try(twsConnect(121)) #try another clientId
+        if (inherits(tws,'try-error')) tws <- twsConnect(150) #a last attempt for an available clientId
+        if (isConnected(tws)) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
+        
+        fields <- c("BID","ASK","TRADES")
+        BID <- ASK <- TRADES <- NULL
+        tryCatch(
+        {
+            for (field in fields) {
+                assign(field, reqHistoricalData(tws,contract,endDateTime=endDateTime,
+                            barSize=barSize,duration=duration,useRTH=useRTH, whatToShow=field))
+                if (!is.null(get(field))) {
+                    cat("Pausing 10 seconds between requests ...\n")
+                    Sys.sleep(10) #to avoid IB pacing violation.
+                }
             }
-        }
-        cat("Disconnecting ... \n")
-    }, finally=twsDisconnect(tws) )
+            cat("Disconnecting ... \n")
+        }, finally=twsDisconnect(tws) )
 
-    if (!is.null(BID) && !is.null(ASK)) { # && !is.null(TRADES)) {
-	    bat <- merge(Cl(BID),Cl(ASK),all=FALSE)
-        bat <- na.omit(bat)
-        if (!is.null(TRADES)) {        
-            bat <- merge(bat,Cl(TRADES),all=FALSE)
-            bat <- na.locf(bat,na.rm=TRUE)	    
-        }
-        bat$Mid.Price <- (bat[,1] + bat[,2])/2
-        bat <- na.omit(bat)
-        if (!is.null(TRADES)) {
-            bat <- merge(bat, Vo(TRADES))
-        	colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Trade.Price','Mid.Price','Volume'),sep='.')
-        } else colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Mid.Price'),sep='.')
-
-	    if (auto.assign) { 
-		    assign(symbol, bat, envir=env)
-		    return(symbol)
-	    } else { return(bat) }
-    } else NULL
+        if (!is.null(BID) && !is.null(ASK)) { # && !is.null(TRADES)) {
+	        bat <- merge(Cl(BID),Cl(ASK),all=FALSE)
+            bat <- na.omit(bat)
+            if (!is.null(TRADES)) {        
+                bat <- merge(bat,Cl(TRADES),all=FALSE)
+                bat <- na.locf(bat,na.rm=TRUE)	    
+            }
+            bat$Mid.Price <- (bat[,1] + bat[,2])/2
+            bat <- na.omit(bat)
+            if (!is.null(TRADES)) {
+                bat <- merge(bat, Vo(TRADES))
+            	colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Trade.Price','Mid.Price','Volume'),sep='.')
+            } else colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Mid.Price'),sep='.')
+                    
+	        if (auto.assign) { 
+                assign(symbol, bat, envir=env)
+	    	    symout <- c(symout, symbol)
+	        } else { return(bat) }
+        } else NULL
+    }
+    symout
 }
 
 
