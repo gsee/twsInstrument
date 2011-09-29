@@ -8,7 +8,7 @@ get a twsContract object
 get a twsContract object
 }
 \usage{
-getContract(x, silent = TRUE, ...)
+getContract(x, verbose=TRUE, silent=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,11 +16,14 @@ getContract(x, silent = TRUE, ...)
 can be an instrument, twsInstrument, name of an instrument or twsInstrument, or a
 numeric or character \sQuote{conId}
 }
+  \item{verbose}{
+be verbose?
+}
   \item{silent}{
-silence warnings and progress updates?
+silence warnings?
 }
   \item{...}{
-passthrough parameters
+any additional arguments to pass to \code{\link{Contr_From_Instr}}
 }
 }
 \details{

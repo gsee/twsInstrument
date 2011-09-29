@@ -1,11 +1,11 @@
 #TODO: UseMethods -- twsInstrument, numeric/character, instrument
 #TODO: make verbose/silent better
-getContract <- function(x, silent=TRUE, ...) {
+getContract <- function(x, verbose=TRUE, silent=FALSE, ...) {
     #if (is.xts(x)) x <- deparse(substitute(x))
-    instr <- if (is.instrument(x)) {x} else try(getInstrument(x, silent=TRUE, ...))
+    instr <- if (is.instrument(x)) {x} else try(getInstrument(x, silent=TRUE))
     if (is.twsInstrument(instr)) return(instr$IB)
     tmpnum <- try(suppressWarnings(as.numeric(x)), silent=TRUE)
-    if (any(is.na(tmpnum))) return(Contr_From_Instr(x, assign_c=FALSE, ...))
+    if (any(is.na(tmpnum))) return(Contr_From_Instr(x, assign_c=FALSE, verbose=verbose, silent=silent, ...))
     else {
         tryCatch({
             tryCatch(
@@ -17,7 +17,7 @@ getContract <- function(x, silent=TRUE, ...) {
                 if (inherits(tws,'try-error')) tws <- twsConnect(150) #last attempt
             }, finally={
                 if (isConnected(tws)) {                
-                    if (!silent) 
+                    if (verbose) 
                         cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
                     if (tws$clientId == 150) warning("IB Trader Workstation should be restarted.")                    
                     contract <- twsContract()
@@ -26,10 +26,10 @@ getContract <- function(x, silent=TRUE, ...) {
                                                     #but you need it here in case this contract is expired. 
                     #request that IB fill in missing info.
                     details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)[[1]]                
-                } else if (!silent) cat('Could not connect to tws.')
+                } else if (verbose) cat('Could not connect to tws.')
             }) #end nested tryCatch  
         },finally=twsDisconnect(tws)) #End outer tryCatch
-        if (!silent) cat('Contract details request complete. Disconnected')
+        if (verbose) cat('Contract details request complete. Disconnected.\n')
         return(details$contract)
     }
 }

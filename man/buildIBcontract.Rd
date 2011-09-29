@@ -20,19 +20,19 @@ instrument creating slots as needed.
 buildIBcontract(symbol, tws=NULL, 
     	addIBslot=FALSE, updateInstrument=FALSE, 
     	output=c('contract','instrument','symbol','nothing'), 
-    	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE)
+    	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE, silent=FALSE)
 twsInstrument(symbol, tws=NULL, 
         addIBslot=TRUE, updateInstrument=TRUE, 
         output=c('symbol','nothing','instrument','contract'), 
-        include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE)
+        include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE, silent=FALSE)
 Instr_From_Contr(contract, tws=NULL, 
     	addIBslot=FALSE, updateInstrument=TRUE, 
     	output=c('instrument','symbol','nothing','contract'), 
-    	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE) 
+    	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE, silent=FALSE) 
 Contr_From_Instr(instrument, tws=NULL, 
     	addIBslot=FALSE, updateInstrument=FALSE, 
     	output=c('contract','symbol','nothing','instrument'), 
-    	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE) 
+    	include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE, silent=FALSE) 
 
 is.twsInstrument(x)
 }
@@ -46,6 +46,7 @@ is.twsInstrument(x)
   \item{assign_i}{boolean. Should the instrument be stored in the instrument environment?}
   \item{assign_c}{boolean. If a currency isn't defined, should it be?}
   \item{verbose}{be verbose?}
+  \item{silent}{silence warnings?}
 
   \item{instrument}{for wrapper, alias for symbol}
   \item{contract}{for wrapper, alias for symbol}

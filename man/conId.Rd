@@ -11,13 +11,14 @@ methods to get conId
 currently defined methods for default, character, twsInstrument, and twsContract
 }
 \usage{
-conId(x)
+conId(x, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
 The name of a twsInstrument, or an object of type twsInstrument, or twsContract.
 }
+  \item{...}{other arguments}
 }
 \value{
 character conId

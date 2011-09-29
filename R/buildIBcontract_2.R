@@ -29,47 +29,47 @@ is.twsInstrument <- function(x) {
 Contr_From_Instr <- function(instrument, tws=NULL, 
 		addIBslot=FALSE, updateInstrument=FALSE, 
 		output=c('contract','symbol','nothing','instrument'), 
-		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE) 
+		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE, silent=FALSE) 
 {
     if (is.numeric(output))
         output <- c('contract','symbol','nothing','instrument')[output]
     buildIBcontract(symbol=instrument, tws=tws, addIBslot=addIBslot,
         updateInstrument=updateInstrument, output=output[1], 
         include_expired=include_expired, 
-        assign_i=assign_i, assign_c=assign_c, verbose=verbose)
+        assign_i=assign_i, assign_c=assign_c, verbose=verbose, silent=silent)
 }
 
 Instr_From_Contr<- function(contract, tws=NULL, 
 		addIBslot=FALSE, updateInstrument=TRUE, 
 		output=c('instrument','symbol','nothing','contract'), 
-		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE) 
+		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE, silent=FALSE) 
 {
     if (is.numeric(output)) 
         output=c('instrument','symbol','nothing','contract')[output]
     buildIBcontract(symbol=contract, tws=tws, addIBslot=addIBslot,
         updateInstrument=updateInstrument, output=output[1],
         include_expired=include_expired, 
-        assign_i=assign_i, assign_c=assign_c, verbose=verbose)
+        assign_i=assign_i, assign_c=assign_c, verbose=verbose, silent=silent)
 }
 
 twsInstrument <- function(symbol, tws=NULL, 
         addIBslot=TRUE, updateInstrument=TRUE, 
         output=c('symbol','nothing','instrument','contract'), 
-        include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE)
+        include_expired="0", assign_i=TRUE, assign_c=TRUE, verbose=TRUE, silent=FALSE)
 {
     if (is.numeric(output)) 
         output <- c('nothing','symbol','instrument','contract')[output]
     buildIBcontract(symbol=symbol, tws=tws, addIBslot=addIBslot,
             updateInstrument=updateInstrument, output=output, 
             include_expired=include_expired, 
-            assign_i=assign_i, assign_c=assign_c, verbose=verbose)
+            assign_i=assign_i, assign_c=assign_c, verbose=verbose, silent=silent)
 } 
 
 
 buildIBcontract <- function(symbol, tws=NULL, 
 		addIBslot=FALSE, updateInstrument=FALSE, 
 		output=c('contract','instrument','symbol','nothing'), 
-		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE)
+		include_expired="0", assign_i=FALSE, assign_c=TRUE, verbose=TRUE, silent=FALSE)
 {
     #TODO: Allow for vector of symbols, instruments, or contracts
     if (is.xts(symbol)) stop('symbol can be the name of an xts object, but not the object itself.')    
@@ -90,7 +90,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		if (inherits(tmpccy, 'try-error') || !is.instrument(tmpccy) ) {
             if (assign_c)	{	    
                 currency(contract$currency)
-		        warning(paste("Creating currency ", contract$currency))   
+		        if (!silent) warning(paste("Creating currency ", contract$currency))   
             } else stop (paste(contract$currency, 'cannot be found, and assign_c=FALSE'))
 		}        
 	    #primary_id <- symbol
@@ -266,7 +266,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     instr$type <- 'option_series' #an option object would parse out to 'root', not 'option'
                 } else if (any(pid$type == 'root')) {
                     instr$type <- 'STK'
-                    warning(paste(instr$primary_id, "is of an ambiguous format.\n",
+                    if (!silent) warning(paste(instr$primary_id, "is of an ambiguous format. ",
                                 "Trying with type = \"stock\""))
                     instr$multiplier <- 1
                 }
@@ -325,12 +325,12 @@ buildIBcontract <- function(symbol, tws=NULL,
             conId <- 0        
             pid <- parse_id(primary_id)
             if ((any(instr$type == "future_series") || any(instr$type == "option_series") ) && is.null(instr$expires) && is.null(instr$expiry)) {
-                if (verbose) warning("Expiry not defined for future or option... Inferring from id.") 
+                if (!silent) warning("Expiry not defined for future or option... Inferring from id.") 
                 instr$expires <- format(as.Date(paste(pid$month,pid$year,15),format='%b%Y%d'),format='%Y%m')
             }
             if (any(instr$type == "option_series") ) {
 				if (is.null(instr$strike)) {
-					if (verbose) warning("strike is not defined for option... Inferring from id.")
+					if (!silent) warning("strike is not defined for option... Inferring from id.")
                     instr$strike <- pid$strike
                 } 				
                 if (!is.null(instr$callput)) {
@@ -339,7 +339,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 					right <- switch(instr$right, call=,c=,C="C",put=,p=,P="P") #instr$right
 				} else {
                     right <- pid$right
-					if (verbose) warning("right of option is neither call nor put... Inferring from id.")
+					if (!silent) warning("right of option is neither call nor put... Inferring from id.")
 				    right <- instr$right
 				}
 			}        
@@ -453,7 +453,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     if (length(details) == 0) {
                         if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (contract$sectype == 'STK')))
                         {
-                            if (verbose) cat("Trying to resolve error in contract details. Using sectype='IND'\n")
+                            if (!silent) warning("Trying to resolve error in contract details. Using sectype='IND'\n")
                             contract$sectype <- 'IND'
                             contract$exch <- ""
                             details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
@@ -469,14 +469,16 @@ buildIBcontract <- function(symbol, tws=NULL,
             addIBslot <- FALSE                        
             stop(paste('Could not create valid twsContract.\n', 
                 contract$symbol, ' may not be a valid ', contract$sectype, 
-                '. Disconnected.\n', sep=""))
+                '.\nDisconnected.\n', sep=""))
         } else { 
-            if (verbose)            
-                cat('Contract details request complete. Disconnected.\n')
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
             uc$include_expired <- contract$include_expired #FIXME: IBrokers:::reqContractDetails overwrites include_expired	
             if (uc$sectype != 'FUT' && uc$sectype != 'OPT') uc$include_expired <- ""    
+            if (verbose) {
+                cat(paste('Request complete: ',
+                        paste(uc$symbol, uc$sectype, uc$currency), '.\nDisconnected.\n', sep=""))
+            }
         }
     } else {
 		warning(paste(primary_id, 'is not a tradeable currency pair.'))
@@ -495,7 +497,7 @@ buildIBcontract <- function(symbol, tws=NULL,
     #and, getInstrument doesn't check length of pattern before grep'ing    
         if (!is.null(uc) && !is.null(uc$currency)) {
             currency(uc$currency)
-            warning(paste("Creating currency ", uc$currency))   
+            if(!silent) warning(paste("Creating currency ", uc$currency))   
         }
     }
 
