@@ -77,7 +77,8 @@ buildIBcontract <- function(symbol, tws=NULL,
     primary_id <- NULL
     right <- NULL    
     contract <- NULL
-    instr <- NULL        
+    instr <- NULL    
+    ambiguous <- FALSE #Is it unclear what type of instrument/contract we're making
     if (is.twsContract(symbol)){ #then make an instr
         #also create instrument (but it will only be assigned if updateInstrument==TRUE) &| assign_i==TRUE
         #need at least primary_id, currency, multiplier, tick_size, identifiers, type
@@ -245,9 +246,12 @@ buildIBcontract <- function(symbol, tws=NULL,
         } else { 
             #warning(paste("Unable to find or infer instrument, ",
             #        symbol, ".\n  Trying with type = \"stock\"", sep=""))
+            ccys <- ls_currencies()
             instr.name <- instrument.auto(primary_id=primary_id, silent=TRUE)
             instr <- getInstrument(instr.name) #workaround because instrument.auto calls wrappers that don't allow assign_i=FALSE
             rm_instruments(instr.name)
+            ccys <- ls_currencies()[!ls_currencies() %in% ccys]
+            if (!identical(ccys, character(0))) rm_currencies(ccys)
             instr$currency <- "" # since we don't know it, we'll have to let IB guess for us (IB may be wrong!)
         } 
     }
@@ -265,9 +269,10 @@ buildIBcontract <- function(symbol, tws=NULL,
                 } else if (any(pid$type == 'option')) {
                     instr$type <- 'option_series' #an option object would parse out to 'root', not 'option'
                 } else if (any(pid$type == 'root')) {
-                    instr$type <- 'STK'
-                    if (!silent) warning(paste(instr$primary_id, "is of an ambiguous format. ",
-                                "Trying with type = \"stock\""))
+                    instr$type <- 'stock'
+                    ambiguous <- TRUE
+                    #if (!silent) warning(paste(instr$primary_id, "is of an ambiguous format. ",
+                    #            "Trying with type = \"stock\""))
                     instr$multiplier <- 1
                 }
             } else pid <- NULL
@@ -407,8 +412,7 @@ buildIBcontract <- function(symbol, tws=NULL,
         if (is.null(right)) right <- ""
 
 		#local <- paste(symbol, TODO				
-		
-        #create/get initial contract
+		#create/get initial contract
         #FIXME: Should exch="" here? or instr$exchange? or 'SMART'?        
         contract <- twsContract(conId=conId, symbol=symbol, exch=exchange,primary=primary,
                         sectype=sectype, expiry=IBexpiry, strike=strike, currency=currency,
@@ -453,12 +457,23 @@ buildIBcontract <- function(symbol, tws=NULL,
                     if (length(details) == 0) {
                         if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (contract$sectype == 'STK')))
                         {
-                            if (!silent) warning("Trying to resolve error in contract details. Using sectype='IND'\n")
+                            if (verbose) cat("Trying to resolve error in contract details. Using sectype='IND'\n")
                             contract$sectype <- 'IND'
                             contract$exch <- ""
                             details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
                         }
-                    }             
+                    }
+                    if (length(details) > 0 && !is.instrument(getInstrument(details[[1]]$contract$currency,type='currency',silent=TRUE))) {
+                        if (verbose) cat("Checking to see if other 'type's have a pre-defined currency.\n")                
+                        tmpcontract <- contract
+                        tmpcontract$sectype <- switch(tmpcontract$sectype, STK='IND', 'STK')
+                        tmpcontract$exch <- switch(tmpcontract$sectype, IND="", STK=,OPT="SMART", CASH='IDEALPRO')
+                        tmpdetails <-  try(suppressWarnings(reqContractDetails(tws,tmpcontract)), silent=TRUE)
+                        if (length(tmpdetails) > 0 && is.instrument(getInstrument(tmpdetails[[1]]$contract$currency,type='currency',silent=TRUE))) {
+                            details <- tmpdetails
+                            instr$type <- switch(details[[1]]$contract$sectype, STK='stock',IND='synthetic',OPT='option',FUT='future',CASH='exchange_rate')
+                        }
+                    }               
                 } else cat('Could not connect to tws.')
             }) #end nested tryCatch  
 	    },finally=twsDisconnect(tws)) #End outer tryCatch 
@@ -486,7 +501,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 		uc <- contract
 		details <- NULL	
 	}
-
+    if(ambiguous && !silent) warning(paste(instr$primary_id, "is of an ambiguous format. Make sure the type is what you wanted.")) 
     #make sure the currency is defined for this product
     tmpccy <- try(getInstrument(uc$currency, silent=TRUE),silent=TRUE)
     if ( (inherits(tmpccy, 'try-error') || !inherits(tmpccy,'currency') )
@@ -500,7 +515,6 @@ buildIBcontract <- function(symbol, tws=NULL,
             if(!silent) warning(paste("Creating currency ", uc$currency))   
         }
     }
-
     #If the instrument doesn't exist, create it, unless assign_i==FALSE    
     #tmpinstr <- try(getInstrument(primary_id),silent=TRUE)
     if (is.null(instr) || inherits(instr, 'try-error') || !is.instrument(instr)) {    

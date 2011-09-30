@@ -25,11 +25,16 @@ getContract <- function(x, verbose=TRUE, silent=FALSE, ...) {
                     contract$include_expired <- "1" #reqContractDetails will overwrite this (due to a bug it has), 
                                                     #but you need it here in case this contract is expired. 
                     #request that IB fill in missing info.
-                    details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)[[1]]                
+                    details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
+                    if (!inherits(details,'try-error') && length(details)) {
+                        details <- details[[1]]        
+                    } else details <- NULL
                 } else if (verbose) cat('Could not connect to tws.')
             }) #end nested tryCatch  
         },finally=twsDisconnect(tws)) #End outer tryCatch
-        if (verbose) cat('Contract details request complete. Disconnected.\n')
+        if (is.null(details)) {
+            stop("Could not find twsContract with conId ", x)
+        } else if (verbose) cat('Contract details request complete. Disconnected.\n')
         return(details$contract)
     }
 }
