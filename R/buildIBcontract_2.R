@@ -302,7 +302,8 @@ buildIBcontract <- function(symbol, tws=NULL,
                     } else symbol <- instr$root_id
                 #TODO: treat option and option_series differently
             } else if (inherits(instr,'future_series') || 
-                any(instr$type == "future_series")) {
+                any(instr$type == "future_series") ||
+                any(parse_suffix(instr$suffix_id)$type == "SSF")) {
                     sectype <- "FUT" 
                     if(is.null(instr$root_id)) instr$root_id <- parse_id(primary_id)$root
                     if(is.null(instr$suffix_id)) instr$suffix_id <- parse_id(primary_id)$suffix        
@@ -502,6 +503,9 @@ buildIBcontract <- function(symbol, tws=NULL,
 		details <- NULL	
 	}
     if(ambiguous && !silent) warning(paste(instr$primary_id, "is of an ambiguous format. Make sure the type is what you wanted.")) 
+    if (any(parse_id(gsub(" ","",uc$local))$type == "SSF") && !any(parse_id(primary_id)$type == "SSF") && !silent) {
+        warning('Returning SSF. If this is not what you want make sure your expiration month is valid.')
+    }  
     #make sure the currency is defined for this product
     tmpccy <- try(getInstrument(uc$currency, silent=TRUE),silent=TRUE)
     if ( (inherits(tmpccy, 'try-error') || !inherits(tmpccy,'currency') )
