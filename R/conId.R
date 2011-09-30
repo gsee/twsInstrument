@@ -17,6 +17,6 @@ conId.twsInstrument <- function(x, ...)
 
 conId.default <- conId.character <- function(x, ...)
 {
-    return(conId(getContract(x, ...)))
+    return(sapply(x, function(xx) conId(getContract(xx, ...))))
 }
 
