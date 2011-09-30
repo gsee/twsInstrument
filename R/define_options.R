@@ -1,20 +1,27 @@
+#' make primary_ids for options...
+#' 
 #' make primary_ids for options
 #' 
-#' create a primary_id for options. The only difference between the ids this generates, and
-#' those of the Option Symbology Initiative (OSI) is that these have an underscore separating 
-#' the primary_id from the suffix_id. The format for a 125 strike call on SPY expiring in 
-#' December of 2011 would be \sQuote{SPY_111217C120}.  The first 6 digits of the suffix correspond 
-#' to the expiration YYMMDD where DD is calculated as the Saturday following the 3rd Friday of the month.
-#'
+#' create a primary_id for options. The only difference between the ids this
+#' generates, and those of the Option Symbology Initiative (OSI) is that these
+#' have an underscore separating the primary_id from the suffix_id. The format
+#' for a 125 strike call on SPY expiring in December of 2011 would be
+#' \sQuote{SPY_111217C120}.  The first 6 digits of the suffix correspond to the
+#' expiration YYMMDD where DD is calculated as the Saturday following the 3rd
+#' Friday of the month.
+#' 
 #' @param underlying_id chr vector of names of underlyings.
 #' @param strike vector of strike prices
-#' @param month numeric vector of months (partial matches to \code{month.name} will also work)
-#' @param year numeric vector of years (can be 1 digit, 2 digit, or 4 digit years)
-#' @param right \sQuote{C} or \sQuote{P} (\sQuote{call} and \sQuote{put} will also work)
-#' @return chr vector of primary_ids (or suffix_ids if underlying_id is missing, NULL, or \dQuote{}) for option_series
-#' @author Garrett See
+#' @param month numeric vector of months (partial matches to \code{month.name}
+#' will also work)
+#' @param year numeric vector of years (can be 1 digit, 2 digit, or 4 digit
+#' years)
+#' @param right \sQuote{C} or \sQuote{P} (\sQuote{call} and \sQuote{put} will
+#' also work)
+#' @return chr vector of primary_ids (or suffix_ids if underlying_id is
+#' missing, NULL, or \dQuote{}) for option_series
 #' @note does not support weekly or EOM options
-#' @TODO support weekly and EOM options
+#' @author Garrett See
 #' @seealso future_id, build_series_symbols, build_spread_symbols
 #' @examples
 #' option_id("SPY",125,'Sep',2011,'C')
@@ -55,10 +62,14 @@ option_id <- function(underlying_id,
 }
 
 
+
+
+#' define option_series with IB...
+#' 
 #' define option_series with IB
-#'
+#' 
 #' define option_series instruments using IBrokers
-#'
+#' 
 #' a wrapper for twsInstrument to define multiple options contracts.
 #' 
 #' @param underlying_id vector of underlying_ids
@@ -67,12 +78,14 @@ option_id <- function(underlying_id,
 #' @param right \code{"C"}, \code{"P"}, or \code{c("C","P")}
 #' @param currency name of currency
 #' @param multiplier contract multiplier (usually 100 for equity options)
-#' @param include_expired \dQuote{0} if you do not want to define expired contracts
+#' @param include_expired \dQuote{0} if you do not want to define expired
+#' contracts
 #' @param \dots other arguments to pass through to \code{\link{twsInstrument}}
 #' @return called for side-effect
+#' @note the date in the primary_id will correspond to Expiration Saturday,
+#' however, the Date in the $expires slot (and in $IB$expiry) will correspond
+#' to the Friday prior, which is the last day trading occurs.
 #' @author Garrett See
-#' @note the date in the primary_id will correspond to Expiration Saturday, however, the Date in the 
-#' $expires slot (and in $IB$expiry) will correspond to the Friday prior, which is the last day trading occurs.
 #' @seealso \code{\link{define_options}}, \code{\link{option_series.yahoo}}
 #' @examples
 #' \dontrun{
@@ -119,35 +132,49 @@ function(underlying_id,
     symout
 }
 
+
+
+#' create twsInstruments for options on a given underlying...
+#' 
 #' create twsInstruments for options on a given underlying
-#'
+#' 
 #' define option_series instruments.
-#'
-#' wrapper to call either \code{\link{define_options.IB}} or \code{\link{define_options.yahoo}}
+#' 
+#' wrapper to call either \code{\link{define_options.IB}} or
+#' \code{\link{define_options.yahoo}}
+#' 
+#' @param \dots arguments to pass to other methods
+#' @param src where to get option_series metadata; currently only \dQuote{IB}
+#' and \dQuote{yahoo} are implemented
 #' @return called for side-effect
 #' @author Garrett See
 #' @seealso \code{\link{define_options.IB}}, \code{\link{define_options.yahoo}}
-#' option_series.yahoo,
-#' option, option_series, twsInstrument
-#' @param \dots arguments to pass to other methods
-#' @param src where to get option_series metadata; currently only \dQuote{IB} and \dQuote{yahoo} are implemented
+#' option_series.yahoo, option, option_series, twsInstrument
 #' @examples
 #' \dontrun{
 #' define_options("SPY",strike=125, src='IB')
 #' define_options("SPY",src='yahoo')
 #' }
+#' @export
 define_options <- function(..., src='IB') { 
     do.call(paste('define_options',src,sep="."), list(...))
 }
 
+
+
+#' define option_series instruments using yahoo...
+#' 
 #' define option_series instruments using yahoo
+#' 
+#' 
 #' @param symbol chr name of underlying instrument
 #' @param currency chr name of currency
 #' @param multiplier contract multiplier (usually 100 for equity options)
 #' @param tick_size minimum price change
 #' @return called for side-effect
 #' @author Garrett See
-#' @seealso option_series.yahoo, \code{\link{define_options}}, \code{\link{define_options.IB}}
+#' @seealso option_series.yahoo, \code{\link{define_options}},
+#' \code{\link{define_options.IB}}
 #' @examples
 #' \dontrun{
 #' define_options("SPY",src='yahoo')

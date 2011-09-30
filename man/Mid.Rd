@@ -1,38 +1,33 @@
-\name{Mid}
-\alias{Mid}
+\name{has.Mid}
 \alias{has.Mid}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Return Mid column / check to see if data contains Mid column
-}
-\description{
-\code{Mid} returns the Mid column of an xts object
-\code{has.Mid} checks to see if an xts object has a Mid column
-}
+\alias{Mid}
+\title{Return Mid column / check to see if data contains Mid column}
 \usage{
-Mid(x)
+  has.Mid(x, which = FALSE)
+
+  Mid(x)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-xts object
-}
+  \item{x}{xts object}
+
+  \item{which}{display position of match}
 }
 \value{
-\code{Mid} returns a univariate xts object
-\code{has.Mid} returns logical (boolean)
+  \code{Mid} returns a univariate xts object \code{has.Mid}
+  returns logical (boolean)
 }
-\author{
-gsee
+\description{
+  \code{Mid} returns the Mid column of an xts object
+  \code{has.Mid} checks to see if an xts object has a Mid
+  column
 }
 \note{
-These should be exported from quantmod.
+  These should be exported from quantmod.
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
+\author{
+  gsee
+}
 \seealso{
-Op, Hi, Lo, Cl, Bid, Ask,
-has.Op, has.Cl
+  Op, Hi, Lo, Cl, Bid, Ask, has.Op, has.Cl
 }
 

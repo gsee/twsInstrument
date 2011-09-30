@@ -1,5 +1,33 @@
 #TODO: allow for more date formats. 
 
+
+
+#' list or remove instruments by expiration date
+#' 
+#' show names of or remove instruments that expire on a given date
+#' 
+#' 
+#' @aliases ls_by_expiry rm_by_expiry
+#' @param expiry expiration date that should correspond to the sQuoteexpires
+#' slot of an instrument
+#' @param pattern an optional regular expression.  Only names matching
+#' sQuotepattern are returned.
+#' @param match exact match of pattern?
+#' @param x what to remove
+#' @return \code{ls_by_expiry} gives a vector of names of instruments that
+#' expire on the given expiry. \code{rm_by_expiry} is called for its
+#' side-effect.
+#' @author Garrett See
+#' @seealso ls_instruments, ls_options, ls_calls, ls_puts, ls_futures,
+#' ls_derivatives
+#' @examples
+#' 
+#' \dontrun{
+#' ls_by_expiry('20110917')
+#' ls_by_expiry('20110917',ls_options())
+#' }
+#' @export
+#' @rdname ls_by_expiry
 ls_by_expiry <- function(expiry, pattern=NULL, match=TRUE) {
     if (length(pattern) > 1 && !match) {
         warning("Using match because length of pattern > 1.")
@@ -31,7 +59,8 @@ ls_by_expiry <- function(expiry, pattern=NULL, match=TRUE) {
     tmp_symbols
 }
 
-#remove x by expiry
+#' @export
+#' @rdname ls_by_expiry
 rm_by_expiry <- function(x,expiry) {
     if (missing(x)) {
         x <- ls_by_expiry(expiry)

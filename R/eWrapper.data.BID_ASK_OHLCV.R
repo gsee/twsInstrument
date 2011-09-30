@@ -1,11 +1,15 @@
+#' eWrapper for getting BID, ASK, LAST and OHLCV values from IB...
+#' 
 #' eWrapper for getting BID, ASK, LAST and OHLCV values from IB
-#'
-#' This is \code{eWrapper.data} modified to include
-#' the Open, High, Low, and Close columns.
-#' @author Samo Pahor
+#' 
+#' This is \code{eWrapper.data} modified to include the Open, High, Low, and
+#' Close columns.
+#' 
 #' @param n number of contracts being watched
 #' @return list of functions
+#' @author Samo Pahor
 #' @seealso \code{eWrapper.data}
+#' @export
 eWrapper.data.BID_ASK_OHLCV <- function(n) {
 	# internally updated data
 	eW <- eWrapper(NULL)  # use basic template

@@ -1,3 +1,24 @@
+#' show names of underlyings
+#' 
+#' shows names that are stored in the \code{underlying_id} slot of derivative
+#' instruments
+#' 
+#' first calls \code{ls_derivatives}, then looks for unique
+#' \code{underlying_id}s. If no derivatives have been defined, nothing will be
+#' returned.
+#' 
+#' @param pattern an optional regular expression.  Only names matching
+#' \sQuote{pattern} are returned.
+#' @param match require exact match?
+#' @return chr vector of names of unique \code{underlying_id}s
+#' @author Garrett See
+#' @seealso ls_instruments_by, ls_derivatives, ls_options, ls_futures
+#' @examples
+#' 
+#' \dontrun{
+#' ls_underlyings()
+#' }
+#' @export
 ls_underlyings <- function(pattern=NULL, match=TRUE) {
     symbols <- ls_derivatives(pattern, match)
     tmp_symbols <- NULL

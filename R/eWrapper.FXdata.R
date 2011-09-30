@@ -1,11 +1,14 @@
+#' eWrapper for exchange_rate instruments...
+#' 
 #' eWrapper for exchange_rate instruments
-#'
-#' This is \code{eWrapper.data} modified to exclude
-#' the Last, LastSize, and Volume columns because
-#' IBrokers does not disseminate FX trade data.
+#' 
+#' This is \code{eWrapper.data} modified to exclude the Last, LastSize, and
+#' Volume columns because IBrokers does not disseminate FX trade data.
+#' 
 #' @param n number of contracts being watched
 #' @return list of functions
 #' @seealso \code{eWrapper.data}
+#' @export
 eWrapper.FXdata <- function (n) 
 {
     eW <- eWrapper(NULL)

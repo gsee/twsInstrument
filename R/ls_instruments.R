@@ -1,4 +1,107 @@
-
+#' display the names of or delete instruments, stocks, options, futures,
+#' currencies, bonds, funds, spreads, guaranteed_spreads, synthetics,
+#' derivatives, or non-derivatives.
+#' 
+#' ls functions return the names of all the instruments of the class implied by
+#' the function name. rm functions remove the instruments of the class implied
+#' by the function name
+#' 
+#' rm_instruments and rm_non_derivatives will not delete currencies unless the
+#' keep.currencies argument is FALSE.
+#' 
+#' For the rm functions, x can be a vector of instrument names, or nothing.  If
+#' \code{x} is missing, all instruments of the relevant type will be removed.
+#' (if \code{x} is not missing, there is currently no check to make sure x
+#' refers to an instrument of the appropriate type.)
+#' 
+#' It can be useful to nest these functions to get things like futures
+#' denominated in USD.
+#' 
+#' ls_yahoo and ls_IB look for instruments with \sQuote{yahoo} or \sQuote{IB}
+#' in the defined.by slot, respectively.  Equivalently,
+#' \code{ls_defined.by("yahoo")} or \code{ls_defined.by("IB")} could be used.
+#' Note that being \code{defined.by} IB does does not necessarily mean that the
+#' instrument is a twsInstrument (i.e. the details may have been updated by
+#' IB, without an IB slot being added.)
+#' 
+#' @aliases ls_instruments ls_stocks ls_options ls_option_series ls_futures
+#' ls_future_series ls_currencies ls_non_currencies ls_exchange_rates ls_FX
+#' ls_bonds ls_funds ls_spreads ls_guaranteed_spreads ls_synthetics
+#' ls_derivatives ls_non_derivatives ls_calls ls_puts rm_instruments rm_stocks
+#' rm_options rm_option_series rm_futures rm_future_series rm_currencies
+#' rm_exchange_rates rm_FX rm_bonds rm_funds rm_spreads rm_synthetics
+#' rm_derivatives rm_non_derivatives
+#' @param pattern an optional regular expression.  Only names matching
+#' \sQuote{pattern} are returned.
+#' @param match return only exact matches?
+#' @param verbose be verbose?
+#' @param include.series should future_series or option_series instruments be
+#' included.
+#' @param x what to remove. if not supplied all instruments of relevent class
+#' will be removed.  For \code{ls_defined.by} x is the string describing how the
+#' instrument was defined.
+#' @param keep.currencies If TRUE, currencies will not be deleted.
+#' @param includeFX should exchange_rates be included in ls_non_currencies
+#' results
+#' @return ls functions return vector of character strings corresponding to
+#' instruments of requested type rm functions are called for side-effect
+#' @note These ls_ functions may be updated to be more like
+#' ls.  i.e use "name" and "pattern" args.
+#' @author Garrett See
+#' @seealso ls_instruments_by, ls_by_currency, ls_by_expiry, ls, rm,
+#' instrument, stock, future, option, currency, FinancialInstrument::sort_ids
+#' @examples
+#' 
+#' \dontrun{
+#' #rm_instruments(keep.currencies=FALSE) #remove everything from .instrument
+#' 
+#' # First, create some instruments
+#' currency('USD')
+#' currency('EUR')
+#' currency('JPY')
+#' #stocks
+#' stock("SEE","USD")
+#' stock("SE","USD")
+#' stock("S","USD")
+#' stock("SPY",'USD')
+#' #derivatives
+#' option('.SPY','USD',multiplier=100,expiry='20110618', strike=130, callput='put', underlying_id='SPY')
+#' future('ES', 'USD', multiplier=50, expiry='20110916', underlying_id='ES')
+#' option('.ES','USD',multiplier=1, expiry='201106',strike=1350, right='C', underlying_id='ES')
+#' 
+#' # Now, the examples
+#' ls_instruments() #all instruments
+#' ls_instruments("SE") #only the one stock
+#' ls_instruments("S", match=FALSE) #anything with "S" in name
+#' 
+#' ls_currencies()
+#' ls_stocks() 
+#' ls_options() 
+#' ls_futures() 
+#' ls_derivatives()
+#' ls_puts()
+#' ls_non_derivatives()
+#' #ls_by_expiry('20110618',ls_puts) #put options that expire on Jun 18th, 2011
+#' #ls_puts(ls_by_expiry('20110618')) #same thing
+#' 
+#' rm_options('.SPY')
+#' rm_futures()
+#' ls_instruments()
+#' #rm_instruments('EUR') #Incorrect
+#' rm_instruments('EUR', keep.currencies=FALSE) #remove the currency
+#' rm_currencies('JPY') #or remove currency like this
+#' ls_currencies()
+#' ls_instruments()
+#' 
+#' rm_instruments() #remove all but currencies
+#' rm_currencies()
+#' 
+#' #option_series.yahoo('DIA')
+#' ls_instruments_by('underlying_id','DIA') #underlying_id must exactly match 'DIA'
+#' ls_derivatives('DIA',match=FALSE) #primary_ids that contain 'DIA'
+#' }
+#' @export
+#' @rdname ls_instruments
 ls_instruments <- function(pattern=NULL, match=TRUE, verbose=TRUE) {
     if (length(pattern) > 1 && !match) {
         if (verbose)
@@ -27,7 +130,8 @@ ls_instruments <- function(pattern=NULL, match=TRUE, verbose=TRUE) {
     tmp_symbols
 }
 
-
+#' @export
+#' @rdname ls_instruments
 ls_stocks <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -40,6 +144,8 @@ ls_stocks <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_options <- function(pattern=NULL,match=TRUE, include.series=TRUE) {
     symbols <- ls_instruments(pattern,match)    
     tmp_symbols <- NULL            
@@ -53,6 +159,8 @@ ls_options <- function(pattern=NULL,match=TRUE, include.series=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_option_series <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)    
     tmp_symbols <- NULL            
@@ -65,6 +173,8 @@ ls_option_series <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_futures <- function(pattern=NULL,match=TRUE, include.series=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -78,6 +188,8 @@ ls_futures <- function(pattern=NULL,match=TRUE, include.series=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_future_series <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -90,6 +202,8 @@ ls_future_series <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_currencies <- function(pattern=NULL, match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -101,6 +215,9 @@ ls_currencies <- function(pattern=NULL, match=TRUE) {
     }
     tmp_symbols
 }
+
+#' @export
+#' @rdname ls_instruments
 ls_non_currencies <- function(pattern=NULL, includeFX=TRUE, match=TRUE) {
     symbols <- ls_instruments(pattern, match)
     tmp_symbols <- NULL            
@@ -114,6 +231,8 @@ ls_non_currencies <- function(pattern=NULL, includeFX=TRUE, match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_exchange_rates <- ls_FX <- function(pattern=NULL,match=TRUE) {
     #This could use ls_currencies instead of ls_instruments, but currency class may be
     #subject to change
@@ -128,6 +247,8 @@ ls_exchange_rates <- ls_FX <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_bonds <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -140,6 +261,8 @@ ls_bonds <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_funds <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -152,6 +275,8 @@ ls_funds <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_spreads <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -164,6 +289,8 @@ ls_spreads <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_guaranteed_spreads <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     tmp_symbols <- NULL            
@@ -176,6 +303,8 @@ ls_guaranteed_spreads <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_synthetics <- function(pattern=NULL, match=TRUE) {
     symbols <- ls_instruments(pattern,match)    
     tmp_symbols <- NULL            
@@ -233,6 +362,8 @@ ls_synthetics <- function(pattern=NULL, match=TRUE) {
 #	tmp_symbols
 #}
 
+#' @export
+#' @rdname ls_instruments
 ls_derivatives <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     #there is currently no derivative class    
@@ -249,6 +380,8 @@ ls_derivatives <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_non_derivatives <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_instruments(pattern,match)
     #there is currently no derivative class
@@ -266,6 +399,8 @@ ls_non_derivatives <- function(pattern=NULL,match=TRUE) {
 }
 
 
+#' @export
+#' @rdname ls_instruments
 ls_calls <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_options(pattern=pattern,match=match)
 	tmp_symbols <- NULL
@@ -286,6 +421,8 @@ ls_calls <- function(pattern=NULL,match=TRUE) {
     tmp_symbols
 }
 
+#' @export
+#' @rdname ls_instruments
 ls_puts <- function(pattern=NULL,match=TRUE) {
     symbols <- ls_options(pattern=pattern,match=match)
 	tmp_symbols <- NULL
@@ -309,6 +446,8 @@ ls_puts <- function(pattern=NULL,match=TRUE) {
 
 #TODO: add error checking: check to see if .instrument exists 
 
+#' @export
+#' @rdname ls_instruments
 rm_instruments <- function(x, keep.currencies=TRUE) {
     if (missing(x)) {
        x <- ls_instruments()       
@@ -323,6 +462,8 @@ rm_instruments <- function(x, keep.currencies=TRUE) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_stocks <- function(x) {
     if (missing(x)) {
         x <- ls_stocks()
@@ -330,6 +471,8 @@ rm_stocks <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_options <- function(x) {
     if (missing(x)) {
         x <- ls_options()
@@ -337,6 +480,8 @@ rm_options <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_option_series <- function(x) {
     if (missing(x)) {
         x <- ls_option_series()
@@ -344,6 +489,8 @@ rm_option_series <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_futures <- function(x) {
     if (missing(x)) {
         x <- ls_futures()
@@ -351,6 +498,8 @@ rm_futures <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_future_series <- function(x) {
     if (missing(x)) {
         x <- ls_future_series()
@@ -358,6 +507,8 @@ rm_future_series <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_currencies <- function(x) {
     if (missing(x)) {
         x <- ls_currencies()
@@ -365,6 +516,8 @@ rm_currencies <- function(x) {
     rm(list=x,pos=.instrument)
 }   
 
+#' @export
+#' @rdname ls_instruments
 rm_exchange_rates <- rm_FX <- function(x) {
     if (missing(x)) {
         x <- ls_currencies()
@@ -372,6 +525,8 @@ rm_exchange_rates <- rm_FX <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_bonds <- function(x) {
     if (missing(x)) {
         x <- ls_bonds()
@@ -379,6 +534,8 @@ rm_bonds <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_funds <- function(x) {
     if (missing(x)) {
         x <- ls_funds()
@@ -386,6 +543,8 @@ rm_funds <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_spreads <- function(x) {
     if (missing(x)) {
         x <- ls_spreads()
@@ -393,6 +552,8 @@ rm_spreads <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_synthetics <- function(x) {
     if (missing(x)) {
         x <- ls_synthetics()
@@ -401,6 +562,8 @@ rm_synthetics <- function(x) {
 }
 
 
+#' @export
+#' @rdname ls_instruments
 rm_derivatives <- function(x) {
     if (missing(x)) {
         x <- ls_derivatives()
@@ -408,6 +571,8 @@ rm_derivatives <- function(x) {
     rm(list=x,pos=.instrument)
 }
 
+#' @export
+#' @rdname ls_instruments
 rm_non_derivatives <- function(x, keep.currencies=TRUE) {
     if (missing(x)) {
         x <- ls_non_derivatives()

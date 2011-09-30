@@ -1,4 +1,38 @@
-
+#' show unique expiration dates of instruments
+#' 
+#' show unique expiration dates of instruments
+#' 
+#' \code{ls_expires} is an alias. (plural of expires?)
+#' 
+#' type is currently only implemented for \sQuote{derivative}, \sQuote{future},
+#' \sQuote{option}, \sQuote{call} and \sQuote{put} internally, a call is made
+#' to the appropriate ls_ function.
+#' 
+#' @aliases ls_expiries ls_expires
+#' @param pattern optional regular expression.
+#' @param match exact match?
+#' @param underlying_id chr name of underlying or vector of underlying_ids. If
+#' NULL, all underlyings will be used
+#' @param type chr string name of class that instruments to be returned must
+#' inherit.
+#' @return named chr vector with length of unique expiration dates of
+#' derivatives of class \code{type} and having an underlying_id of
+#' \code{underlying_id} if given.
+#' @note This should be updated to deal with dates instead of character strings
+#' @author Garrett
+#' @seealso ls_instruments_by for things like e.g.
+#' ls_instruments_by('expires','20110916'), ls_instruments, ls_derivatives,
+#' ls_options, ls_calls, buildHierarchy, instrument.table
+#' @examples
+#' 
+#' \dontrun{
+#' option_series.yahoo('SPY')
+#' option_series.yahoo('DIA',NULL)
+#' ls_expiries()
+#' 
+#' }
+#' #' @export
+#' @rdname ls_expiries
 ls_expiries <- function(pattern=NULL, match=TRUE, underlying_id=NULL, type='derivative') {
     #if (!is.null(pattern)) underlying_id <- ls_underlyings    
     if (is.null(underlying_id))
@@ -35,7 +69,11 @@ ls_expiries <- function(pattern=NULL, match=TRUE, underlying_id=NULL, type='deri
 #    names(underlying_id) <- dates[-which(duplicated(dates))]    
 #    data.frame(underlying_id)    
 }
+
+#' #' @export
+#' @rdname ls_expiries
 ls_expires <- ls_expiries
+
 
 #ls_instruments_by('expires','20110916')
 #ls_expiries(underlying_id=ls_underlyings(ls_calls())) #Nesting

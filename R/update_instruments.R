@@ -1,4 +1,3 @@
-
 #update_instruments.csv <- function() {
 #
 #}
@@ -7,6 +6,8 @@
 #
 #}
 
+#' @export
+#' @rdname update_instruments.IB
 update_instruments.all <- function(Symbols='all', ...) {
     tu <- try(update_instruments.yahoo(Symbols))
     updated <- if (!inherits(tu, 'try-error')) tu
@@ -21,6 +22,8 @@ update_instruments.all <- function(Symbols='all', ...) {
 #getInstrument('SPY')
 
 #TODO: Add support for indexes
+#' @export
+#' @rdname update_instruments.IB
 update_instruments.yahoo <- function(Symbols=c('stocks','all'), verbose=FALSE ) {
     if (is.null(Symbols) || is.na(Symbols) || !hasArg(Symbols)) Symbols <- 'stocks'
     sym.options <- c('all','stocks')
@@ -96,6 +99,59 @@ update_instruments.yahoo <- function(Symbols=c('stocks','all'), verbose=FALSE ) 
     Symbols
 }
 
+
+
+#' updates instrument metadata with data from IB or yahoo
+#' 
+#' Adds/updates information in instrument with data downloaded from IB or yahoo
+#' 
+#' These are basically wrappers for buildIBcontract. With these functions you
+#' can update some or all instruments' information from yahoo or IB, or both.
+#' 
+#' if you call update_instruments.IB with one of \sQuote{all} or
+#' \sQuote{stocks}, \sQuote{futures}, \sQuote{options}, \sQuote{currencies}, it
+#' is the same as calling it with the relevant ls_ function (e.g. ls_stocks()).
+#' Therefore, functionality can be extended by using ls_ functions instead of a
+#' descriptive string.
+#' 
+#' @aliases update_instruments.IB update_instruments.yahoo 
+#' update_instruments.TTR update_instruments.all
+#' @param Symbols can be a vector of instrument names, or, can be \sQuote{all}
+#' or \sQuote{stocks} or, for update_instruments.TTR, can be NULL in which case
+#' all stocks found with \code{stockSymbols} will be defined, or, for
+#' update_instruments.IB, can also be \sQuote{futures}, \sQuote{options},
+#' \sQuote{currencies}
+#' @param exchange character vector of names of exchanges. Used in \sQuote{TTR}
+#' method. Can be \dQuote{AMEX}, \dQuote{NASDAQ}, or \dQuote{NYSE}
+#' @param addIBslot Boolean. should an IB slot be added to the instrument,
+#' making it a twsInstrument?
+#' @param updateInstrument Boolean. Should data outside the IB slot also be
+#' updated?
+#' @param include_expired Should expired contracts be included in
+#' reqContractDetails call? "0" for no, "1" for yes (default).
+#' @param assign_i should the instrument be stored in .instrument environment.
+#' @param assign_c If a new currency is discovered, should it be created
+#' @param ... anything to pass through it update_instruments.IB
+#' @param verbose be verbose?
+#' @return called for side-effect
+#' @author Garrett See
+#' @seealso twsInstrument, define_stocks, getIBEquities, instrument, stock,
+#' future, option, currency
+#' @references Yahoo! Finance \url{finance.yahoo.com} YahooQuote
+#' \url{http://dirk.eddelbuettel.com/code/yahooquote.html} gummy-stuff.org
+#' \url{www.gummy-stuff.org/Yahoo-data.htm} InteractiveBrokers
+#' \url{www.interactivebrokers.com} IB API
+#' \url{http://interactivebrokers.com/php/apiUsersGuide/apiguide.htm}?
+#' @examples
+#' 
+#' \dontrun{	
+#' 	stock('GS',currency('USD'))
+#'     update_instruments.yahoo('GS')
+#' 	getInstrument('GS')
+#' 	update_instruments.IB('GS') 
+#' }
+#' @export
+#' @rdname update_instruments.IB
 update_instruments.IB <- function(Symbols=c('all','stocks','futures','options','currencies'),
             addIBslot=TRUE, updateInstrument=TRUE, include_expired='1', assign_i=TRUE, assign_c=TRUE) 
 {
@@ -136,17 +192,8 @@ update_instruments.IB <- function(Symbols=c('all','stocks','futures','options','
     symout   
 }
 
-#' update metadata for stocks
-#'
-#' update stock metadata using the \code{stockSymbols} function from TTR.
-#' 
-#' If \code{Symbols} is a character vector, those \code{Symbols} will be updated or 
-#' defined if they do not already exist.
-#' If \code{Symbols} is NULL all stocks found with \code{stockSymbols} will be updated/defined.
-#' If \code{Symbols} is \dQuote{stocks} or \dQuote{all} all stocks that are already defined wil be updated.
-#' @param Symbols names of instruments to update.
-#' @param exchange \dQuote{AMEX}, \dQuote{NASDAQ}, or \dQuote{NYSE}
-#' @return names of instruments that were updated/defined
+#' @export
+#' @rdname update_instruments.IB
 update_instruments.TTR <- function(Symbols = c("stocks", "all"), exchange=c("AMEX","NASDAQ","NYSE")) {
     if (!("package:TTR" %in% search() || require("TTR", quietly = TRUE))) {
         stop("Please install TTR before using this function.")

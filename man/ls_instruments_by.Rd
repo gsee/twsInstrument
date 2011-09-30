@@ -1,46 +1,38 @@
 \name{ls_instruments_by}
 \alias{ls_instruments_by}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Subset names of instruments
-}
-\description{
-list names of instruments that have an attribute that matches some value
-}
+\title{Subset names of instruments}
 \usage{
-ls_instruments_by(what, value, in.slot = NULL, pattern = NULL, match = TRUE)
+  ls_instruments_by(what, value, in.slot = NULL, pattern =
+  NULL, match = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{what}{
-what attribute (e.g. currency, type, strike, etc.)
-}
-  \item{value}{
-what value must the attribute have (e.g. \sQuote{EUR}, \sQuote{option}, 100, etc.). 
-If \code{NULL} then the names of all instruments that have a \code{what} slot will be returned
-}
-  \item{pattern}{
-only return instruments with \code{pattern} in the name
-}
-  \item{match}{
-should pattern match names exactly?
-}
-  \item{in.slot}{
-If the attribute you are looking for is stored inside another slot, this is the name of that slot. (usually "IB")
-}
+  \item{what}{what attribute (e.g. currency, type, strike,
+  etc.)}
 
-}
-\details{
-list instruments that have a given attribute level with a given value.
+  \item{value}{what value must the attribute have (e.g.
+  \sQuote{EUR}, \sQuote{option}, 100, etc.).  If
+  \code{NULL} then the names of all instruments that have a
+  \code{what} slot will be returned}
+
+  \item{pattern}{only return instruments with
+  \code{pattern} in the name}
+
+  \item{match}{should pattern match names exactly?}
+
+  \item{in.slot}{If the attribute you are looking for is
+  stored inside another slot, this is the name of that
+  slot. (usually "IB")}
 }
 \value{
-chr vector of instrument names
+  chr vector of instrument names
 }
-\author{
-Garrett See
+\description{
+  list names of instruments that have an attribute that
+  matches some value
 }
-\seealso{
-buildHierarchy, instrument.table, ls_instruments
+\details{
+  list instruments that have a given attribute level with a
+  given value.
 }
 \examples{
 \dontrun{
@@ -51,3 +43,10 @@ ls_instruments_by("name",NULL,in.slot='src')
 ls_instruments_by('src',NULL)
 }
 }
+\author{
+  Garrett See
+}
+\seealso{
+  buildHierarchy, instrument.table, ls_instruments
+}
+

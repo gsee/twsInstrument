@@ -1,5 +1,47 @@
 #TODO: UseMethods -- twsInstrument, numeric/character, instrument
 #TODO: make verbose/silent better
+
+
+#' get a twsContract object
+#' 
+#' get a twsContract object
+#' 
+#' If \code{x} is a twsInstrument, or if it can find a twsInstrument with the
+#' same name as \code{x} in the .instrument environment, it will return the
+#' twsContract found in the $IB slot of that object.  If not, then if \code{x}
+#' is numeric, or if it is a character string of numbers, it will treat that as
+#' the conId in a newly created twsContract shell.  Then it will call
+#' \code{\link{reqContractDetails}} to get the contract object.  Otherwise,
+#' \code{x} will be passed to \code{\link{Contr_From_Instr}} which will use
+#' what information it can to create a twsContract shell that can/will be
+#' updated with \code{\link{reqContractDetails}}
+#' 
+#' @param x can be an instrument, twsInstrument, name of an instrument or
+#' twsInstrument, or a numeric or character \sQuote{conId}
+#' @param verbose be verbose?
+#' @param silent silence warnings?
+#' @param ...  any additional arguments to pass to
+#' \code{\link{Contr_From_Instr}}
+#' @return an object of class twsContract
+#' @note To ensure you get the contract you're after, you should define your
+#' instruments before using this function.
+#' @author Garrett See
+#' @seealso \code{\link{conId}}, \code{\link{define_stocks}},
+#' \code{\link{define_options}}, \code{\link{define_futures}},
+#' \code{\link{Contr_From_Instr}}, \code{\link{twsInstrument}},
+#' \code{\link{getInstrument}}
+#' @examples
+#' 
+#' \dontrun{
+#' getContract("4082282") #uses reqContractDetails
+#' getContract(4082282) #same
+#' twsInstrument('SEE') 
+#' getContract("SEE") # == .instrument$SEE$IB
+#' getContract("DIA") # will use reqContractDetails if "DIA" is not already defined
+#' instr <- getInstrument("SEE")
+#' getContract(instr)
+#' }
+#' @export
 getContract <- function(x, verbose=TRUE, silent=FALSE, ...) {
     #if (is.xts(x)) x <- deparse(substitute(x))
     instr <- if (is.instrument(x)) {x} else try(getInstrument(x, silent=TRUE))

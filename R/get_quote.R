@@ -1,7 +1,7 @@
-
 #getQuote.IB <- function(Symbols,src='yahoo', ...
 
 #' @export
+#' @rdname get_quote.IB
 get_quote <- function(Symbols, src='IB', ...) {
 #    if (src != 'IB' && src != 'yahoo') stop("\"IB\" and \"yahoo\" are the only valid values for src.")
 #    if (src == 'yahoo') getQuote(Symbols)
@@ -9,32 +9,47 @@ get_quote <- function(Symbols, src='IB', ...) {
     do.call(paste('get_quote', src, sep='.'), list(Symbols, ...))
 }
 
+
+
+#' Download current instrument quote using IBrokers...
+#' 
 #' Download current instrument quote using IBrokers
-#'
-#' \code{get_quote} can be called with \code{src="yahoo"} or \code{src="IB"}.  
-#'
-#' \code{get_quote.IB} is an adaptation of code that Jeff sent to the r-sig-finance mailing list.
-#' This function will connect to IBrokers and download recent market data for one or many instruments.
-#' It will try to connect with clientId 1000. If unsuccessful, it will try again with clientId 1001, and finally, clientId 9999. 
-#' (the clientIds are arbitrary.)
-#' Once connected, it will request market data and then disconnect. 
-#' IB does not give values for \sQuote{Last}, \sQuote{LastSize}, or \sQuote{Volume} for
-#' exchange_rates (twsCASH), so those columns will not be included if any of the instruments for which you
-#' are requesting a quote are exchange_rates.
-#'
-#' All instruments should be defined before requesting quotes with \code{src="IB"}, but if any of the requested symbols are not 
-#' names of previously defined instruments, they will be treated as stocks denominated in \sQuote{USD}.
-#' Internally, the stock instrument will be temporarily created to make the request, and subsequently removed.
-#' @param Symbols Can be a vector of instrument names, or a character string of symbols, separated by semi-colons.
-#' @param verbose boolean. If TRUE, user will be informed that connection is established, and what is being downloaded.
+#' 
+#' \code{get_quote} can be called with \code{src="yahoo"} or \code{src="IB"}.
+#' 
+#' \code{get_quote.IB} is an adaptation of code that Jeff sent to the
+#' r-sig-finance mailing list. This function will connect to IBrokers and
+#' download recent market data for one or many instruments. It will try to
+#' connect with clientId 1000. If unsuccessful, it will try again with clientId
+#' 1001, and finally, clientId 9999.  (the clientIds are arbitrary.) Once
+#' connected, it will request market data and then disconnect.  IB does not
+#' give values for \sQuote{Last}, \sQuote{LastSize}, or \sQuote{Volume} for
+#' exchange_rates (twsCASH), so those columns will not be included if any of
+#' the instruments for which you are requesting a quote are exchange_rates.
+#' 
+#' All instruments should be defined before requesting quotes with
+#' \code{src="IB"}, but if any of the requested symbols are not names of
+#' previously defined instruments, they will be treated as stocks denominated
+#' in \sQuote{USD}. Internally, the stock instrument will be temporarily
+#' created to make the request, and subsequently removed.
+#' 
+#' @aliases get_quote get_quote.IB
+#' @param Symbols Can be a vector of instrument names, or a character string of
+#' symbols, separated by semi-colons.
+#' @param verbose boolean. If TRUE, user will be informed that connection is
+#' established, and what is being downloaded.
 #' @param tws Currently not implemented.
 #' @param \dots other arguments such as \sQuote{eWrapper}
-#' @return data.frame with columns: \sQuote{BidSize}, \sQuote{BidPrice}, \sQuote{AskPrice}, \sQuote{AskSize}.  If none of the quotes are for
-#' exchange_rates, it will also contain the columns \sQuote{Last}, \sQuote{LastSize}, and \sQuote{Volume} 
-#' @aliases get_quote get_quote.IB
-#' @references \url{http://www.mail-archive.com/r-sig-finance@@stat.math.ethz.ch/msg00927.html}
-#' @author Garrett See, but the bulk of this comes from Jeff Ryan. See references.
+#' @param src method to use to get the quote. Only "IB" and "yahoo" supported
+#' @return data.frame with columns: \sQuote{BidSize}, \sQuote{BidPrice},
+#' \sQuote{AskPrice}, \sQuote{AskSize}.  If none of the quotes are for
+#' exchange_rates, it will also contain the columns \sQuote{Last},
+#' \sQuote{LastSize}, and \sQuote{Volume}
+#' @author Garrett See, but the bulk of this comes from Jeff Ryan. See
+#' references.
 #' @seealso \code{\link{get_quote.yahoo}}
+#' @references
+#' \url{http://www.mail-archive.com/r-sig-finance@@stat.math.ethz.ch/msg00927.html}
 #' @examples
 #' \dontrun{
 #' define_stocks(c("SPY","DIA"))
@@ -45,6 +60,7 @@ get_quote <- function(Symbols, src='IB', ...) {
 #' get_quote(ls_twsInstruments()) #will not include trade related data because EURUSD doesn't have it
 #' }
 #' @export
+#' @rdname get_quote.IB
 get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
     if (length(Symbols) == 1) Symbols <- strsplit(Symbols,";")[[1]]
     snapShot <- function (twsCon, eWrapper, timestamp, file, playback = 1, ...)
@@ -155,21 +171,35 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
     qt
 }
 
+
+
+#' Download current instrument quote from yahoo...
+#' 
 #' Download current instrument quote from yahoo
-#'
-#' This \code{get_quote.yahoo} method is the same as Jeff Ryan's code for getQuote.yahoo (see also) except for 2 changes. 
-#' The first is a patch to allow custom quote formats for requests for 200 symbols or more. (put the \sQuote{what} arg in the rbind)  
-#' The second is that in this version, the quote requests are wrapped in a while loop.  If the timestamp
-#' of the receied quote has a year that is different than the current year (as reported by \code{Sys.time()}), 
-#' it will keep trying until either the year in the quote is the same as the current year, or \code{waitTime} has passed.
-#' Thanks to Zachary Mayar for suggesting the change, and Samo Pahor for providing the specific patch for this code.
-#' @param Symbols Can be a vector of instrument names, or a character string of symbols, separated by semi-colons.
+#' 
+#' This \code{get_quote.yahoo} method is the same as Jeff Ryan's code for
+#' getQuote.yahoo (see also) except for 2 changes.  The first is a patch to
+#' allow custom quote formats for requests for 200 symbols or more. (put the
+#' \sQuote{what} arg in the rbind) The second is that in this version, the
+#' quote requests are wrapped in a while loop.  If the timestamp of the receied
+#' quote has a year that is different than the current year (as reported by
+#' \code{Sys.time()}), it will keep trying until either the year in the quote
+#' is the same as the current year, or \code{waitTime} has passed. Thanks to
+#' Zachary Mayar for suggesting the change, and Samo Pahor for providing the
+#' specific patch for this code.
+#' 
+#' @param Symbols Can be a vector of instrument names, or a character string of
+#' symbols, separated by semi-colons.
 #' @param what what should be retrieved
-#' @param waitTime time in seconds that is the longest you're willing to wait to get back a quote with a valid timestamp.
+#' @param waitTime time in seconds that is the longest you're willing to wait
+#' to get back a quote with a valid timestamp.
 #' @param \dots other args
-#' @return a data frame with rows matching the number of Symbols requested, and the columns matching the requested columns.
-#' @references \url{http://r.789695.n4.nabble.com/getQuote-problem-tt3689746.html}
-#' @seealso quantmod:::getQuote.yahoo, \code{\link{get_quote}}, \code{\link{get_quote.IB}}
+#' @return a data frame with rows matching the number of Symbols requested, and
+#' the columns matching the requested columns.
+#' @seealso quantmod:::getQuote.yahoo, \code{\link{get_quote}},
+#' \code{\link{get_quote.IB}}
+#' @references
+#' \url{http://r.789695.n4.nabble.com/getQuote-problem-tt3689746.html}
 #' @export
 get_quote.yahoo<-function(Symbols,what=standardQuote(),waitTime=30,...) { 
 	tmp <- tempfile()
