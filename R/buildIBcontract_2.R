@@ -259,10 +259,10 @@ buildIBcontract <- function(symbol, tws=NULL,
 
 	if (is.instrument(instr) && !is.twsContract(instr$IB) && is.null(contract)) { #make contract
 	    primary_id <- instr$primary_id
+        pid <- parse_id(instr$primary_id)
 	    #figure out sectype
 	    if (is.null(instr$sectype) ) {
             if (is.null(instr$type)) { #future_series or option_series created with instrument.auto when no root existed
-                pid <- parse_id(instr$primary_id)
                 instr$multiplier <- ""
                 if (any(pid$type == 'future')) {
                     instr$type <- 'future_series' #a future object would parse out to 'root', not 'future'
@@ -303,7 +303,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 #TODO: treat option and option_series differently
             } else if (inherits(instr,'future_series') || 
                 any(instr$type == "future_series") ||
-                any(parse_suffix(instr$suffix_id)$type == "SSF")) {
+                any(pid$type == "SSF")) {
                     sectype <- "FUT" 
                     if(is.null(instr$root_id)) instr$root_id <- parse_id(primary_id)$root
                     if(is.null(instr$suffix_id)) instr$suffix_id <- parse_id(primary_id)$suffix        
