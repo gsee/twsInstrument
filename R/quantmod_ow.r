@@ -1,3 +1,4 @@
+#' @export
 getQuote.yahoo <-
 function (Symbols, what = standardQuote(), ...) 
 {
