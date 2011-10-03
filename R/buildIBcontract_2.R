@@ -78,9 +78,9 @@ twsInstrument <- function(symbol, tws=NULL,
 #' 
 #' create twsInstrument, or create twsContracts using previously defined
 #' FinancialInstruments, or create FinancialInstruments from previously defined
-#' twsContract see 
+#' twsContract
 #' 
-#' ?\sQuote{twsInstrument-package} for package help page.
+#' see ?\sQuote{twsInstrument-package} for \code{\link{twsInstrument-package}} help page.
 #'
 #' Using metadata that has already been defined for an instrument, create a
 #' twsContract object and fill in any missing information. Can either add an IB

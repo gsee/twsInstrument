@@ -13,8 +13,8 @@
 }
 \details{
   Mostly just wrappers for IBrokers and FinancialInstrument
-  See \code{?buildIBcontract} for the twsInstrument
-  function help page
+  See \code{?buildIBcontract} for the
+  \code{\link{twsInstrument}} function help page
 
   \tabular{ll}{ Package: \tab twsInstrument\cr Type: \tab
   Package\cr Version: \tab 1.0-13\cr Depends: \tab
@@ -48,7 +48,7 @@
 
   \code{\link{define_stocks}},
   \code{\link{define_options}},
-  \code{\link{define_futures}} and code\link{define_FX}
+  \code{\link{define_futures}} and \code{\link{define_FX}}
   make it easy to define several instruments of the same
   type.  \code{\link{front_future}} attempts to define the
   near term liquid futures contract of a given
