@@ -24,14 +24,16 @@
 twsClock <- function(format = "%H:%M:%S", refresh = 1, verbose=TRUE)
 {
     tryCatch({
-            tws <- try(twsConnect(1010))
+            tws <- try(twsConnect(140))
         if (inherits(tws, "try-error")) 
-            tws <- try(twsConnect(1011))
+            tws <- try(twsConnect(141))
         if (inherits(tws, "try-error")) 
-            tws <- twsConnect(9999)
+            tws <- try(twsConnect(142))
+        if (inherits(tws, "try-error")) 
+            tws <- twsConnect(150)
         if (isConnected(tws) && verbose) 
             cat(paste("Connected with clientId", tws$clientId, '\n'))
-        if (tws$clientId == 9999) 
+        if (tws$clientId == 150) 
             warning("IB TWS should be restarted.")    
         repeat
         {

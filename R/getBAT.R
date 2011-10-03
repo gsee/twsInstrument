@@ -121,6 +121,7 @@ function(Symbols, endDateTime, tws=NULL,
         if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
             tws <- try(twsConnect(120))
         if (inherits(tws,'try-error')) tws <- try(twsConnect(121)) #try another clientId
+        if (inherits(tws,'try-error')) tws <- try(twsConnect(122)) #try another clientId
         if (inherits(tws,'try-error')) tws <- twsConnect(150) #a last attempt for an available clientId
         if (isConnected(tws)) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
         

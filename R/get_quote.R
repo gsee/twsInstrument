@@ -132,28 +132,22 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
         return(df)
     }
 
-    #if any Symbols are not instruments, we'll define them as stocks,
-    #try to get the quote, and then remove those instruments from .instrument
-    non_instr <- Symbols[which(!Symbols %in% ls_instruments())]
-    if (any(!Symbols %in% ls_instruments())) {
-        if (!exists("USD")) currency("USD")
-        invisible(lapply(non_instr, FUN=function(x) twsInstrument(stock(x,"USD"))))
-    }
-
     tryCatch( {
         if (missing(tws) || 
             is.null(tws) ||
             !inherits(tws, 'twsconn') || 
 	        (is.twsConnection(tws) && !isConnected(tws))) 
-            tws <- try(twsConnect(1000))
+            tws <- try(twsConnect(130))
         if (inherits(tws, "try-error")) 
-            tws <- try(twsConnect(1001))
+            tws <- try(twsConnect(131))
+        if (inherits(tws, "try-error"))
+            tws <- try(twsConnect(132))
         if (inherits(tws, "try-error")) 
-            tws <- twsConnect(9999)
+            tws <- twsConnect(150)
         if (isConnected(tws) && verbose) 
             cat(paste("Connected with clientId ", tws$clientId, 
                         ".\n Requesting ", Symbols, "\n", sep = ""))
-        if (tws$clientId == 9999) warning("IB TWS should be restarted.")
+        if (tws$clientId == 150) warning("IB TWS should be restarted.")
         
         if (hasArg(eWrapper)) {
             eW <- list(...)$eWrapper
@@ -165,9 +159,6 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
         qt <- reqMktData(tws, lapply(Symbols,getContract), eventWrapper=ew,CALLBACK=snapShot)
                      
         },finally={twsDisconnect(tws)} )
-
-    #Clean-up if we had to make any instruments
-    if (length(non_instr)) rm_instruments(non_instr)
     qt
 }
 

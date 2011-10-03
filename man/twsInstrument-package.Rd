@@ -49,7 +49,7 @@
   \code{\link{define_stocks}},
   \code{\link{define_options}},
   \code{\link{define_futures}} and code\link{define_FX}
-  make it easy to define several of instruments of the same
+  make it easy to define several instruments of the same
   type.  \code{\link{front_future}} attempts to define the
   near term liquid futures contract of a given
   future_series.
@@ -69,6 +69,17 @@
   \code{conId} is a generic that will get the conId.  If it
   cannot find it easily, it will call getContract and
   extract the conId from that.
+
+  Many functions in this package need data from IB.  The
+  ones that do will automatically connect and disconnect
+  using the \code{\link[IBrokers]{twsConnect}} and
+  \code{\link[IBrokers]{twsDisconnect}}.  This package will
+  only use clientIds 100 through 150( buildIBcontract may
+  use 100:102, getContract may use 110:112, getBAT may use
+  120:122, get_quote.IB may use 130:132, and twsClock may
+  use 140:142). clientId 150 is used as a last resort, and
+  any time it is used, you will be notified with a warning
+  message.
 
   The following will eventually be moved to the
   FinancialInstrument package \code{\link{saveInstruments}}
