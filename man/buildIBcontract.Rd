@@ -4,9 +4,7 @@
 \alias{Instr_From_Contr}
 \alias{is.twsInstrument}
 \alias{twsInstrument}
-\title{create twsInstrument, or create twsContracts using previously defined
-FinancialInstruments, or create FinancialInstruments from previously defined
-twsContract see ?\sQuote{twsInstrument-package} for package help page.}
+\title{buildIBcontract and wrappers}
 \usage{
   is.twsInstrument(x)
 
@@ -74,13 +72,20 @@ twsContract see ?\sQuote{twsInstrument-package} for package help page.}
   is defined by the output argument. See details.
 }
 \description{
+  create twsInstrument, or create twsContracts using
+  previously defined FinancialInstruments, or create
+  FinancialInstruments from previously defined twsContract
+  see
+}
+\details{
+  ?\sQuote{twsInstrument-package} for package help page.
+
   Using metadata that has already been defined for an
   instrument, create a twsContract object and fill in any
   missing information. Can either add an IB slot to the
   instrument, or update the entire instrument creating
   slots as needed.
-}
-\details{
+
   buildIBcontract is the main function; the rest are
   wrappers.
 
