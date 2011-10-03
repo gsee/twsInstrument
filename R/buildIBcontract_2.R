@@ -454,7 +454,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             pid <- parse_id(primary_id)
             if ((any(instr$type == "future_series") || any(instr$type == "option_series") ) && is.null(instr$expires) && is.null(instr$expiry)) {
                 if (!silent) warning("Expiry not defined for future or option... Inferring from id.") 
-                instr$expires <- format(as.Date(paste(pid$month,pid$year,15),format='%b%Y%d'),format='%Y%m')
+                instr$expires <- format(as.Date(paste(pid$month,pid$year,15),origin='1970-01-01',format='%b%Y%d'),format='%Y%m')
             }
             if (any(instr$type == "option_series") ) {
 				if (is.null(instr$strike)) {
@@ -496,19 +496,19 @@ buildIBcontract <- function(symbol, tws=NULL,
 		IBexpiry <- expiry
         if(sectype == "FUT") {
             if (nchar(IBexpiry) == 10) {
-                IBexpiry <- format(as.Date(IBexpiry,format="%Y-%m-%d"),"%Y%m")
+                IBexpiry <- format(as.Date(IBexpiry, origin='1970-01-01', format="%Y-%m-%d"),"%Y%m")
             } else if (nchar(IBexpiry) == 7) IBexpiry <- gsub("-","",IBexpiry)
         } 
         #IB uses the Friday before expiration Saturday for expiry
         #except for EOM options.
 		if (!is.null(IBexpiry) && is.character(IBexpiry) && IBexpiry != "") {
             if (nchar(IBexpiry) == 8) {
-			    expdate <- as.Date(IBexpiry,format="%Y%m%d")
+			    expdate <- as.Date(IBexpiry, origin='1970-01-01', format="%Y%m%d")
 			    if (weekdays(expdate) == "Saturday") {
 				    IBexpiry <- format(expdate - 1,"%Y%m%d")
 			    }
             } else if (nchar(IBexpiry) == 10) {
-                expdate <- as.Date(IBexpiry,format="%Y-%m-%d")
+                expdate <- as.Date(IBexpiry, origin='1970-01-01', format="%Y-%m-%d")
                 if (weekdays(expdate) == "Saturday") {
                     IBexpiry <- format(expdate - 1, "%Y%m%d")
                 }

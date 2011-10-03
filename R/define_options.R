@@ -44,13 +44,14 @@ option_id <- function(underlying_id,
             } else if (all(nchar(year) == 1)) {
                 as.numeric(year)+2010
             } else as.numeric(year)
-    DT <- as.Date(paste(outer(y,sprintf("%02d",m),paste,sep="-"),01,sep="-"),format='%Y-%m-%d')
+    DT <- as.Date(paste(outer(y,sprintf("%02d",m),paste,sep="-"),01,sep="-"), 
+                 origin='1970-01-01', format='%Y-%m-%d')
     #for each of these dates, get expiration Saturday
     ExpSat <- sort(as.Date(sapply(DT, 
                                   FUN=function(x) { 
                                         DS <- x+0:22; 
                                         ds <- which(weekdays(DS)=="Friday")[3]+1; 
-                                        DS[ds]})))
+                                        DS[ds]}), origin='1970-01-01'))
     right <- toupper(gsub("call","C",right,ignore.case=TRUE)) #replace 'call' and 'put' with "C" and "P"
     right <- toupper(gsub("put","P",right,ignore.case=TRUE))
     suff <- as.character(outer(format(ExpSat,"%y%m%d"),right,paste,sep=""))
@@ -110,7 +111,7 @@ function(underlying_id,
         for (expiry in expires) {
             expiry <- gsub("-","",expiry)
             if (nchar(expiry) == 8) {
-                expiry <- as.Date(expiry,format='%Y%m%d')            
+                expiry <- as.Date(expiry,origin='1970-01-01', format='%Y%m%d')            
                 if (weekdays(expiry) == "Saturday") expiry <- format(expiry - 1,"%Y%m%d")
             }
             for (k in strike) {
