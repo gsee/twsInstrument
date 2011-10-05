@@ -436,9 +436,9 @@ buildIBcontract <- function(symbol, tws=NULL,
                 any(instr$type == 'future')) {
                     sectype <- 'FUT'
                     symbol <- primary_id <- gsub("\\.","",primary_id)
-            } else if (inherits(instr,'stock') || 
-                any((instr$type == "stock")) || 
-                any((instr$type == "STK"))) {
+            } else if (inherits(instr,'stock') || inherits(instr, 'fund') ||
+                any(instr$type == "stock") || any(instr$type == 'fund') ||
+                any(instr$type == "STK")) {
                     sectype <- "STK"                
             } else if (inherits(instr,'synthetic') ||
                 any((instr$type == 'synthetic')) ||
