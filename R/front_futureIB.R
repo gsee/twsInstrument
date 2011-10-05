@@ -81,14 +81,17 @@ front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBs
             warning('underlying_id not defined.')    
         }
         #Do we need to create the root?
-        tmproot <- try(get(root,pos=.instrument),silent=TRUE)
+#        tmproot <- try(get(root,pos=.instrument),silent=TRUE)
+        tmproot <- try(getInstrument(root, type='future', silent=TRUE))
         if (!inherits(tmproot,'future')) {
-            if (is.instrument(tmproot)) {
-                warning(paste(instr$primary_id,
+            if (is.instrument(try(get(root,pos=.instrument),silent=TRUE))) {
+                warning(paste(root,
                         " already exists, but it is not futures specs.", sep=""))
-                        #"Specs will be stored in ", instr$primary_id, "_fspecs", 
-                        #sep="")
-                store.to <- paste(instr$primary_id, 'fspecs', sep="_")
+                store.to <- if(!is.instrument(try(get(paste('..',root,sep=""))))) {
+                        paste("..",root,sep="")
+                    } else if (!is.instrument(try(get(paste('.',root,sep=""))))) {
+                        paste("..",root,sep="")
+                    } else paste(root, 'fspecs', sep="_")
                 cat(paste('Futures contract specs stored in ', store.to, "\n", sep=""))                
             } else store.to <- root
             instrument.tws(primary_id=store.to, currency=instr$currency, 
