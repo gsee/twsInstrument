@@ -579,6 +579,14 @@ buildIBcontract <- function(symbol, tws=NULL,
                             details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
                         }
                     }   
+                    if (length(details) == 0 && !identical(integer(0), grep("\\.", contract$symbol) )) {
+                        if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (any(contract$sectype == c('STK','IND')))))
+                        {
+                            contract$symbol <- strsplit(contract$symbol, "\\.")[[1]][1]
+                            details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
+                            if (length(details) > 0 && verbose) cat("Resolved error in contract details by omitting exchange info from ticker.\n")
+                        }
+                    }
                     if (length(details) == 0) {
                         if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (contract$sectype == 'STK')))
                         {
