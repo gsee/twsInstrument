@@ -44,6 +44,7 @@
 #' @export
 getContract <- function(x, verbose=TRUE, silent=FALSE, ...) {
     #if (is.xts(x)) x <- deparse(substitute(x))
+    if (inherits(x, 'twsContractDetails')) return(x$contract)
     instr <- if (is.instrument(x)) {x} else try(getInstrument(x, silent=TRUE))
     if (is.twsInstrument(instr)) return(instr$IB)
     tmpnum <- try(suppressWarnings(as.numeric(x)), silent=TRUE)

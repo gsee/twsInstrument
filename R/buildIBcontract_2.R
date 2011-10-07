@@ -197,6 +197,7 @@ buildIBcontract <- function(symbol, tws=NULL,
 {
     #TODO: Allow for vector of symbols, instruments, or contracts
     if (is.xts(symbol)) stop('symbol can be the name of an xts object, but not the object itself.')    
+    if (inherits(symbol, 'twsContractDetails')) symbol <- getContract(symbol) #TODO: give user the option to not reqContractDetails again.
     if (!is.list(symbol) && (is.numeric(symbol) || !is.na(suppressWarnings(as.numeric(symbol))))) symbol <- getContract(symbol)    
     primary_id <- NULL
     right <- NULL    

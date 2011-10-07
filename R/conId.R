@@ -41,6 +41,13 @@ conId.twsContract <- function(x, ...)
 
 #' @export
 #' @rdname conId
+conId.twsContractDetails <- function(x, ...)
+{
+    return(x[["contract"]][["conId"]])
+}
+
+#' @export
+#' @rdname conId
 conId.twsInstrument <- function(x, ...)
 {
     return(x[["IB"]][["conId"]])

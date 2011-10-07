@@ -3,12 +3,15 @@
 \alias{conId.character}
 \alias{conId.default}
 \alias{conId.twsContract}
+\alias{conId.twsContractDetails}
 \alias{conId.twsInstrument}
 \title{methods to get conId}
 \usage{
   conId(x, ...)
 
   conId.twsContract(x, ...)
+
+  conId.twsContractDetails(x, ...)
 
   conId.twsInstrument(x, ...)
 
