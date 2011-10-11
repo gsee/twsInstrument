@@ -148,14 +148,15 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
             cat(paste("Connected with clientId ", tws$clientId, 
                         ".\n Requesting ", Symbols, "\n", sep = ""))
         if (tws$clientId == 150) warning("IB TWS should be restarted.")
+
+        contracts <- lapply(Symbols, getContract)
         
         if (hasArg(eWrapper)) {
             eW <- list(...)$eWrapper
             ew <- eW(length(Symbols))
-        } else ew <- if(is.null(ls_FX(Symbols))) #if any are FX, don't include Last or LastSize columns
-                    eWrapper.data(length(Symbols))
-              else eWrapper.FXdata(length(Symbols))
-      
+        } else ew <- if(any(lapply(contracts, "[[", "sectype") == "CASH"))
+                    eWrapper.FXdata(length(Symbols))  
+              else eWrapper.data(length(Symbols))      
         qt <- reqMktData(tws, lapply(Symbols,getContract), eventWrapper=ew,CALLBACK=snapShot)
                      
         },finally={twsDisconnect(tws)} )
