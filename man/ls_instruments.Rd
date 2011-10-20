@@ -144,26 +144,10 @@ derivatives, or non-derivatives.}
 
   For the rm functions, x can be a vector of instrument
   names, or nothing.  If \code{x} is missing, all
-  instruments of the relevant type will be removed. (if
-  \code{x} is not missing, there is currently no check to
-  make sure x refers to an instrument of the appropriate
-  type.)
+  instruments of the relevant type will be removed.
 
   It can be useful to nest these functions to get things
   like futures denominated in USD.
-
-  ls_yahoo and ls_IB look for instruments with
-  \sQuote{yahoo} or \sQuote{IB} in the defined.by slot,
-  respectively.  Equivalently,
-  \code{ls_defined.by("yahoo")} or
-  \code{ls_defined.by("IB")} could be used. Note that being
-  \code{defined.by} IB does does not necessarily mean that
-  the instrument is a twsInstrument (i.e. the details may
-  have been updated by IB, without an IB slot being added.)
-}
-\note{
-  These ls_ functions may be updated to be more like ls.
-  i.e use "name" and "pattern" args.
 }
 \examples{
 \dontrun{

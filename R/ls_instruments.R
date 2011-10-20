@@ -11,18 +11,9 @@
 #' 
 #' For the rm functions, x can be a vector of instrument names, or nothing.  If
 #' \code{x} is missing, all instruments of the relevant type will be removed.
-#' (if \code{x} is not missing, there is currently no check to make sure x
-#' refers to an instrument of the appropriate type.)
 #' 
 #' It can be useful to nest these functions to get things like futures
 #' denominated in USD.
-#' 
-#' ls_yahoo and ls_IB look for instruments with \sQuote{yahoo} or \sQuote{IB}
-#' in the defined.by slot, respectively.  Equivalently,
-#' \code{ls_defined.by("yahoo")} or \code{ls_defined.by("IB")} could be used.
-#' Note that being \code{defined.by} IB does does not necessarily mean that the
-#' instrument is a twsInstrument (i.e. the details may have been updated by
-#' IB, without an IB slot being added.)
 #' 
 #' @aliases ls_instruments ls_stocks ls_options ls_option_series ls_futures
 #' ls_future_series ls_currencies ls_non_currencies ls_exchange_rates ls_FX
@@ -45,8 +36,6 @@
 #' results
 #' @return ls functions return vector of character strings corresponding to
 #' instruments of requested type rm functions are called for side-effect
-#' @note These ls_ functions may be updated to be more like
-#' ls.  i.e use "name" and "pattern" args.
 #' @author Garrett See
 #' @seealso ls_instruments_by, ls_by_currency, ls_by_expiry, ls, rm,
 #' instrument, stock, future, option, currency, FinancialInstrument::sort_ids
@@ -468,7 +457,7 @@ rm_stocks <- function(x) {
     if (missing(x)) {
         x <- ls_stocks()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_stocks()], pos=.instrument)
 }
 
 #' @export
@@ -477,7 +466,7 @@ rm_options <- function(x) {
     if (missing(x)) {
         x <- ls_options()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_options()], pos=.instrument)
 }
 
 #' @export
@@ -486,7 +475,7 @@ rm_option_series <- function(x) {
     if (missing(x)) {
         x <- ls_option_series()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_option_series()], pos=.instrument)
 }
 
 #' @export
@@ -495,7 +484,7 @@ rm_futures <- function(x) {
     if (missing(x)) {
         x <- ls_futures()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_futures()], pos=.instrument)
 }
 
 #' @export
@@ -504,7 +493,7 @@ rm_future_series <- function(x) {
     if (missing(x)) {
         x <- ls_future_series()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_future_series()], pos=.instrument)
 }
 
 #' @export
@@ -513,16 +502,16 @@ rm_currencies <- function(x) {
     if (missing(x)) {
         x <- ls_currencies()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_currencies()], pos=.instrument)
 }   
 
 #' @export
 #' @rdname ls_instruments
 rm_exchange_rates <- rm_FX <- function(x) {
     if (missing(x)) {
-        x <- ls_currencies()
+        x <- ls_exchange_rates()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_exchange_rates()], pos=.instrument)
 }
 
 #' @export
@@ -531,7 +520,7 @@ rm_bonds <- function(x) {
     if (missing(x)) {
         x <- ls_bonds()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_bonds()], pos=.instrument)
 }
 
 #' @export
@@ -540,7 +529,7 @@ rm_funds <- function(x) {
     if (missing(x)) {
         x <- ls_funds()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_funds()], pos=.instrument)
 }
 
 #' @export
@@ -549,7 +538,7 @@ rm_spreads <- function(x) {
     if (missing(x)) {
         x <- ls_spreads()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_spreads()], pos=.instrument)
 }
 
 #' @export
@@ -558,7 +547,7 @@ rm_synthetics <- function(x) {
     if (missing(x)) {
         x <- ls_synthetics()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_synthetics()],pos=.instrument)
 }
 
 
@@ -568,7 +557,7 @@ rm_derivatives <- function(x) {
     if (missing(x)) {
         x <- ls_derivatives()
     }
-    rm(list=x,pos=.instrument)
+    rm(list=x[x %in% ls_derivatives()],pos=.instrument)
 }
 
 #' @export
@@ -583,7 +572,7 @@ rm_non_derivatives <- function(x, keep.currencies=TRUE) {
                 x <- x[-match(ls_currencies(),x)] #then take them out of to-be-removed
         } else stop('Use keep.currencies=FALSE to delete a currency')    
     }
-    rm(list=x,pos=.instrument) 
+    rm(list=x[x %in% ls_non_derivatives()],pos=.instrument) 
 }
 
 
