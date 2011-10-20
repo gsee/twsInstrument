@@ -2,11 +2,11 @@ Package: twsInstrument
 Type: Package
 Title: Improves ease of use of IBrokers and
     FinancialInstrument
-Version: 1.1-2
+Version: 1.2-0
 Date: 2011-09-30
 Depends:
     IBrokers,
-    FinancialInstrument (>= 0.7.1),
+    FinancialInstrument (>= 0.8),
     quantmod
 Suggests:
     qmao,
@@ -35,17 +35,9 @@ Collate:
     'getIBEquities.R'
     'get_quote.R'
     'instrument.R'
-    'ls_by_currency.R'
-    'ls_by_expiry.R'
-    'ls_expiries.R'
-    'ls_instruments_by.R'
-    'ls_instruments.R'
-    'ls_strikes.R'
     'ls_twsInstruments.R'
-    'ls_underlyings.R'
     'Mid.r'
     'quantmod_ow.r'
-    'saveInstruments.R'
     'twsClock.R'
     'twsInstrument-package.R'
     'update_instruments.R'

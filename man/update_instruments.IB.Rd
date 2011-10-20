@@ -1,34 +1,19 @@
 \name{update_instruments.all}
 \alias{update_instruments.all}
 \alias{update_instruments.IB}
-\alias{update_instruments.TTR}
-\alias{update_instruments.yahoo}
-\title{updates instrument metadata with data from IB or yahoo}
+\title{updates instrument metadata with data from IB}
 \usage{
   update_instruments.all(Symbols = "all", ...)
-
-  update_instruments.yahoo(Symbols = c("stocks", "all"),
-  verbose = FALSE)
 
   update_instruments.IB(Symbols = c("all", "stocks",
   "futures", "options", "currencies"), addIBslot = TRUE,
   updateInstrument = TRUE, include_expired = "1", assign_i
   = TRUE, assign_c = TRUE)
-
-  update_instruments.TTR(Symbols = c("stocks", "all"),
-  exchange = c("AMEX", "NASDAQ", "NYSE"))
 }
 \arguments{
   \item{Symbols}{can be a vector of instrument names, or,
-  can be \sQuote{all} or \sQuote{stocks} or, for
-  update_instruments.TTR, can be NULL in which case all
-  stocks found with \code{stockSymbols} will be defined,
-  or, for update_instruments.IB, can also be
+  can be \sQuote{all} or \sQuote{stocks} or, can also be
   \sQuote{futures}, \sQuote{options}, \sQuote{currencies}}
-
-  \item{exchange}{character vector of names of exchanges.
-  Used in \sQuote{TTR} method. Can be \dQuote{AMEX},
-  \dQuote{NASDAQ}, or \dQuote{NYSE}}
 
   \item{addIBslot}{Boolean. should an IB slot be added to
   the instrument, making it a twsInstrument?}
@@ -45,23 +30,18 @@
 
   \item{assign_c}{If a new currency is discovered, should
   it be created}
-
-  \item{...}{anything to pass through it
-  update_instruments.IB}
-
-  \item{verbose}{be verbose?}
 }
 \value{
   called for side-effect
 }
 \description{
   Adds/updates information in instrument with data
-  downloaded from IB or yahoo
+  downloaded from IB
 }
 \details{
   These are basically wrappers for buildIBcontract. With
   these functions you can update some or all instruments'
-  information from yahoo or IB, or both.
+  information from IB.
 
   if you call update_instruments.IB with one of
   \sQuote{all} or \sQuote{stocks}, \sQuote{futures},
@@ -73,24 +53,17 @@
 \examples{
 \dontrun{
 stock('GS',currency('USD'))
-update_instruments.yahoo('GS')
-getInstrument('GS')
 update_instruments.IB('GS')
+getInstrument("GS")
 }
 }
 \author{
   Garrett See
 }
-\references{
-  Yahoo! Finance \url{finance.yahoo.com} YahooQuote
-  \url{http://dirk.eddelbuettel.com/code/yahooquote.html}
-  gummy-stuff.org \url{www.gummy-stuff.org/Yahoo-data.htm}
-  InteractiveBrokers \url{www.interactivebrokers.com} IB
-  API
-  \url{http://interactivebrokers.com/php/apiUsersGuide/apiguide.htm}?
-}
 \seealso{
-  twsInstrument, define_stocks, getIBEquities, instrument,
-  stock, future, option, currency
+  FinancialInstrument:::update_instruments.yahoo,
+  twsInstrument, define_stocks
+  \url{www.interactivebrokers.com} IB API
+  \url{http://interactivebrokers.com/php/apiUsersGuide/apiguide.htm}?
 }
 
