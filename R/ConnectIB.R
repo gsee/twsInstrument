@@ -22,7 +22,7 @@
 #' con3 <- ConnectIB(851:852) #out of ids
 #' lapply(list(con1, con2), twsDisconnect)
 #' }
-#'
+#' @export
 ConnectIB <- function(clientIds=1:10) {
     con <- suppressWarnings(try(twsConnect(clientIds[[1]]), silent=TRUE))
     #if (!inherits(con, 'try-error')) return(con)
