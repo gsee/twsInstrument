@@ -23,13 +23,18 @@
   get a twsContract object
 }
 \details{
-  If \code{x} is a twsInstrument, or if it can find a
+  If \code{x} is a twsInstrument, or if there is a
   twsInstrument with the same name as \code{x} in the
   .instrument environment, it will return the twsContract
-  found in the $IB slot of that object.  If not, then if
+  found in the $IB field of that object.  If not, then if
+  \code{x} is the name of a Symbol defined in the Symbol
+  Lookup table (see
+  \code{\link[quantmod]{setSymbolLookup}}) that has an
+  "IBrokers" src, and a twsContract object stored under
+  "Contract", that twsContract will be returned. If
   \code{x} is numeric, or if it is a character string of
-  numbers, it will treat that as the conId in a newly
-  created twsContract shell.  Then it will call
+  numbers, it will be treated as the conId in a newly
+  created twsContract shell. Then a call will be made to
   \code{\link{reqContractDetails}} to get the contract
   object.  Otherwise, \code{x} will be passed to
   \code{\link{Contr_From_Instr}} which will use what
