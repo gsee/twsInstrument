@@ -24,13 +24,7 @@
 twsClock <- function(format = "%H:%M:%S", refresh = 1, verbose=TRUE)
 {
     tryCatch({
-            tws <- try(twsConnect(140))
-        if (inherits(tws, "try-error")) 
-            tws <- try(twsConnect(141))
-        if (inherits(tws, "try-error")) 
-            tws <- try(twsConnect(142))
-        if (inherits(tws, "try-error")) 
-            tws <- twsConnect(150)
+            tws <- try(ConnectIB(c(140:144, 150)))
         if (isConnected(tws) && verbose) 
             cat(paste("Connected with clientId", tws$clientId, '\n'))
         if (tws$clientId == 150) 

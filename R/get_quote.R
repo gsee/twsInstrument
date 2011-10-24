@@ -137,13 +137,7 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
             is.null(tws) ||
             !inherits(tws, 'twsconn') || 
 	        (is.twsConnection(tws) && !isConnected(tws))) 
-            tws <- try(twsConnect(130))
-        if (inherits(tws, "try-error")) 
-            tws <- try(twsConnect(131))
-        if (inherits(tws, "try-error"))
-            tws <- try(twsConnect(132))
-        if (inherits(tws, "try-error")) 
-            tws <- twsConnect(150)
+            tws <- ConnectIB(c(130:134,150))
         if (isConnected(tws) && verbose) 
             cat(paste("Connected with clientId ", tws$clientId, 
                         ".\n Requesting ", Symbols, "\n", sep = ""))

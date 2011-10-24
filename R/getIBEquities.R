@@ -41,16 +41,9 @@ function(symbols, tws ,barSize='1 min', duration='5 D', env=.GlobalEnv) {
             tws <- try(get('tws',pos=.GlobalEnv),silent=TRUE)    
 	#isConnected will take care of case where tws wasn't found
     }
-    iscon <- try(isConnected(tws),silent=TRUE)
-    if(inherits(iscon,"try-error") || iscon==FALSE) tws <- try(twsConnect(),silent=TRUE)	
-    #Still can't connect. Try with up to 10 different clientIds.        
-    #i <- 1	
-    #while(inherits(tws,"try-error")) #try with next clientid
-    #{
-    #	tws <- try(twsConnect(i),silent=TRUE)
-    #	i <- i + 1
-    #	if (i >= 10) stop('Too many clientIds in use.')
-    #}
+    iscon <- suppressWarnings(try(isConnected(tws),silent=TRUE))
+    if(inherits(iscon,"try-error") || iscon==FALSE) tws <- ConnectIB(c(125:129, 150))
+    if (tws$clientId == 150) warning("Interactive Brokers should be restarted.")
     if (is.environment(env) || length(symbols) > 1) {
         assign('tws',tws,pos=env)
         use.env=TRUE

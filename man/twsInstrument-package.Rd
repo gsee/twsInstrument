@@ -105,11 +105,11 @@
   using the \code{\link[IBrokers]{twsConnect}} and
   \code{\link[IBrokers]{twsDisconnect}}.  This package will
   only use clientIds 100 through 150( buildIBcontract may
-  use 100:102, getContract may use 110:112, getBAT may use
-  120:122, get_quote.IB may use 130:132, and twsClock may
-  use 140:142). clientId 150 is used as a last resort, and
-  any time it is used, you will be notified with a warning
-  message.
+  use 100:104, getContract may use 110:114, getBAT may use
+  120:124, getIBEquities may use 125:129, get_quote.IB may
+  use 130:132, and twsClock may use 140:144). clientId 150
+  is used as a last resort, and any time it is used, you
+  will be notified with a warning message.
 }
 \examples{
 #Before using, enable ActiveX and socket clients and add your computer

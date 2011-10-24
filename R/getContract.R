@@ -54,10 +54,7 @@ getContract <- function(x, verbose=TRUE, silent=FALSE, ...) {
             tryCatch(
             {
                 if ( (hasArg(tws) && is.twsConnection(tws) && !isConnected(tws))
-                    || !hasArg(tws)) {tws <- try(twsConnect(110),silent=TRUE)}
-                if (inherits(tws,'try-error')) tws <- try(twsConnect(111), silent=TRUE)        
-                if (inherits(tws,'try-error')) tws <- try(twsConnect(112), silent=TRUE)
-                if (inherits(tws,'try-error')) tws <- twsConnect(150) #last attempt
+                    || !hasArg(tws)) {tws <- try(ConnectIB(c(110:114, 150)), silent=TRUE)}
             }, finally={
                 if (isConnected(tws)) {                
                     if (verbose) 

@@ -558,10 +558,7 @@ buildIBcontract <- function(symbol, tws=NULL,
             tryCatch(
             {
                 if (is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
-                    tws <- try(twsConnect(100),silent=TRUE)
-                if (inherits(tws,'try-error')) tws <- try(twsConnect(101),silent=TRUE) #try another clientId
-                if (inherits(tws,'try-error')) tws <- try(twsConnect(102),silent=TRUE) #3rd time's the charm
-                if (inherits(tws,'try-error')) tws <- twsConnect(150) #a last attempt for an available clientId
+                    tws <- try(ConnectIB(c(100:104, 150)),silent=TRUE)
             }, finally={ 
                 if (isConnected(tws)) {
                     if (verbose) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
