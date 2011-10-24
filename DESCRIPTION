@@ -41,3 +41,4 @@ Collate:
     'twsClock.R'
     'twsInstrument-package.R'
     'update_instruments.R'
+    'ConnectIB.R'

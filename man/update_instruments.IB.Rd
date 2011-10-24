@@ -30,6 +30,10 @@
 
   \item{assign_c}{If a new currency is discovered, should
   it be created}
+
+  \item{...}{pass through arguments for
+  \code{\link{update_instruments.IB}} and
+  \code{\link[FinancialInstrument]{update_instruments.TTR}}}
 }
 \value{
   called for side-effect

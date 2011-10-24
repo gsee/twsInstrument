@@ -43,6 +43,8 @@ update_instruments.all <- function(Symbols='all', ...) {
 #' reqContractDetails call? "0" for no, "1" for yes (default).
 #' @param assign_i should the instrument be stored in .instrument environment.
 #' @param assign_c If a new currency is discovered, should it be created
+#' @param ... pass through arguments for \code{\link{update_instruments.IB}} and 
+#' \code{\link[FinancialInstrument]{update_instruments.TTR}}
 #' @return called for side-effect
 #' @author Garrett See
 #' @seealso FinancialInstrument:::update_instruments.yahoo, twsInstrument, define_stocks
