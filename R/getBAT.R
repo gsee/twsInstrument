@@ -109,7 +109,7 @@ function(Symbols, endDateTime, tws=NULL,
     if (length(Symbols) > 1 && !auto.assign) stop('auto.assign must be TRUE if using multiple Symbols')
     symout <- NULL	
     for (symbol in Symbols) {
-	    contract <- Contr_From_Instr(symbol,verbose=FALSE)
+	    contract <- getContract(symbol,verbose=FALSE)
         
         if (missing(endDateTime)) endDateTime <- Sys.time()
         if (!is.null(contract$expiry) && contract$expiry != "") {
@@ -119,7 +119,7 @@ function(Symbols, endDateTime, tws=NULL,
         endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
         
         if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
-            tws <- try(ConnectIB(c(120:124, 150)))
+            tws <- ConnectIB(c(120:124, 150))
         if (isConnected(tws)) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
         
         fields <- c("BID","ASK","TRADES")
@@ -135,7 +135,7 @@ function(Symbols, endDateTime, tws=NULL,
                 }
             }
             cat("Disconnecting ... \n")
-        }, finally=twsDisconnect(tws) )
+        }, finally=try(twsDisconnect(tws), silent=TRUE) )
 
         if (!is.null(BID) && !is.null(ASK)) { # && !is.null(TRADES)) {
 	        bat <- merge(Cl(BID),Cl(ASK),all=FALSE)

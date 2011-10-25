@@ -553,61 +553,58 @@ buildIBcontract <- function(symbol, tws=NULL,
           (is.instrument(instr) && instr$currency != instr$primary_id) ) {
         #|| (contract$symbol != contract$currency) ) {		
         # || is.exchange_rate(instr) #no function for this
-		tryCatch(
-		{    
-            tryCatch(
-            {
-                if (is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
-                    tws <- try(ConnectIB(c(100:104, 150)),silent=TRUE)
-            }, finally={ 
-                if (isConnected(tws)) {
-                    if (verbose) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
-                    if (tws$clientId == 150) warning("IB Trader Workstation should be restarted.")                    
-                    #request that IB fill in missing info.                
-                    details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
-                    if (length(details) == 0) {
-                        if ( (contract$include_expired == 0 ||
-                                contract$include_expired == "0" ||
-                                !isTRUE(contract$include_expired)) && 
-                             (is.null(contract$sectype) ||
-                                (!is.null(contract$sectype) && any(contract$sectype == c("FUT","OPT","FOP","BAG")))) ) 
-                        {
-                            if (verbose) cat("Trying to resolve error in contract details. Using include_expired=1\n")              
-                            contract$include_expired <- "1"
-                            details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
-                        }
-                    }   
-                    if (length(details) == 0 && !identical(integer(0), grep("\\.", contract$symbol) )) {
-                        if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (any(contract$sectype == c('STK','IND')))))
-                        {
-                            contract$symbol <- strsplit(contract$symbol, "\\.")[[1]][1]
-                            details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
-                            if (length(details) > 0 && verbose) cat("Resolved error in contract details by omitting exchange info from ticker.\n")
-                        }
+
+		if (is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
+            tws <- ConnectIB(c(100:104, 150))
+        tryCatch(
+		{
+            if (suppressWarnings(isConnected(tws))) {
+                if (verbose) cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
+                if (tws$clientId == 150) warning("IB Trader Workstation should be restarted.")                    
+                #request that IB fill in missing info.                
+                details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
+                if (length(details) == 0) {
+                    if ( (contract$include_expired == 0 ||
+                            contract$include_expired == "0" ||
+                            !isTRUE(contract$include_expired)) && 
+                         (is.null(contract$sectype) ||
+                            (!is.null(contract$sectype) && any(contract$sectype == c("FUT","OPT","FOP","BAG")))) ) 
+                    {
+                        if (verbose) cat("Trying to resolve error in contract details. Using include_expired=1\n")              
+                        contract$include_expired <- "1"
+                        details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
                     }
-                    if (length(details) == 0) {
-                        if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (contract$sectype == 'STK')))
-                        {
-                            if (verbose) cat("Trying to resolve error in contract details. Using sectype='IND'\n")
-                            contract$sectype <- 'IND'
-                            contract$exch <- ""
-                            details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
-                        }
+                }   
+                if (length(details) == 0 && !identical(integer(0), grep("\\.", contract$symbol) )) {
+                    if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (any(contract$sectype == c('STK','IND')))))
+                    {
+                        contract$symbol <- strsplit(contract$symbol, "\\.")[[1]][1]
+                        details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
+                        if (length(details) > 0 && verbose) cat("Resolved error in contract details by omitting exchange info from ticker.\n")
                     }
-                    if (length(details) > 0 && !is.instrument(getInstrument(details[[1]]$contract$currency,type='currency',silent=TRUE))) {
-                        if (verbose) cat("Checking to see if other 'type's have a pre-defined currency.\n")                
-                        tmpcontract <- contract
-                        tmpcontract$sectype <- switch(tmpcontract$sectype, STK='IND', 'STK')
-                        tmpcontract$exch <- switch(tmpcontract$sectype, IND="", STK=,OPT="SMART", CASH='IDEALPRO')
-                        tmpdetails <-  try(suppressWarnings(reqContractDetails(tws,tmpcontract)), silent=TRUE)
-                        if (length(tmpdetails) > 0 && is.instrument(getInstrument(tmpdetails[[1]]$contract$currency,type='currency',silent=TRUE))) {
-                            details <- tmpdetails
-                            instr$type <- switch(details[[1]]$contract$sectype, STK='stock',IND='synthetic',OPT='option',FUT='future',CASH='exchange_rate')
-                        }
-                    }               
-                } else cat('Could not connect to tws.')
-            }) #end nested tryCatch  
-	    },finally=twsDisconnect(tws)) #End outer tryCatch 
+                }
+                if (length(details) == 0) {
+                    if ( is.null(contract$sectype) || (!is.null(contract$sectype) && (contract$sectype == 'STK')))
+                    {
+                        if (verbose) cat("Trying to resolve error in contract details. Using sectype='IND'\n")
+                        contract$sectype <- 'IND'
+                        contract$exch <- ""
+                        details <- try(suppressWarnings(reqContractDetails(tws,contract)), silent=TRUE)
+                    }
+                }
+                if (length(details) > 0 && !is.instrument(getInstrument(details[[1]]$contract$currency,type='currency',silent=TRUE))) {
+                    if (verbose) cat("Checking to see if other 'type's have a pre-defined currency.\n")                
+                    tmpcontract <- contract
+                    tmpcontract$sectype <- switch(tmpcontract$sectype, STK='IND', 'STK')
+                    tmpcontract$exch <- switch(tmpcontract$sectype, IND="", STK=,OPT="SMART", CASH='IDEALPRO')
+                    tmpdetails <-  try(suppressWarnings(reqContractDetails(tws,tmpcontract)), silent=TRUE)
+                    if (length(tmpdetails) > 0 && is.instrument(getInstrument(tmpdetails[[1]]$contract$currency,type='currency',silent=TRUE))) {
+                        details <- tmpdetails
+                        instr$type <- switch(details[[1]]$contract$sectype, STK='stock',IND='synthetic',OPT='option',FUT='future',CASH='exchange_rate')
+                    }
+                }               
+            } else cat('Could not connect to tws.\n') #shouldn't get this message because we should get an error first
+	    },finally=try(twsDisconnect(tws), silent=TRUE)) #End tryCatch 
 
         if (length(details) == 0) {
             uc <- contract

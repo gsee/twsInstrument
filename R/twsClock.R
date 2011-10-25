@@ -23,8 +23,8 @@
 #' @export
 twsClock <- function(format = "%H:%M:%S", refresh = 1, verbose=TRUE)
 {
+    tws <- ConnectIB(c(140:144, 150))
     tryCatch({
-            tws <- try(ConnectIB(c(140:144, 150)))
         if (isConnected(tws) && verbose) 
             cat(paste("Connected with clientId", tws$clientId, '\n'))
         if (tws$clientId == 150) 

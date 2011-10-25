@@ -12,13 +12,17 @@
 #' \code{x} is the name of a Symbol defined in the Symbol Lookup table 
 #' (see \code{\link[quantmod]{setSymbolLookup}}) that has an "IBrokers" src,
 #' and a twsContract object stored under "Contract", that twsContract will be returned.
-#' If \code{x} is numeric, or if it is a character string of numbers, 
-#' it will be treated as the conId in a newly created twsContract shell.  
-#' Then a call will be made to \code{\link{reqContractDetails}} to get the 
-#' contract object.  Otherwise, \code{x} will be passed to \code{\link{Contr_From_Instr}} 
+#' Otherwise, \code{x} will be passed to \code{\link{Contr_From_Instr}} 
 #' which will use what information it can to create a twsContract shell that can/will be
 #' updated with \code{\link{reqContractDetails}}
 #' 
+#' If you want to force a request for contract details from IB (and ensure you are not 
+#' getting a local copy of the twsContract), use \code{\link{Contr_From_Instr}}
+#' which will return the twsContract that \code{\link[IBrokers]{reqContractDetails}} returns
+#' without altering any local copies.  Alternatively, if you call \code{\link{rmContract}}
+#' before calling \code{getContract}, it will be forced to look it up 
+#' (by calling \code{\link{Contr_From_Instr}} for you).
+#'
 #' @param x can be an instrument, twsInstrument, name of an instrument or
 #' twsInstrument, or a numeric or character \sQuote{conId}
 #' @param verbose be verbose?
@@ -29,7 +33,8 @@
 #' @note To ensure you get the contract you're after, you should define your
 #' instruments before using this function.
 #' @author Garrett See
-#' @seealso \code{\link{conId}}, \code{\link{define_stocks}},
+#' @seealso \code{\link{conId}}, \code{\link{rmContract}}, 
+#' \code{\link{define_stocks}},
 #' \code{\link{define_options}}, \code{\link{define_futures}},
 #' \code{\link{Contr_From_Instr}}, \code{\link{twsInstrument}},
 #' \code{\link{getInstrument}}
@@ -43,6 +48,7 @@
 #' getContract("DIA") # will use reqContractDetails if "DIA" is not already defined
 #' instr <- getInstrument("SEE")
 #' getContract(instr)
+#' getContract(instr$conId) # will connect to IB and reqContractDetails
 #' }
 #' @export
 getContract <- function(x, verbose=TRUE, silent=FALSE, ...) {
@@ -55,36 +61,7 @@ getContract <- function(x, verbose=TRUE, silent=FALSE, ...) {
         if (!is.null(SL$Contract) && SL$src == 'IBrokers')
             if (is.twsContract(SL$Contract)) return(SL$Contract)   
     }        
-    tmpnum <- try(suppressWarnings(as.numeric(x)), silent=TRUE)
-    if (any(is.na(tmpnum))) return(Contr_From_Instr(x, assign_c=FALSE, verbose=verbose, silent=silent, ...))
-    else {
-        tryCatch({
-            tryCatch(
-            {
-                if ( (hasArg(tws) && is.twsConnection(tws) && !isConnected(tws))
-                    || !hasArg(tws)) {tws <- try(ConnectIB(c(110:114, 150)), silent=TRUE)}
-            }, finally={
-                if (isConnected(tws)) {                
-                    if (verbose) 
-                        cat(paste('Connected with clientId ', tws$clientId, '.\n',sep=""))    
-                    if (tws$clientId == 150) warning("IB Trader Workstation should be restarted.")                    
-                    contract <- twsContract()
-                    contract$conId <- paste(x)
-                    contract$include_expired <- "1" #reqContractDetails will overwrite this (due to a bug it has), 
-                                                    #but you need it here in case this contract is expired. 
-                    #request that IB fill in missing info.
-                    details <- try(suppressWarnings(reqContractDetails(tws,contract)),silent=TRUE)
-                    if (!inherits(details,'try-error') && length(details)) {
-                        details <- details[[1]]        
-                    } else details <- NULL
-                } else if (verbose) cat('Could not connect to tws.')
-            }) #end nested tryCatch  
-        },finally=twsDisconnect(tws)) #End outer tryCatch
-        if (is.null(details)) {
-            stop("Could not find twsContract with conId ", x)
-        } else if (verbose) cat('Contract details request complete. Disconnected.\n')
-        return(details$contract)
-    }
+    return(Contr_From_Instr(x, assign_c=FALSE, verbose=verbose, silent=silent, ...))
 }
 
 #' Remove local copies of twsContracts

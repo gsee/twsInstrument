@@ -31,15 +31,21 @@
   Lookup table (see
   \code{\link[quantmod]{setSymbolLookup}}) that has an
   "IBrokers" src, and a twsContract object stored under
-  "Contract", that twsContract will be returned. If
-  \code{x} is numeric, or if it is a character string of
-  numbers, it will be treated as the conId in a newly
-  created twsContract shell. Then a call will be made to
-  \code{\link{reqContractDetails}} to get the contract
-  object.  Otherwise, \code{x} will be passed to
-  \code{\link{Contr_From_Instr}} which will use what
-  information it can to create a twsContract shell that
-  can/will be updated with \code{\link{reqContractDetails}}
+  "Contract", that twsContract will be returned. Otherwise,
+  \code{x} will be passed to \code{\link{Contr_From_Instr}}
+  which will use what information it can to create a
+  twsContract shell that can/will be updated with
+  \code{\link{reqContractDetails}}
+
+  If you want to force a request for contract details from
+  IB (and ensure you are not getting a local copy of the
+  twsContract), use \code{\link{Contr_From_Instr}} which
+  will return the twsContract that
+  \code{\link[IBrokers]{reqContractDetails}} returns
+  without altering any local copies.  Alternatively, if you
+  call \code{\link{rmContract}} before calling
+  \code{getContract}, it will be forced to look it up (by
+  calling \code{\link{Contr_From_Instr}} for you).
 }
 \note{
   To ensure you get the contract you're after, you should
@@ -54,13 +60,15 @@ getContract("SEE") # == .instrument$SEE$IB
 getContract("DIA") # will use reqContractDetails if "DIA" is not already defined
 instr <- getInstrument("SEE")
 getContract(instr)
+getContract(instr$conId) # will connect to IB and reqContractDetails
 }
 }
 \author{
   Garrett See
 }
 \seealso{
-  \code{\link{conId}}, \code{\link{define_stocks}},
+  \code{\link{conId}}, \code{\link{rmContract}},
+  \code{\link{define_stocks}},
   \code{\link{define_options}},
   \code{\link{define_futures}},
   \code{\link{Contr_From_Instr}},

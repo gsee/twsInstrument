@@ -132,19 +132,18 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
         return(df)
     }
 
-    tryCatch( {
-        if (missing(tws) || 
-            is.null(tws) ||
-            !inherits(tws, 'twsconn') || 
-	        (is.twsConnection(tws) && !isConnected(tws))) 
-            tws <- ConnectIB(c(130:134,150))
-        if (isConnected(tws) && verbose) 
+    if (missing(tws) || 
+        is.null(tws) ||
+        !inherits(tws, 'twsconn') || 
+        (is.twsConnection(tws) && !isConnected(tws))) 
+        tws <- ConnectIB(c(130:134,150))
+    tryCatch( 
+    {
+        if (suppressWarnings(isConnected(tws)) && verbose) 
             cat(paste("Connected with clientId ", tws$clientId, 
                         ".\n Requesting ", Symbols, "\n", sep = ""))
         if (tws$clientId == 150) warning("IB TWS should be restarted.")
-
         contracts <- lapply(Symbols, getContract)
-        
         if (hasArg(eWrapper)) {
             eW <- list(...)$eWrapper
             ew <- eW(length(Symbols))
@@ -152,8 +151,8 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
                     eWrapper.FXdata(length(Symbols))  
               else eWrapper.data(length(Symbols))      
         qt <- reqMktData(tws, lapply(Symbols,getContract), eventWrapper=ew,CALLBACK=snapShot)
-                     
-        },finally={twsDisconnect(tws)} )
+                  
+    },finally={try(twsDisconnect(tws), silent=TRUE)} )
     qt
 }
 
