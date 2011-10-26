@@ -616,8 +616,8 @@ buildIBcontract <- function(symbol, tws=NULL,
         } else { 
             details <- details[[1]]
 		    uc <- details[["contract"]] #updated contract
-            uc$include_expired <- contract$include_expired #FIXME: IBrokers:::reqContractDetails overwrites include_expired	
-            if (uc$sectype != 'FUT' && uc$sectype != 'OPT') uc$include_expired <- ""    
+            #uc$include_expired <- contract$include_expired #FIXME: IBrokers:::reqContractDetails overwrites include_expired	
+            #if (uc$sectype != 'FUT' && uc$sectype != 'OPT') uc$include_expired <- ""    
             if (verbose) {
                 cat(paste('Request complete: ',
                         paste(uc$symbol, uc$sectype, uc$currency), '.\nDisconnected.\n', sep=""))
