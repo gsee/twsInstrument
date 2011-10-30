@@ -27,7 +27,7 @@ ConnectIB <- function(clientIds=1:10) {
     con <- suppressWarnings(try(twsConnect(clientIds[[1]]), silent=TRUE))
     #if (!inherits(con, 'try-error')) return(con)
     if (suppressWarnings(isConnected(con))) return(con)
-    if (grep('cannot open the connection', con[[1]]) == 1)
+    if (!identical(integer(0), grep('cannot open the connection', con[[1]])))
         con <- suppressWarnings(try(ibgConnect(clientIds[[1]]), silent=TRUE))
     #if (!inherits(con, 'try-error')) return(con)
     if (suppressWarnings(isConnected(con))) return(con)

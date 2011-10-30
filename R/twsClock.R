@@ -7,7 +7,7 @@
 #' @param format format
 #' @param refresh refresh rate
 #' @param verbose be verbose about what clientId you are connected with?
-#' @return live updating current time as reported by \code{reqCurrentTime}.
+#' @return live updating current time as reported by \code{\link[IBrokers]{reqCurrentTime}}.
 #' Press escape to exit clock utility.
 #' @references
 #' \url{http://stackoverflow.com/questions/5953718/overwrite-current-output-in-the-r-console}

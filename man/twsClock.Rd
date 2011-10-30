@@ -15,8 +15,8 @@
 }
 \value{
   live updating current time as reported by
-  \code{reqCurrentTime}. Press escape to exit clock
-  utility.
+  \code{\link[IBrokers]{reqCurrentTime}}. Press escape to
+  exit clock utility.
 }
 \description{
   A clock utility to display the TWS server time
