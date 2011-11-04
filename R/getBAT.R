@@ -1,4 +1,4 @@
-#symbol can be the name of an instrument (e.g. "XOM")
+#Symbol can be the name of an instrument (e.g. "XOM")
 #OR
 #it can be a twsContract
 #OR
@@ -11,22 +11,18 @@
 #' download Bid Ask Trade data and merge into BAT object
 #' 
 #' getBAT downloads and merges data for Bid, Ask, and Trade. reqTBBO is an
-#' alias for getBAT. %getBAThistory downloads the max allowed by
-#' InteractiveBrokers.
-#' 
-#' %for getBAThistory, the symbol argument must be the name %of a
-#' FinancialInstrument instrument.
+#' alias for getBAT. 
 #' 
 #' reqTBBO is an alias for getBAT.
 #' 
-#' symbol can be one of: an instrument, the name of an instrument, the name of
+#' Symbol can be one of: an instrument, the name of an instrument, the name of
 #' an undefined stock, or a twsContract object.
 #' 
-#' Before making a request for historical data, symbol will be passed through
+#' Before making a request for historical data, Symbol will be passed through
 #' \code{Contr_From_Instr} (which is a wrapper for \code{buildIBcontract})
-#' which will convert symbol into an updated, complete twsContract.
+#' which will convert Symbol into an updated, complete twsContract.
 #' 
-#' If you want to get data for something other than a stock, then \code{symbol}
+#' If you want to get data for something other than a stock, then \code{Symbol}
 #' should be an instrument object, a twsContract object or the name of a
 #' previosly defined instrument
 #' 
@@ -37,9 +33,9 @@
 #' if given, and 1 minute before midnight on the expiration date, will be used
 #' for endDateTime in the call to reqHistoricalData.
 #' 
-#' !!! Ignore the rest of this details section until I upload getBAThistory
-#' function !!! (Below is mostly copied from reqHistoricalData help) If
-#' endDateTime is not specified the current time as returned from the TWS
+#' Below is copied from the help page for \code{\link[IBrokers]{reqHistoricalData}} 
+#'
+#' If endDateTime is not specified the current time as returned from the TWS
 #' server will be used. This is the preferred method for backfilling data. The
 #' \sQuote{TZ} portion of the string is optional.
 #' 
@@ -54,9 +50,6 @@
 #' character may be any one of \sQuote{S} (seconds), \sQuote{D} (days),
 #' \sQuote{W} (weeks), \sQuote{M} (months), and \sQuote{Y} (year). At present
 #' the limit for years is 1.
-#' 
-#' %getBAThistory needs to be updated; %getBAThistory requests the maximal
-#' history from IB.
 #' 
 #' @aliases getBAT reqTBBO
 #' @param Symbols can be a twsInstrument, a twsContract, an instrumnet or the
@@ -74,7 +67,8 @@
 #' Trade.Price, Mid.Price, along with additional information stored in the
 #' objects xtsAttributes,
 #' @author Garrett See
-#' @seealso Contr_From_Instr, IBrokers, reqHistoricalData, reqHistory,
+#' @seealso \code{\link{reqTBBOhistory}}, \code{\link{Contr_From_Instr}}, 
+#' \code{\link[IBrokers]{reqHistoricalData}}, \code{\link[IBrokers]{reqHistory}},
 #' getIBequities
 #' @references InteractiveBrokers \url{www.interactivebrokers.com}
 #' 
@@ -97,11 +91,11 @@
 #' #the twsContract object
 #' currency('USD')
 #' stock('XOM', 'USD', 1, IB=twsSTK('XOM'))
-#' getBAT('XOM') #gets from .instrument
+#' getBAT('XOM') #gets contract from .instrument
 #' }
-#' @export 
-getBAT <- reqTBBO <-
-function(Symbols, endDateTime, tws=NULL, 
+#' @export
+#' @rdname getBAT
+getBAT <- function(Symbols, endDateTime, tws=NULL, 
         barSize='1 min', duration='5 D', 
         useRTH="1", auto.assign=TRUE, 
         env=.GlobalEnv) {
@@ -160,97 +154,8 @@ function(Symbols, endDateTime, tws=NULL,
     symout
 }
 
+#' @export
+#' @rdname getBAT
+reqTBBO <- getBAT
 
-#################################################################
-#Old Version
-#symbol can either be the symbol of an instrument (e.g. "XOM")
-#OR
-#it can be a twsContract
-#getBAT <-
-#function(symbol, endDateTime, tws=NULL, barSize='1 min', 
-#duration='5 D',auto.assign=TRUE, env=.GlobalEnv) {
-##TODO: use dots. check for tws, symbol, contract, endDateTime, barSize, duration, clientId
-##TODO: if endDateTime is character string, convert to IB format time    
-#    if (is.twsContract(symbol)){ 
-#        contract <- symbol
-#        symbol <- symbol$symbol    
-#    } else {
-#        if (length(symbol) > 1) 
-#            stop('symbol must be either the name of an instrument, or a twsContract object.')
-#        instr <- try(getInstrument(symbol))
-
-#        if (inherits(instr,'try-error') || !is.instrument(instr)) {
-#            warning(paste("No instrument defined for ", symbol, 
-#                ". Tried using twsSTK to create contract.1",  sep=""))
-#            contract <- twsSTK(symbol,'SMART')
-#        } else if (is.null(instr$IB) ) {
-#            warning(paste('Cannot find twsContract definition in IB slot of, ',
-#                         symbol, '. Tried using twsSTK to create contract.2',sep=""))
-#            contract <- twsSTK(symbol, 'SMART')
-#        } else contract <- instr$IB
-#        #done getting twsContract object
-#    }
-#    #if endDateTime is provided, does it need to be converted to an IB time?    
-#    if (!missing(endDateTime)) {
-#        if(is.character(endDateTime)) {
-#            endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
-#        }
-#    }
-#    if (is.null(tws) || !isConnected(tws)) tws <- twsConnect()
-#
-#	bid <- reqHistoricalData(tws,contract,endDateTime=endDateTime,
-#                barSize=barSize,duration=duration,whatToShow='BID')
-#	cat("Pausing 10 seconds between requests ...")
-#	Sys.sleep(10) #to avoid IB pacing violation.
-#	cat(" Request sent ... ")
-#	ask <- reqHistoricalData(tws,contract,endDateTime=endDateTime,
-#               barSize=barSize,duration=duration,whatToShow='ASK')
-#	cat("Pausing 10 seconds between requests ...")
-#	Sys.sleep(10) #to avoid IB pacing violation.
-#	cat(" Request sent ... ")
-#	trd <- reqHistoricalData(tws,contract,endDateTime=endDateTime,
-#                barSize=barSize,duration=duration,whatToShow='TRADES')	
-#    twsDisconnect(tws)
-#
-#	bat <- merge(Cl(bid),Cl(ask),all=FALSE)
-#    bat <- na.omit(bat)
-#    bat <- merge(bat,Cl(trd),all=FALSE)
-#    bat <- na.locf(bat,na.rm=TRUE)
-#	bat$Mid.Price <- (bat[,1] + bat[,2])/2
-#    if (NCOL(bat)==4)
-#    	colnames(bat) <- paste(symbol,c('Bid.Price','Ask.Price','Trade.Price','Mid.Price'),sep='.')
-#	if (auto.assign) { 
-#		assign(symbol, bat, envir=env)
-#		return(symbol)
-#	} else { return(bat) }
-#}
-
-
-##########################################################################################################
-#Older version
-#getBAT <-
-#function(tws, symbol, endDateTime, barSize='1 min', duration='5 D',auto.assign=TRUE, env=.GlobalEnv) {
-##TODO: if endDateTime is character string, convert to IB format time
-#	instr <- getInstrument(symbol)
-#	bid <- reqHistoricalData(tws,getInstrument(symbol)$IB,endDateTime=endDateTime,barSize=barSize,duration=duration,whatToShow='BID')
-#	cat("Pausing 10 seconds between requests ...")
-#	Sys.sleep(10) #to avoid IB pacing violation.
-#	cat(" Request sent ... ")
-#	ask <- reqHistoricalData(tws,getInstrument(symbol)$IB,endDateTime=endDateTime,barSize=barSize,duration=duration,whatToShow='ASK')
-#	cat("Pausing 10 seconds between requests ...")
-#	Sys.sleep(10) #to avoid IB pacing violation.
-#	cat(" Request sent ... ")
-#	trd <- reqHistoricalData(tws,getInstrument(symbol)$IB,endDateTime=endDateTime,barSize=barSize,duration=duration,whatToShow='TRADES')	
-#	Sys.sleep(10) #to avoid IB pacing violation.
-#	cat(" Request sent ... ")
-	
-#	fut.bat <- cbind(Cl(bid),Cl(ask),Cl(trd))
-#	fut.bat <- na.locf(fut.bat,na.rm=TRUE)
-#	fut.bat$Mid.Price <- (fut.bat[,1] + fut.bat[,2])/2
-#	colnames(fut.bat) <- paste(symbol,c('Bid','Ask','Trade.Price','Mid.Price'),sep='.')
-#	if (auto.assign) { 
-#		assign(symbol, fut.bat, envir=env)
-#		return(symbol)
-#	} else { return(fut.bat) }
-#}
 
