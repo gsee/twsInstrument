@@ -55,6 +55,11 @@
   \sQuote{TRADES}, and \sQuote{BAT}.  If you will be
   requesting data for foreign exchange rates, you should
   also have a sub-directory called \sQuote{BAM}.
+
+  The default \code{base_dir} is \dQuote{/mnt/W}.  If you
+  do not have a directory there, you should either create
+  it, or not use the default value for \code{base_dir}.
+
   \code{reqTBBOhistory} will make requests for 5 days of
   bid, ask, and trade data and then pause for 30 seconds.
   In between requests, all BID, ASK, and TRADES data are
@@ -72,7 +77,9 @@
   every 30 seconds.
 
   For best results, you should define your instruments
-  before calling this function
+  before calling this function.
+
+  This has only been tested on a debian-based linux system.
 }
 \note{
   IB limits historical data requests to 6 every 60 seconds
@@ -93,9 +100,9 @@ reqTBBOhistory("ES_M1")
   \url{http://individuals.interactivebrokers.com/php/apiUsersGuide/apiguide/api/historical_data_limitations.htm#XREF_93621_Historical_Data}
 }
 \seealso{
-  \code{\link{getBAT}}, \code{update.data} (unexported due
-  to current lack of documentation),
-  \code{\link{makeBATs}},
+  \code{\link{getBAT}}, \code{twsInstrument:::update.data}
+  (unexported due to possibility of name change, and
+  current lack of documentation), \code{\link{makeBATs}},
   \code{\link[IBrokers]{reqHistoricalData}},
   \code{\link[IBrokers]{reqHistory}}
 }
