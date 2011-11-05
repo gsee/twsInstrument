@@ -1,0 +1,50 @@
+\name{get_from}
+\alias{get_from}
+\alias{get_to}
+\title{Get first or last date for which there are data stored on disk}
+\usage{
+  get_from(Symbol, base_dir = "/mnt/W/TRADES", maxDays =
+  365)
+
+  get_to(Symbol, base_dir = "/mnt/W/TRADES", maxDays = 365)
+}
+\arguments{
+  \item{Symbol}{name of instrument}
+
+  \item{base_dir}{directory that has subdirectories for all
+  of your Symbols (where each subdirectory contains data
+  files named ).}
+
+  \item{maxDays}{if there are no data for \code{Symbol}
+  stored on disk, get_from and get_to will return today's
+  date minus maxDays.}
+}
+\value{
+  character string of format "\%Y-\%m-\%d" representing the
+  first date for which there is data stored in
+  \code{base_dir}.  If there are no data for \code{Symbol}
+  then the date returned will be today's date minus
+  \code{maxDays}
+}
+\description{
+  Get first or last date for which there are data stored on
+  disk
+}
+\details{
+  Data should be stored as follows: There should be a
+  directory under \code{base_dir} named the same as
+  \code{Symbol} that contains a separate data file for each
+  day.  The data file names should begin with
+  "\%Y.\%m.\%d".  ("2011.07.05.SPY.RData", for example).
+}
+\examples{
+get_from("SPY")
+}
+\author{
+  Garrett See
+}
+\seealso{
+  \code{\link[FinancialInstrument]{saveSymbols.days}} to
+  save data the way this function expects it to be saved.
+}
+

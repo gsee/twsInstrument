@@ -1,21 +1,8 @@
 \name{conId}
 \alias{conId}
-\alias{conId.character}
-\alias{conId.default}
-\alias{conId.twsContract}
-\alias{conId.twsContractDetails}
-\alias{conId.twsInstrument}
 \title{methods to get conId}
 \usage{
   conId(x, ...)
-
-  conId.twsContract(x, ...)
-
-  conId.twsContractDetails(x, ...)
-
-  conId.twsInstrument(x, ...)
-
-  conId.default(x, ...)
 }
 \arguments{
   \item{x}{The name of a twsInstrument, or an object of
@@ -29,6 +16,9 @@
 \description{
   currently defined methods for default, character,
   twsInstrument, and twsContract
+}
+\details{
+  conId.twsContract
 }
 \note{
   unless you call \code{conId} with a \code{twsContract} or

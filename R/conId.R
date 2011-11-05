@@ -3,8 +3,6 @@
 #' currently defined methods for default, character, twsInstrument, and
 #' twsContract
 #' 
-#' 
-#' @aliases conId conId.default conId.character conId.twsInstrument
 #' conId.twsContract
 #' @param x The name of a twsInstrument, or an object of type twsInstrument, or
 #' twsContract.
@@ -32,29 +30,45 @@ conId <- function(x, ...)
     UseMethod('conId', x)
 }
 
-#' @export
-#' @rdname conId
+#' twsContract class conId extractor
+#'
+#' @method conId twsContract
+#' @S3method conId twsContract
+#' @author Garrett See
+#' @keywords internal
 conId.twsContract <- function(x, ...) 
 {
     return(x[["conId"]])
 }
 
-#' @export
-#' @rdname conId
+#' twsContractDetails class conId extractor
+#'
+#' @method conId twsContractDetails
+#' @S3method conId twsContractDetails
+#' @author Garrett See
+#' @keywords internal
 conId.twsContractDetails <- function(x, ...)
 {
     return(x[["contract"]][["conId"]])
 }
 
-#' @export
-#' @rdname conId
+#' twsInstrument class conId extractor
+#'
+#' @method conId twsInstrument
+#' @S3method conId twsInstrument
+#' @author Garrett See
+#' @keywords internal
 conId.twsInstrument <- function(x, ...)
 {
     return(x[["IB"]][["conId"]])
 }
 
-#' @export
-#' @rdname conId
+#' default conId extractor
+#'
+#' @method conId default
+#' @S3method conId default
+#' @author Garrett See
+#' @keywords internal
 conId.default <- conId.character <- function(x, ...)
 {
     return(sapply(x, function(xx) conId(getContract(xx, ...))))
