@@ -50,6 +50,8 @@
   limitations.
 }
 \details{
+  Experimental code -- see Note section
+
   Important: You should have a base directory that contains
   these sub-directories: \sQuote{BID}, \sQuote{ASK},
   \sQuote{TRADES}, and \sQuote{BAT}.  If you will be
@@ -80,9 +82,20 @@
   before calling this function.
 
   This has only been tested on a debian-based linux system.
+
+  IB limits historical data requests to 6 every 60 seconds
 }
 \note{
-  IB limits historical data requests to 6 every 60 seconds
+  Warning: Interactive Brokers *back adjusts* their data
+  for stock splits (but not for dividends). If you are
+  storing stock data, you should probably unadjust the last
+  year's worth of data, then, make sure you download the
+  most recent data each day, being careful not to overwrite
+  any data already stored on disk.  This way you could have
+  all unadjusted data that you could adjust (with
+  qmao:::adjustIntraday.yahoo, for example).  Otherwise,
+  you'll have some data that is split-adjusted (or
+  partially split-adjusted) and some that isn't.
 }
 \examples{
 \dontrun{
