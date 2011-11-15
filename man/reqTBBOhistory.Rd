@@ -130,11 +130,7 @@ getSymbols("SPY", src='FI', dir='tmpdata/BAT',
 from=Sys.Date() - 20, verbose=TRUE)
 
 # Clean up -- Delete everything
-unlink("tmpdata/BID")
-unlink("tmpdata/ASK")
-unlink("tmpdata/TRADES")
-unlink("tmpdata/BAT")
-unlink("tmpdata/BAM", recursive=TRUE)
+unlink("tmpdata", recursive=TRUE)
 }
 }
 \author{
