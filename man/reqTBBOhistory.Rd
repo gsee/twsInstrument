@@ -99,9 +99,46 @@
 }
 \examples{
 \dontrun{
-define_futures('ES','GLOBEX','201106',include_expired=1)
-reqTBBOhistory("ES_M1")
+library(twsInstrument)
+dir.create("tmpdata/BID", recursive=TRUE)
+dir.create("tmpdata/ASK")
+dir.create("tmpdata/TRADES")
+dir.create("tmpdata/BAT")
+dir.create("tmpdata/BAM")
+define_stocks("SPY")
+# get the last 20 days of minutely data
+# (this will take ~2 minutes)
+reqTBBOhistory("SPY",
+base_dir="tmpdata",
+ndays=20,
+save=TRUE,
+chronological=TRUE)
+# Now to prove it's on disk, delete from workspace
+# and load it.
+rm("SPY")
+getSymbols("SPY", src='FI', dir='tmpdata/BAT',
+from=Sys.Date() - 20, verbose=TRUE)
+
+# If you had called reqTBBOhistory with save=FALSE (the default)
+# or if your "BAT" directory were wiped out, you can use
+# the unexported makeBATs function to get the BID, ASK, TRADES
+# data from disk and rebuild the BAT data.
+unlink("tmpdata/BAT")
+twsInstrument:::makeBATs("SPY", base_dir='tmpdata', ndays=20)
+rm("SPY")
+getSymbols("SPY", src='FI', dir='tmpdata/BAT',
+from=Sys.Date() - 20, verbose=TRUE)
+
+# Clean up -- Delete everything
+unlink("tmpdata/BID")
+unlink("tmpdata/ASK")
+unlink("tmpdata/TRADES")
+unlink("tmpdata/BAT")
+unlink("tmpdata/BAM", recursive=TRUE)
 }
+}
+\author{
+  Garrett See
 }
 \references{
   InteractiveBrokers \url{www.interactivebrokers.com}
@@ -113,9 +150,11 @@ reqTBBOhistory("ES_M1")
   \url{http://individuals.interactivebrokers.com/php/apiUsersGuide/apiguide/api/historical_data_limitations.htm#XREF_93621_Historical_Data}
 }
 \seealso{
-  \code{\link{getBAT}}, \code{twsInstrument:::update.data}
-  (unexported due to possibility of name change, and
-  current lack of documentation), \code{\link{makeBATs}},
+  \code{twsInstrument:::update.data} (unexported due to
+  possibility of name change, and current lack of
+  documentation),
+
+  \code{\link{getBAT}}, \code{\link{makeBATs}},
   \code{\link[IBrokers]{reqHistoricalData}},
   \code{\link[IBrokers]{reqHistory}}
 }

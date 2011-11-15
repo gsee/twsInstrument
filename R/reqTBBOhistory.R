@@ -42,14 +42,16 @@
 #' to use TRUE so that if a request is interrupted, you will not have gaps in your data.
 #' \code{update.data} uses \code{chronological=TRUE}
 #' @return called for side-effect. Returns the names of Symbols.
+#' @author Garrett See
 #' @note Warning: Interactive Brokers *back adjusts* their data for stock splits (but not for dividends).  
 #' If you are storing stock data, you should probably unadjust the last year's worth of data, then, 
 #' make sure you download the most recent data each day, being careful not to overwrite any data already
 #' stored on disk.  This way you could have all unadjusted data that you could adjust (with 
 #' qmao:::adjustIntraday.yahoo, for example).  Otherwise, you'll have some data that is 
 #' split-adjusted (or partially split-adjusted) and some that isn't.
-#' @seealso \code{\link{getBAT}}, \code{twsInstrument:::update.data} (unexported due to possibility of name change, and current lack of documentation), 
-#' \code{\link{makeBATs}}, \code{\link[IBrokers]{reqHistoricalData}}, \code{\link[IBrokers]{reqHistory}}
+#' @seealso \code{twsInstrument:::update.data} (unexported due to possibility of name change, and current lack of documentation), 
+#' 
+#' \code{\link{getBAT}}, \code{\link{makeBATs}}, \code{\link[IBrokers]{reqHistoricalData}}, \code{\link[IBrokers]{reqHistory}}
 #' @references InteractiveBrokers \url{www.interactivebrokers.com}
 #' 
 #' IB API \url{http://interactivebrokers.com/php/apiUsersGuide/apiguide.htm}
@@ -59,8 +61,42 @@
 #'
 #' @examples
 #' \dontrun{
-#' define_futures('ES','GLOBEX','201106',include_expired=1)
-#' reqTBBOhistory("ES_M1")
+#' library(twsInstrument)
+#' dir.create("tmpdata/BID", recursive=TRUE)
+#' dir.create("tmpdata/ASK")
+#' dir.create("tmpdata/TRADES")
+#' dir.create("tmpdata/BAT")
+#' dir.create("tmpdata/BAM")
+#' define_stocks("SPY")
+#' # get the last 20 days of minutely data 
+#' # (this will take ~2 minutes)
+#' reqTBBOhistory("SPY", 
+#'                 base_dir="tmpdata", 
+#'                 ndays=20, 
+#'                 save=TRUE, 
+#'                 chronological=TRUE)
+#' # Now to prove it's on disk, delete from workspace
+#' # and load it.
+#' rm("SPY")
+#' getSymbols("SPY", src='FI', dir='tmpdata/BAT', 
+#'             from=Sys.Date() - 20, verbose=TRUE)
+#' 
+#' # If you had called reqTBBOhistory with save=FALSE (the default)
+#' # or if your "BAT" directory were wiped out, you can use
+#' # the unexported makeBATs function to get the BID, ASK, TRADES 
+#' # data from disk and rebuild the BAT data.
+#' unlink("tmpdata/BAT")
+#' twsInstrument:::makeBATs("SPY", base_dir='tmpdata', ndays=20)
+#' rm("SPY")
+#' getSymbols("SPY", src='FI', dir='tmpdata/BAT', 
+#'             from=Sys.Date() - 20, verbose=TRUE)
+#' 
+#' # Clean up -- Delete everything
+#' unlink("tmpdata/BID")
+#' unlink("tmpdata/ASK")
+#' unlink("tmpdata/TRADES")
+#' unlink("tmpdata/BAT")
+#' unlink("tmpdata/BAM", recursive=TRUE)
 #' }
 #' @export
 reqTBBOhistory <-
