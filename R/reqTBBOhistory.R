@@ -59,7 +59,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' define_futures('ES_M1','GLOBEX','201106',include_expired=1)
+#' define_futures('ES','GLOBEX','201106',include_expired=1)
 #' reqTBBOhistory("ES_M1")
 #' }
 #' @export
