@@ -666,14 +666,25 @@ buildIBcontract <- function(symbol, tws=NULL,
         }    
     }
 
-
     if (updateInstrument) { # && assign_i) {
         instr$primary_id <- primary_id
         instr$currency <- uc$currency
-        instr$identifiers <- unique(c(instr$identifiers, list(conId=uc$conId, local=gsub(" ","",uc$local))))
+        #instr$identifiers <- unique(c(instr$identifiers, list(conId=uc$conId, local=gsub(" ","",uc$local))))
+        # Get nammed and unnamed unique identifiers separately
+        ident <-  c(instr$identifiers, list(conId=uc$conId, local=gsub(" ","",uc$local)))
+        unnamed <- which(names(ident)=="")
+        uident <- unique(ident[unnamed])
+        ident.names <- unique(names(ident)[names(ident) != ""])
+        ident <- ident[ident.names]
+        instr$identifiers <- c(uident, ident)
         instr$local <- uc$local
         instr$IB.primary.exch <- uc$primary
         instr$exchange <- uc$exch #ok to overwrite 'SMART' ?         
+        mN <- details$marketName
+        instr$marketName <- if (mN == "NMS") { 
+            if (!silent) warning('marketName of "NMS" was replaced by symbol')
+            uc$symbol
+        } else mN
         switch(uc$sectype,
             IND={
                 instr$type <- unique(c(instr$type,'synthetic'))
@@ -699,8 +710,18 @@ buildIBcontract <- function(symbol, tws=NULL,
                         paste(substr(uc$expiry,1,4),substr(uc$expiry,5,6),substr(uc$expiry,7,8),sep="-")
                     } else uc$expiry
                 iblocal <- uc$local
+
+                tmpx <- suppressWarnings(try(as.numeric(iblocal)))
+                if (!inherits(tmpx, 'try-error') && !is.na(tmpx) && is.numeric(tmpx)) { #make suffix_id
+                    tmpd <- as.Date(instr$expires)
+                    Y <- format(tmpd, "%y")                    
+                    M <- month.abb[as.numeric(format(tmpd, "%m"))]
+                    instr$suffix_id <- paste(M2C(M), Y, sep="")
+                    rm('tmpd', 'Y', 'M')
+                }
+                rm('tmpx')
                 si <- if (is.null(instr$suffix_id)) {
-                        parse_id(gsub(" ","",iblocal))$suffix
+                        parse_id(gsub(" ","",iblocal), root=details$marketName)$suffix
                     } else instr$suffix_id
                 primary_id <- paste(contract$symbol,si,sep="_")
                 primary_id <- gsub(" ","",primary_id)
@@ -715,7 +736,8 @@ buildIBcontract <- function(symbol, tws=NULL,
         #the IB API event that provides them has been deprecated.
 		if (uc$sectype != "CASH" || (instr$currency != instr$primary_id)) {
 		#we don't have this info for non-tradeable base currency			    
-			instr$tick_size <- as.numeric(details$minTick)        
+			instr$tick_size <- as.numeric(details$minTick)
+            instr$priceMagnifier <- as.numeric(details$priceMagnifier)
 		    instr$longName <- details$longName
 		    instr$industry <- details$industry
 		    if (!is.null(details) && details$contractMonth != "") 
@@ -723,6 +745,21 @@ buildIBcontract <- function(symbol, tws=NULL,
 		    instr$category <- details$category
 		    instr$subcategory <- details$subcategory
 		    instr$timeZoneId <- details$timeZoneId
+            # extract start and end times
+            elec <- strsplit(details$tradingHours, ":")[[1]]
+            elec <- elec[length(elec)]
+            elec <- strsplit(elec, "-")[[1]]
+            elec <- paste(substr(elec, 1, 2), substr(elec, 3, 4), sep=":")
+            instr$electronic_start <- elec[1]
+            instr$electronic_end <- elec[2]
+            #now the primary_session times
+            prim <- strsplit(details$liquidHours, ":")[[1]]
+            prim <- prim[length(prim)]
+            prim <- strsplit(prim, "-")[[1]]
+            prim <- paste(substr(prim, 1, 2), substr(prim, 3, 4), sep=":")
+            instr$primary_start <- prim[1]
+            instr$primary_end <- prim[2]
+            instr$validExchanges <- details$validExchanges
 		}  #End deprecated
 
         tmptype <- switch(instr$type[1],

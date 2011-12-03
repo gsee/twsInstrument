@@ -3,17 +3,20 @@
 \alias{front_future.IB}
 \title{instrument class constructor for front futures contract}
 \usage{
-  front_future(roots, currency = "USD", underlying_id =
-  NULL, addIBslot = TRUE, src = "IB")
+  front_future(roots, currency = "USD", exchange = NULL,
+  underlying_id = NULL, addIBslot = TRUE, src = "IB")
 
-  front_future.IB(roots, currency = "USD", underlying_id =
-  NULL, addIBslot = TRUE)
+  front_future.IB(roots, currency = "USD", exchange = NULL,
+  underlying_id = NULL, addIBslot = TRUE)
 }
 \arguments{
   \item{roots}{vector of chr strings; contract roots.}
 
   \item{currency}{name of currency; if more than one root,
   they all must have the same currency}
+
+  \item{exchange}{optional character string name of
+  exchange ("GLOBEX", "NYMEX", etc.)}
 
   \item{underlying_id}{name of underlying}
 

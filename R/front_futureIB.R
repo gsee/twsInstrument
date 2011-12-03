@@ -1,6 +1,6 @@
 #' @export
 #' @rdname front_future.IB
-front_future <- function(roots, currency='USD', underlying_id = NULL, addIBslot=TRUE, src='IB') {
+front_future <- function(roots, currency='USD', exchange=NULL, underlying_id = NULL, addIBslot=TRUE, src='IB') {
     do.call(paste('front_future',src,sep="."),list(roots=roots,currency=currency, underlying_id=underlying_id, addIBslot=addIBslot))
 }
 
@@ -37,6 +37,7 @@ front_future <- function(roots, currency='USD', underlying_id = NULL, addIBslot=
 #' @param roots vector of chr strings; contract roots.
 #' @param currency name of currency; if more than one root, they all must have
 #' the same currency
+#' @param exchange optional character string name of exchange ("GLOBEX", "NYMEX", etc.)
 #' @param underlying_id name of underlying
 #' @param addIBslot should an IB slot be added to the instrument; i.e. do you
 #' want to create a twsInstrument.
@@ -60,7 +61,7 @@ front_future <- function(roots, currency='USD', underlying_id = NULL, addIBslot=
 #' }
 #' @export
 #' @rdname front_future.IB
-front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBslot=TRUE) 
+front_future.IB <- function (roots, currency='USD', exchange=NULL, underlying_id = NULL, addIBslot=TRUE) 
 {
     if (!is.character(roots)) stop("roots should be a chr vector.")    
 
@@ -70,6 +71,7 @@ front_future.IB <- function (roots, currency='USD', underlying_id = NULL, addIBs
         contract$symbol <- root
         contract$currency <- currency
         contract$sectype <- "FUT"
+        if (!is.null(exchange)) contract$exchange <- exchange
         instr <- Instr_From_Contr(contract,addIBslot=addIBslot,updateInstrument=TRUE,
                         output='instrument',assign_i=FALSE,assign_c=TRUE)
 
