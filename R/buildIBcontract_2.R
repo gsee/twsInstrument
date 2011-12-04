@@ -745,20 +745,45 @@ buildIBcontract <- function(symbol, tws=NULL,
 		    instr$category <- details$category
 		    instr$subcategory <- details$subcategory
 		    instr$timeZoneId <- details$timeZoneId
-            # extract start and end times
-            elec <- strsplit(details$tradingHours, ":")[[1]]
-            elec <- elec[length(elec)]
-            elec <- strsplit(elec, "-")[[1]]
-            elec <- paste(substr(elec, 1, 2), substr(elec, 3, 4), sep=":")
-            instr$electronic_start <- elec[1]
-            instr$electronic_end <- elec[2]
-            #now the primary_session times
-            prim <- strsplit(details$liquidHours, ":")[[1]]
-            prim <- prim[length(prim)]
-            prim <- strsplit(prim, "-")[[1]]
-            prim <- paste(substr(prim, 1, 2), substr(prim, 3, 4), sep=":")
-            instr$primary_start <- prim[1]
-            instr$primary_end <- prim[2]
+
+            formatHours <- function(tH) {
+                tH <- strsplit(tH, ":")[[1]]
+                tH <- tH[length(tH)]
+                tH <- strsplit(tH, ",")[[1]]
+                tH <- strsplit(tH, "-")
+                tH <- do.call(c, lapply(tH, function(x) paste(paste(substr(x, 1, 2), substr(x, 3, 4), "00", sep=":"), collapse="/T")))
+                tH <- paste("T", tH, sep="")                
+                names(tH) <- paste('session', 1:length(tH), sep="")
+                tH
+            }
+            tH <- formatHours(details$tradingHours)
+            lH <- formatHours(details$liquidHours)
+            instr$tradingHours <- tH
+            instr$liquidHours <- lH
+            if (details$tradingHours == details$liquidHours) {
+                if (length(tH) == 3) { #use middle one as primary
+                    instr$primary_start <- sub("T", "", strsplit(tH[2], "/")[[1]][1])
+                    instr$primary_end <- sub("T", "", strsplit(tH[2], "/")[[1]][2])
+                    instr$electronic_start <- gsub("T", "", strsplit(tH[1], "/")[[1]][1])
+                    instr$electronic_end <- strsplit(gsub("T", "", tH[3]), "/")[[1]][2]
+                } else if (length(tH) == 2) { #use second one as primary
+                    instr$primary_start <- sub("T", "", strsplit(tH[2], "/")[[1]][1])
+                    instr$primary_end <- sub("T", "", strsplit(tH[2], "/")[[1]][2])
+                    instr$electronic_start <- sub("T", "", strsplit(tH[1], "/")[[1]][1])
+                    instr$electronic_end <- sub("T", "", strsplit(tH[1], "/")[[1]][2])
+                } else if (length(tH) == 1) {
+                    times <- gsub("T", "", strsplit(tH, "/")[[1]])
+                    instr$primary_start <- instr$electronic_start <- times[1]
+                    instr$primary_end <- instr$electronic_end <- times[2]
+                }
+            } else {
+                ltimes <- gsub("T", "", strsplit(lH, "/")[[1]])
+                instr$primary_start <- ltimes[1]
+                instr$primary_end <- ltimes[2]
+                ttimes <- gsub("T", "", strsplit(tH, "/")[[1]])
+                instr$electronic_start <- ttimes[1]
+                instr$electronic_end <- ttimes[2]
+            }
             instr$validExchanges <- details$validExchanges
 		}  #End deprecated
 
