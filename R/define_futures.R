@@ -70,7 +70,11 @@ define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currenc
 #' or deleted the root \code{future} and you would like to define the root.
 #' @param x \code{\link[FinancialInstrument]{future_series}}, or name of 
 #' \code{\link[FinancialInstrument]{future_series}} from which to extract \code{\link[FinancialInstrument]{future}}
-#' @param future_id string to use as \code{primary_id} of the newly created \code{\link[FinancialInstrument]{future}}
+#' @param future_id Can be any string to use as \code{primary_id} of the newly created \code{\link[FinancialInstrument]{future}}.
+#' Alternatively, it can be \dQuote{root}, \dQuote{exchange_id}, or \dQuote{marketName}.  
+#' If \code{future_id} is missing, or if it is \dQuote{root}, it will become the root as determined by a call to
+#' \code{\link[FinancialInstrument]{parse_id}}.  If it is \dQuote{exchange_id}, or \dQuote{marketName} and either
+#' of those fields exist in the \code{future_series}, the value of that field will be used as the \code{future_id}
 #' @param assign_i should the future instrument be stored in the \code{.instrument} environment?
 #' @param overwrite TRUE/FALSE if an instrument already exists by the same name, should it be overwritten? (Default=FALSE)
 #' @param ... any other parameters to pass through to \code{instrument}
@@ -104,12 +108,30 @@ extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, ...) {
     instr <- if (is.instrument(x)) {
         x
     } else getInstrument(x, type='future_series')
-    if (missing(future_id)) future_id <- parse_id(instr$primary_id)$root
+    parsed_root <- parse_id(instr$primary_id)$root
+    if (missing(future_id)) {
+        future_id <- parsed_root
+    } else if (future_id == "exchange_id" || future_id == "marketName") {
+        if (!is.null(instr$marketName)) {
+            future_id <- instr$marketName
+        } else if (!is.null(instr$exchange_id)) {
+            future_id <- instr$exchange_id
+        } else {
+            warning('future_series does not contain ', future_id, " parsing primary_id for root instead.")
+            future_id <- parsed_root <- parse_id(instr$primary_id)$root
+        }
+    }
     args <- list()
     args$primary_id <- future_id
     # stuff that gets passed through instrument dots
     if (!is.null(instr$exchange)) args$exchange = instr$exchange
-    if (!is.null(instr$marketName)) args$exchange_id = instr$marketName
+    if (!is.null(instr$marketName)) {
+        args$exchange_id = instr$marketName
+        args$identifiers <- list(exchange_id=args$exchange_id)
+    }
+    if (future_id != parsed_root) {
+        args$identifiers <- c(args$identifiers, root_id=parsed_root)
+    }
     if (!is.null(instr$longName)) args$description = instr$longName
     if (!is.null(instr$priceMagnifier)) args$priceMagnifier = instr$priceMagnifier
     if (!is.null(instr$timeZoneId)) args$timeZoneId = instr$timeZoneId

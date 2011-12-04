@@ -12,9 +12,17 @@
   which to extract
   \code{\link[FinancialInstrument]{future}}}
 
-  \item{future_id}{string to use as \code{primary_id} of
-  the newly created
-  \code{\link[FinancialInstrument]{future}}}
+  \item{future_id}{Can be any string to use as
+  \code{primary_id} of the newly created
+  \code{\link[FinancialInstrument]{future}}. Alternatively,
+  it can be \dQuote{root}, \dQuote{exchange_id}, or
+  \dQuote{marketName}. If \code{future_id} is missing, or
+  if it is \dQuote{root}, it will become the root as
+  determined by a call to
+  \code{\link[FinancialInstrument]{parse_id}}.  If it is
+  \dQuote{exchange_id}, or \dQuote{marketName} and either
+  of those fields exist in the \code{future_series}, the
+  value of that field will be used as the \code{future_id}}
 
   \item{assign_i}{should the future instrument be stored in
   the \code{.instrument} environment?}
