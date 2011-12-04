@@ -68,29 +68,46 @@ define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currenc
 #' 
 #' Use this if you have defined a future_series object using \code{define_futures}, 
 #' or deleted the root \code{future} and you would like to define the root.
-#' @param primary_id of future_series object
+#' @param x \code{\link[FinancialInstrument]{future_series}}, or name of 
+#' \code{\link[FinancialInstrument]{future_series}} from which to extract \code{\link[FinancialInstrument]{future}}
+#' @param future_id string to use as \code{primary_id} of the newly created \code{\link[FinancialInstrument]{future}}
 #' @param assign_i should the future instrument be stored in the \code{.instrument} environment?
+#' @param overwrite TRUE/FALSE if an instrument already exists by the same name, should it be overwritten? (Default=FALSE)
 #' @param ... any other parameters to pass through to \code{instrument}
 #' @return a \code{\link[FinancialInstrument]{future}} object unless called with \code{assign_i=TRUE}
 #' in which case the \code{future} will be stored and only the \code{primary_id} will be returned.
 #' @author Garrett See
+#' @seealso \code{\link[FinancialInstrument]{instrument}}, \code{\link[FinancialInstrument]{future}},
+#' \code{\link[FinancialInstrument]{future_series}}
 #' @examples
 #' \dontrun{
 #' s <- front_future("ES")
 #' rm_futures("ES") #delete the root that front_future automatically created
 #' extract_future(s)
 #' extract_future(s, extra_field="custom") # can add any extra arbitrary fields
+#'
+#' currency(c("USD", "AUD"))
+#' define_futures("AUD", "GLOBEX", "201112", include_expired=1)
+#' extract_future("AUD_Z1") # not assigned
+#' extract_future("AUD_Z1", assign_i=TRUE) #root stored in "..AUD"
+#' getInstrument("AUD") #Oh no, that's the curreny
+#' getInstrument("AUD", type='future') #specify type to get the root
+#'
+#' extract_future("AUD_Z1", future_id='X6A', assign_i=TRUE, identifiers=list(CME='6A'))
+#' getInstrument("6A")
+#'
+#' # The next line would replace "AUD" the currency with a future
+#' # extract_future("AUD_Z1", future_id='AUD', assign_i=TRUE, identifiers=list(CME='6A'), overwrite=TRUE)
 #' }
 #' @export
-extract_future <- function(primary_id, assign_i=FALSE, ...) {
-    instr <- if (is.instrument(primary_id)) {
-        primary_id
-    } else getInstrument(primary_id, type='future_series')
-
-    args <- list()    
-
-    args$primary_id <- parse_id(instr$primary_id)$root
-    # stuff that gets passed through dots
+extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, ...) {
+    instr <- if (is.instrument(x)) {
+        x
+    } else getInstrument(x, type='future_series')
+    if (missing(future_id)) future_id <- parse_id(instr$primary_id)$root
+    args <- list()
+    args$primary_id <- future_id
+    # stuff that gets passed through instrument dots
     if (!is.null(instr$exchange)) args$exchange = instr$exchange
     if (!is.null(instr$marketName)) args$exchange_id = instr$marketName
     if (!is.null(instr$longName)) args$description = instr$longName
@@ -110,10 +127,14 @@ extract_future <- function(primary_id, assign_i=FALSE, ...) {
     args$currency <- instr$currency
     args$multiplier <- instr$multiplier
     args$tick_size <- instr$tick_size
-    args$type <- instr$type[-1]  #args$type = 'future'
-    args$assign_i <- FALSE
 
-    out <- do.call(instrument, args)
+    out <- if (assign_i && !overwrite) {
+        do.call(future, args)
+    } else {
+        args$assign_i <- assign_i
+        args$type <- instr$type[-1]  #args$type = 'future'
+        do.call(instrument, args)
+    }
     out
 }
 

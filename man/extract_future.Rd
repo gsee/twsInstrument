@@ -2,13 +2,26 @@
 \alias{extract_future}
 \title{Extract root \code{future} from \code{future_series}}
 \usage{
-  extract_future(primary_id, assign_i = FALSE, ...)
+  extract_future(x, future_id, assign_i = FALSE, overwrite
+  = FALSE, ...)
 }
 \arguments{
-  \item{primary_id}{of future_series object}
+  \item{x}{\code{\link[FinancialInstrument]{future_series}},
+  or name of
+  \code{\link[FinancialInstrument]{future_series}} from
+  which to extract
+  \code{\link[FinancialInstrument]{future}}}
+
+  \item{future_id}{string to use as \code{primary_id} of
+  the newly created
+  \code{\link[FinancialInstrument]{future}}}
 
   \item{assign_i}{should the future instrument be stored in
   the \code{.instrument} environment?}
+
+  \item{overwrite}{TRUE/FALSE if an instrument already
+  exists by the same name, should it be overwritten?
+  (Default=FALSE)}
 
   \item{...}{any other parameters to pass through to
   \code{instrument}}
@@ -33,9 +46,27 @@ s <- front_future("ES")
 rm_futures("ES") #delete the root that front_future automatically created
 extract_future(s)
 extract_future(s, extra_field="custom") # can add any extra arbitrary fields
+
+currency(c("USD", "AUD"))
+define_futures("AUD", "GLOBEX", "201112", include_expired=1)
+extract_future("AUD_Z1") # not assigned
+extract_future("AUD_Z1", assign_i=TRUE) #root stored in "..AUD"
+getInstrument("AUD") #Oh no, that's the curreny
+getInstrument("AUD", type='future') #specify type to get the root
+
+extract_future("AUD_Z1", future_id='X6A', assign_i=TRUE, identifiers=list(CME='6A'))
+getInstrument("6A")
+
+# The next line would replace "AUD" the currency with a future
+# extract_future("AUD_Z1", future_id='AUD', assign_i=TRUE, identifiers=list(CME='6A'), overwrite=TRUE)
 }
 }
 \author{
   Garrett See
+}
+\seealso{
+  \code{\link[FinancialInstrument]{instrument}},
+  \code{\link[FinancialInstrument]{future}},
+  \code{\link[FinancialInstrument]{future_series}}
 }
 
