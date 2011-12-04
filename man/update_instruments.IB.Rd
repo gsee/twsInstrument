@@ -5,10 +5,10 @@
 \usage{
   update_instruments.all(Symbols = "all", ...)
 
-  update_instruments.IB(Symbols = c("all", "stocks",
-  "futures", "options", "currencies"), addIBslot = TRUE,
-  updateInstrument = TRUE, include_expired = "1", assign_i
-  = TRUE, assign_c = TRUE)
+  update_instruments.IB(Symbols = c("all", "stocks", "futures", "options", "currencies"),
+    addIBslot = TRUE, updateInstrument = TRUE,
+    include_expired = "1", assign_i = TRUE,
+    assign_c = TRUE)
 }
 \arguments{
   \item{Symbols}{can be a vector of instrument names, or,
@@ -56,9 +56,9 @@
 }
 \examples{
 \dontrun{
-stock('GS',currency('USD'))
-update_instruments.IB('GS')
-getInstrument("GS")
+	stock('GS',currency('USD'))
+	update_instruments.IB('GS')
+ getInstrument("GS")
 }
 }
 \author{

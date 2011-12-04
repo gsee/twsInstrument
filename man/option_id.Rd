@@ -2,8 +2,8 @@
 \alias{option_id}
 \title{make primary_ids for options...}
 \usage{
-  option_id(underlying_id, strike, month, year, right =
-  c("C", "P"))
+  option_id(underlying_id, strike, month, year,
+    right = c("C", "P"))
 }
 \arguments{
   \item{underlying_id}{chr vector of names of underlyings.}

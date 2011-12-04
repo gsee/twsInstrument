@@ -4,10 +4,10 @@
 \title{instrument class constructor for front futures contract}
 \usage{
   front_future(roots, currency = "USD", exchange = NULL,
-  underlying_id = NULL, addIBslot = TRUE, src = "IB")
+    underlying_id = NULL, addIBslot = TRUE, src = "IB")
 
   front_future.IB(roots, currency = "USD", exchange = NULL,
-  underlying_id = NULL, addIBslot = TRUE)
+    underlying_id = NULL, addIBslot = TRUE)
 }
 \arguments{
   \item{roots}{vector of chr strings; contract roots.}

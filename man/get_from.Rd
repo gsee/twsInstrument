@@ -3,8 +3,8 @@
 \alias{get_to}
 \title{Get first or last date for which there are data stored on disk}
 \usage{
-  get_from(Symbol, base_dir = "/mnt/W/TRADES", maxDays =
-  365)
+  get_from(Symbol, base_dir = "/mnt/W/TRADES",
+    maxDays = 365)
 
   get_to(Symbol, base_dir = "/mnt/W/TRADES", maxDays = 365)
 }

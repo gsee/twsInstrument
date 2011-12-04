@@ -3,7 +3,7 @@
 \title{Build Bid Ask Trade object}
 \usage{
   makeBATs(Symbols, base_dir = "/mnt/W", env = .GlobalEnv,
-  ndays)
+    ndays)
 }
 \arguments{
   \item{Symbols}{chr name of instrument}

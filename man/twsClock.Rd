@@ -2,8 +2,8 @@
 \alias{twsClock}
 \title{A clock utility to display the TWS server time...}
 \usage{
-  twsClock(format = "\%H:\%M:\%S", refresh = 1, verbose =
-  TRUE)
+  twsClock(format = "\%H:\%M:\%S", refresh = 1,
+    verbose = TRUE)
 }
 \arguments{
   \item{format}{format}

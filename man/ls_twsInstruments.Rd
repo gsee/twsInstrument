@@ -79,7 +79,7 @@ stock("S","USD")
 stock('SPY','USD',1)
 twsInstrument('XOM') #requires Interactive Brokers
 twsInstrument(option(primary_id='XOM', currency='USD', multiplier=100,
-tick_size=0.01, expiry='201106', right='P', strike=80, underlying_id='XOM'))
+    tick_size=0.01, expiry='201106', right='P', strike=80, underlying_id='XOM'))
 
 # Now, the examples
 ls_twsInstruments() #all instruments containing IB slot with twsContract object

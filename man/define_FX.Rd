@@ -4,7 +4,8 @@
 \title{exchange_rate class constructor}
 \usage{
   define_FX(pairs, counter_currencies = NULL,
-  second_currencies = NULL, use.IB = TRUE, verbose = FALSE)
+    second_currencies = NULL, use.IB = TRUE,
+    verbose = FALSE)
 }
 \arguments{
   \item{pairs}{chr names of currency pairs to be defined.

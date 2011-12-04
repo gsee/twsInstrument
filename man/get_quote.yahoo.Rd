@@ -2,8 +2,8 @@
 \alias{get_quote.yahoo}
 \title{Download current instrument quote from yahoo...}
 \usage{
-  get_quote.yahoo(Symbols, what = standardQuote(), waitTime
-  = 30, ...)
+  get_quote.yahoo(Symbols, what = standardQuote(),
+    waitTime = 30, ...)
 }
 \arguments{
   \item{Symbols}{Can be a vector of instrument names, or a

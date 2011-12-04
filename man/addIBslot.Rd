@@ -3,9 +3,9 @@
 \title{Create a twsContract and store it in a slot of an instrument}
 \usage{
   addIBslot(symbols, sectype = "STK", exch = "SMART",
-  primary = "", expiry = "", strike = "0.0", currency =
-  "USD", right = "", local = "", multiplier = "",
-  include_expired = "0", conId = 0)
+    primary = "", expiry = "", strike = "0.0",
+    currency = "USD", right = "", local = "",
+    multiplier = "", include_expired = "0", conId = 0)
 }
 \arguments{
   \item{symbols}{vector of character names of

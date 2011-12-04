@@ -2,8 +2,8 @@
 \alias{define_options.yahoo}
 \title{define option_series instruments using yahoo...}
 \usage{
-  define_options.yahoo(symbol, currency = "USD", multiplier
-  = 100, tick_size = NULL)
+  define_options.yahoo(symbol, currency = "USD",
+    multiplier = 100, tick_size = NULL)
 }
 \arguments{
   \item{symbol}{chr name of underlying instrument}

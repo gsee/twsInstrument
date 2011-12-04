@@ -2,8 +2,8 @@
 \alias{extract_future}
 \title{Extract root \code{future} from \code{future_series}}
 \usage{
-  extract_future(x, future_id, assign_i = FALSE, overwrite
-  = FALSE, ...)
+  extract_future(x, future_id, assign_i = FALSE,
+    overwrite = FALSE, ...)
 }
 \arguments{
   \item{x}{\code{\link[FinancialInstrument]{future_series}},

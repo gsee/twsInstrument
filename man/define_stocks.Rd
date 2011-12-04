@@ -2,8 +2,9 @@
 \alias{define_stocks}
 \title{Define stocks}
 \usage{
-  define_stocks(x = SP500desc, currency = "USD", file =
-  NULL, use.yahoo = TRUE, use.IB = TRUE, addIBslot = TRUE)
+  define_stocks(x = SP500desc, currency = "USD",
+    file = NULL, use.yahoo = TRUE, use.IB = TRUE,
+    addIBslot = TRUE)
 }
 \arguments{
   \item{x}{vector of instrument names, a data.frame, or a

@@ -2,9 +2,9 @@
 \alias{define_options.IB}
 \title{define option_series with IB...}
 \usage{
-  define_options.IB(underlying_id, strike, expires, right =
-  c("C", "P"), currency = "USD", multiplier = 100,
-  include_expired = "1", ...)
+  define_options.IB(underlying_id, strike, expires,
+    right = c("C", "P"), currency = "USD",
+    multiplier = 100, include_expired = "1", ...)
 }
 \arguments{
   \item{underlying_id}{vector of underlying_ids}

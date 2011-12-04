@@ -3,13 +3,13 @@
 \alias{define_futures.IB}
 \title{futures contract contstructor}
 \usage{
-  define_futures.IB(symbols, exch, expiries =
-  as.Date(Sys.time()), currency = "USD", include_expired =
-  "1", ...)
+  define_futures.IB(symbols, exch,
+    expiries = as.Date(Sys.time()), currency = "USD",
+    include_expired = "1", ...)
 
-  define_futures(symbols, exch, expiries =
-  as.Date(Sys.time()), currency = "USD", include_expired =
-  "1", src = "IB", ...)
+  define_futures(symbols, exch,
+    expiries = as.Date(Sys.time()), currency = "USD",
+    include_expired = "1", src = "IB", ...)
 }
 \arguments{
   \item{symbols}{chr name of underlying}

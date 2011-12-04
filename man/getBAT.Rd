@@ -3,9 +3,13 @@
 \alias{reqTBBO}
 \title{download Bid Ask Trade data and merge into BAT object}
 \usage{
-  getBAT(Symbols, endDateTime, tws = NULL, barSize = "1 min", 
-  duration = "5 D", useRTH = "1", auto.assign = TRUE,
-  env = .GlobalEnv)
+  getBAT(Symbols, endDateTime, tws = NULL,
+    barSize = "1 min", duration = "5 D", useRTH = "1",
+    auto.assign = TRUE, env = .GlobalEnv)
+
+  reqTBBO(Symbols, endDateTime, tws = NULL,
+    barSize = "1 min", duration = "5 D", useRTH = "1",
+    auto.assign = TRUE, env = .GlobalEnv)
 }
 \arguments{
   \item{Symbols}{can be a twsInstrument, a twsContract, an
@@ -36,26 +40,22 @@
 }
 \description{
   getBAT downloads and merges data for Bid, Ask, and Trade.
-  reqTBBO is an alias for getBAT. %getBAThistory downloads
-  the max allowed by InteractiveBrokers.
+  reqTBBO is an alias for getBAT.
 }
 \details{
-  %for getBAThistory, the symbol argument must be the name
-  %of a FinancialInstrument instrument.
-
   reqTBBO is an alias for getBAT.
 
-  symbol can be one of: an instrument, the name of an
+  Symbol can be one of: an instrument, the name of an
   instrument, the name of an undefined stock, or a
   twsContract object.
 
-  Before making a request for historical data, symbol will
+  Before making a request for historical data, Symbol will
   be passed through \code{Contr_From_Instr} (which is a
   wrapper for \code{buildIBcontract}) which will convert
-  symbol into an updated, complete twsContract.
+  Symbol into an updated, complete twsContract.
 
   If you want to get data for something other than a stock,
-  then \code{symbol} should be an instrument object, a
+  then \code{Symbol} should be an instrument object, a
   twsContract object or the name of a previosly defined
   instrument
 
@@ -67,13 +67,13 @@
   midnight on the expiration date, will be used for
   endDateTime in the call to reqHistoricalData.
 
-  !!! Ignore the rest of this details section until I
-  upload getBAThistory function !!! (Below is mostly copied
-  from reqHistoricalData help) If endDateTime is not
-  specified the current time as returned from the TWS
-  server will be used. This is the preferred method for
-  backfilling data. The \sQuote{TZ} portion of the string
-  is optional.
+  Below is copied from the help page for
+  \code{\link[IBrokers]{reqHistoricalData}}
+
+  If endDateTime is not specified the current time as
+  returned from the TWS server will be used. This is the
+  preferred method for backfilling data. The \sQuote{TZ}
+  portion of the string is optional.
 
   Legal \code{barSize} settings are technically \sQuote{1
   secs},\sQuote{5 secs},\sQuote{15 secs}, \sQuote{30
@@ -90,9 +90,6 @@
   (seconds), \sQuote{D} (days), \sQuote{W} (weeks),
   \sQuote{M} (months), and \sQuote{Y} (year). At present
   the limit for years is 1.
-
-  %getBAThistory needs to be updated; %getBAThistory
-  requests the maximal history from IB.
 }
 \examples{
 \dontrun{
@@ -108,7 +105,7 @@ getBAT(contract)
 #the twsContract object
 currency('USD')
 stock('XOM', 'USD', 1, IB=twsSTK('XOM'))
-getBAT('XOM') #gets from .instrument
+getBAT('XOM') #gets contract from .instrument
 }
 }
 \author{
@@ -124,7 +121,9 @@ getBAT('XOM') #gets from .instrument
   \url{http://individuals.interactivebrokers.com/php/apiUsersGuide/apiguide/api/historical_data_limitations.htm#XREF_93621_Historical_Data}
 }
 \seealso{
-  Contr_From_Instr, IBrokers, reqHistoricalData,
-  reqHistory, getIBequities
+  \code{\link{reqTBBOhistory}},
+  \code{\link{Contr_From_Instr}},
+  \code{\link[IBrokers]{reqHistoricalData}},
+  \code{\link[IBrokers]{reqHistory}}, getIBequities
 }
 

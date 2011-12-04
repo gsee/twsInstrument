@@ -3,8 +3,8 @@
 \title{Download and save to disk historical Bid, Ask, and Trades data}
 \usage{
   reqTBBOhistory(Symbols, base_dir = "/mnt/W", ndays = 95,
-  endDateTime, tws, barSize = "1 min", useRTH = "1", env =
-  .GlobalEnv, save = FALSE, chronological = FALSE)
+    endDateTime, tws, barSize = "1 min", useRTH = "1",
+    env = .GlobalEnv, save = FALSE, chronological = FALSE)
 }
 \arguments{
   \item{Symbols}{names of instruments for which to request
@@ -109,15 +109,15 @@ define_stocks("SPY")
 # get the last 20 days of minutely data
 # (this will take ~2 minutes)
 reqTBBOhistory("SPY",
-base_dir="tmpdata",
-ndays=20,
-save=TRUE,
-chronological=TRUE)
+                base_dir="tmpdata",
+                ndays=20,
+                save=TRUE,
+                chronological=TRUE)
 # Now to prove it's on disk, delete from workspace
 # and load it.
 rm("SPY")
 getSymbols("SPY", src='FI', dir='tmpdata/BAT',
-from=Sys.Date() - 20, verbose=TRUE)
+            from=Sys.Date() - 20, verbose=TRUE)
 
 # If you had called reqTBBOhistory with save=FALSE (the default)
 # or if your "BAT" directory were wiped out, you can use
@@ -127,7 +127,7 @@ unlink("tmpdata/BAT")
 twsInstrument:::makeBATs("SPY", base_dir='tmpdata', ndays=20)
 rm("SPY")
 getSymbols("SPY", src='FI', dir='tmpdata/BAT',
-from=Sys.Date() - 20, verbose=TRUE)
+            from=Sys.Date() - 20, verbose=TRUE)
 
 # Clean up -- Delete everything
 unlink("tmpdata", recursive=TRUE)

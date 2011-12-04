@@ -3,8 +3,8 @@
 \title{instrument class constructor.}
 \usage{
   instrument.tws(primary_id = "", ..., currency = "",
-  multiplier = "", tick_size = NULL, identifiers = NULL,
-  type = NULL, assign_i = FALSE)
+    multiplier = "", tick_size = NULL, identifiers = NULL,
+    type = NULL, assign_i = FALSE)
 }
 \arguments{
   \item{primary_id}{string describing the unique ID for the

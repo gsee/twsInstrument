@@ -1,7 +1,6 @@
 \docType{package}
 \name{twsInstrument-package}
-\alias{"twsInstrument-help"}
-\alias{"twsInstrument-package"}
+\alias{twsInstrument-help}
 \alias{twsInstrument-package}
 \title{twsInstrument package: Integrates IBrokers and FinancialInstrument.}
 \description{
@@ -123,7 +122,7 @@ twsInstrument(twsSTK("SPY","USD"))
 twsInstrument(twsSTK("DIA","USD"))
 
 option('.SPY','USD',100,right='P',strike=135,
-expiry=201112,underlying_id="SPY")
+     expiry=201112,underlying_id="SPY")
 
 contract <- Contr_From_Instr('.SPY') #doesn't change instrument
 
@@ -131,7 +130,7 @@ Instr_From_Contr(contract)
 Instr_From_Contr(twsFUT('ES',exch='GLOBEX',expiry='201109'))
 
 option('.DIA','USD',100,right='P',strike=125,
-expiry=201112,underlying_id="DIA")
+     expiry=201112,underlying_id="DIA")
 
 define_stocks(c('G','GA','GAR'), use.yahoo=FALSE)
 define_stocks(c('S','SE','SEE'),currency="USD", use.IB=FALSE)

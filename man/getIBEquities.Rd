@@ -2,8 +2,8 @@
 \alias{getIBEquities}
 \title{requests historical data for stocks from IB}
 \usage{
-  getIBEquities(symbols, tws, barSize = "1 min", duration =
-  "5 D", env = .GlobalEnv)
+  getIBEquities(symbols, tws, barSize = "1 min",
+    duration = "5 D", env = .GlobalEnv)
 }
 \arguments{
   \item{symbols}{character vector}

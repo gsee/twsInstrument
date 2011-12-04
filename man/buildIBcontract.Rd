@@ -8,29 +8,29 @@
 \usage{
   is.twsInstrument(x)
 
-  Contr_From_Instr(instrument, tws = NULL, addIBslot =
-  FALSE, updateInstrument = FALSE, output = c("contract",
-  "symbol", "nothing", "instrument"), include_expired =
-  "0", assign_i = FALSE, assign_c = TRUE, verbose = TRUE,
-  silent = FALSE)
+  Contr_From_Instr(instrument, tws = NULL,
+    addIBslot = FALSE, updateInstrument = FALSE,
+    output = c("contract", "symbol", "nothing", "instrument"),
+    include_expired = "0", assign_i = FALSE,
+    assign_c = TRUE, verbose = TRUE, silent = FALSE)
 
   Instr_From_Contr(contract, tws = NULL, addIBslot = FALSE,
-  updateInstrument = TRUE, output = c("instrument",
-  "symbol", "nothing", "contract"), include_expired = "0",
-  assign_i = FALSE, assign_c = TRUE, verbose = TRUE, silent
-  = FALSE)
+    updateInstrument = TRUE,
+    output = c("instrument", "symbol", "nothing", "contract"),
+    include_expired = "0", assign_i = FALSE,
+    assign_c = TRUE, verbose = TRUE, silent = FALSE)
 
   twsInstrument(symbol, tws = NULL, addIBslot = TRUE,
-  updateInstrument = TRUE, output = c("symbol", "nothing",
-  "instrument", "contract"), include_expired = "0",
-  assign_i = TRUE, assign_c = TRUE, verbose = TRUE, silent
-  = FALSE)
+    updateInstrument = TRUE,
+    output = c("symbol", "nothing", "instrument", "contract"),
+    include_expired = "0", assign_i = TRUE,
+    assign_c = TRUE, verbose = TRUE, silent = FALSE)
 
   buildIBcontract(symbol, tws = NULL, addIBslot = FALSE,
-  updateInstrument = FALSE, output = c("contract",
-  "instrument", "symbol", "nothing"), include_expired =
-  "0", assign_i = FALSE, assign_c = TRUE, verbose = TRUE,
-  silent = FALSE)
+    updateInstrument = FALSE,
+    output = c("contract", "instrument", "symbol", "nothing"),
+    include_expired = "0", assign_i = FALSE,
+    assign_c = TRUE, verbose = TRUE, silent = FALSE)
 }
 \arguments{
   \item{symbol}{An instrument, The name of an instrument, a
@@ -162,7 +162,7 @@ twsInstrument('SPY') #assumes it's a stock
 
 #Now something that isn't denominated in USD
 twsInstrument(twsFUT(symbol='NIY',exch='GLOBEX',expiry='201109',
-currency='JPY'))
+                     currency='JPY'))
 
 #As a wrapper for instrument wrappers
 Contr_From_Instr(synthetic('SPX','USD'))
