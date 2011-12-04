@@ -62,6 +62,61 @@ define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currenc
 }
 
 
+#' Extract root \code{future} from \code{future_series}
+#' 
+#' Construct a \code{future} from a \code{future_series}
+#' 
+#' Use this if you have defined a future_series object using \code{define_futures}, 
+#' or deleted the root \code{future} and you would like to define the root.
+#' @param primary_id of future_series object
+#' @param assign_i should the future instrument be stored in the \code{.instrument} environment?
+#' @param ... any other parameters to pass through to \code{instrument}
+#' @return a \code{\link[FinancialInstrument]{future}} object unless called with \code{assign_i=TRUE}
+#' in which case the \code{future} will be stored and only the \code{primary_id} will be returned.
+#' @author Garrett See
+#' @examples
+#' \dontrun{
+#' s <- front_future("ES")
+#' rm_futures("ES") #delete the root that front_future automatically created
+#' extract_future(s)
+#' extract_future(s, extra_field="custom") # can add any extra arbitrary fields
+#' }
+#' @export
+extract_future <- function(primary_id, assign_i=FALSE, ...) {
+    instr <- if (is.instrument(primary_id)) {
+        primary_id
+    } else getInstrument(primary_id, type='future_series')
+
+    args <- list()    
+
+    args$primary_id <- parse_id(instr$primary_id)$root
+    # stuff that gets passed through dots
+    if (!is.null(instr$exchange)) args$exchange = instr$exchange
+    if (!is.null(instr$marketName)) args$exchange_id = instr$marketName
+    if (!is.null(instr$longName)) args$description = instr$longName
+    if (!is.null(instr$priceMagnifier)) args$priceMagnifier = instr$priceMagnifier
+    if (!is.null(instr$timeZoneId)) args$timeZoneId = instr$timeZoneId
+    if (!is.null(instr$electronic_start)) args$electronic_start = instr$electronic_start
+    if (!is.null(instr$electronic_end)) args$electronic_end = instr$electronic_end
+    if (!is.null(instr$primary_start)) args$primary_start = instr$primary_start
+    if (!is.null(instr$primary_end)) args$primary_end = instr$primary_end
+    args$defined.by = paste(unique(c(instr$defined.by, 'IBx')), collapse=';')
+    args$updated <- if (!is.null(instr$updated)) {
+        instr$updated
+    } else Sys.time()
+    if (!is.null(instr$underlying_id)) args$underlying_id = instr$underlying_id
+    args <- c(args, list(...))
+    # end dots
+    args$currency <- instr$currency
+    args$multiplier <- instr$multiplier
+    args$tick_size <- instr$tick_size
+    args$type <- instr$type[-1]  #args$type = 'future'
+    args$assign_i <- FALSE
+
+    out <- do.call(instrument, args)
+    out
+}
+
 
 #' Create future_series ids...
 #' 
