@@ -759,21 +759,25 @@ buildIBcontract <- function(symbol, tws=NULL,
 
             tH <- details$tradingHours
             lH <- details$liquidHours
+            instr$tradingHours <- tH
+            instr$liquidHours <- lH
             if (nchar(tH) > 0) instr$tradingHours <- formatHours(tH) 
-            if (nchar(lH) > 0) instr$liquidHours <- formatHours(lH) 
-            if (nchar(details$tradingHours) > 0) {            
+            if (nchar(lH) > 0) instr$liquidHours <- formatHours(lH)
+            tH <- instr$tradingHours
+            lH <- instr$liquidHours
+            if (nchar(details$tradingHours) > 0) {
                 if (details$tradingHours == details$liquidHours) {
-                    if (length(tH) == 3) { #use middle one as primary
+                    if (length(instr$tradingHours) == 3) { #use middle one as primary
                         instr$primary_start <- sub("T", "", strsplit(tH[2], "/")[[1]][1])
                         instr$primary_end <- sub("T", "", strsplit(tH[2], "/")[[1]][2])
                         instr$electronic_start <- gsub("T", "", strsplit(tH[1], "/")[[1]][1])
                         instr$electronic_end <- strsplit(gsub("T", "", tH[3]), "/")[[1]][2]
-                    } else if (length(tH) == 2) { #use second one as primary
+                    } else if (length(instr$tradingHours) == 2) { #use second one as primary
                         instr$primary_start <- sub("T", "", strsplit(tH[2], "/")[[1]][1])
                         instr$primary_end <- sub("T", "", strsplit(tH[2], "/")[[1]][2])
                         instr$electronic_start <- sub("T", "", strsplit(tH[1], "/")[[1]][1])
                         instr$electronic_end <- sub("T", "", strsplit(tH[1], "/")[[1]][2])
-                    } else if (length(tH) == 1) {
+                    } else if (length(instr$tradingHours) == 1) {
                         times <- gsub("T", "", strsplit(tH, "/")[[1]])
                         instr$primary_start <- instr$electronic_start <- times[1]
                         instr$primary_end <- instr$electronic_end <- times[2]
