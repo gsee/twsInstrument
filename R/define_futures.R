@@ -135,8 +135,8 @@ extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, ...) {
     if (!is.null(instr$longName)) args$description = instr$longName
     if (!is.null(instr$priceMagnifier)) args$priceMagnifier = instr$priceMagnifier
     if (!is.null(instr$timeZoneId)) args$timeZoneId = instr$timeZoneId
-    if (!is.null(instr$tradingHours)) args$tradingHours = instr$tradingHours
-    if (!is.null(instr$liquidHours)) args$liquidHours = instr$liquidHours
+    if (!is.null(instr$tradingHours) && instr$tradingHours != '') args$tradingHours = instr$tradingHours
+    if (!is.null(instr$liquidHours) && instr$liquidHours != '') args$liquidHours = instr$liquidHours
     if (!is.null(instr$electronic_start)) args$electronic_start = instr$electronic_start
     if (!is.null(instr$electronic_end)) args$electronic_end = instr$electronic_end
     if (!is.null(instr$primary_start)) args$primary_start = instr$primary_start
