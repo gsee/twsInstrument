@@ -63,6 +63,22 @@ conId.twsInstrument <- function(x, ...)
     return(x[["IB"]][["conId"]])
 }
 
+#' instrument class conId extractor
+#'
+#' @method conId instrument
+#' @S3method conId instrument
+#' @author Garrett See
+#' @keywords internal
+conId.instrument <- function(x, ...)
+{
+    if (!is.null(x[["identifiers"]][["conId"]])) {
+        return(x[["identifiers"]][["conId"]])
+    } else if (!is.null(x[["conId"]])) {
+        return(x[["conId"]])
+    } else NextMethod("conId")
+}
+
+
 #' default conId extractor
 #'
 #' @method conId default
