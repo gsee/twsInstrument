@@ -3,7 +3,7 @@
 \title{Extract root \code{future} from \code{future_series}}
 \usage{
   extract_future(x, future_id, assign_i = FALSE,
-    overwrite = FALSE, ...)
+    overwrite = FALSE, identifiers = list(), ...)
 }
 \arguments{
   \item{x}{\code{\link[FinancialInstrument]{future_series}},
@@ -30,6 +30,9 @@
   \item{overwrite}{TRUE/FALSE if an instrument already
   exists by the same name, should it be overwritten?
   (Default=FALSE)}
+
+  \item{identifiers}{list of identifers to add to the
+  \code{future}}
 
   \item{...}{any other parameters to pass through to
   \code{instrument}}

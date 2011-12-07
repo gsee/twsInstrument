@@ -77,6 +77,7 @@ define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currenc
 #' of those fields exist in the \code{future_series}, the value of that field will be used as the \code{future_id}
 #' @param assign_i should the future instrument be stored in the \code{.instrument} environment?
 #' @param overwrite TRUE/FALSE if an instrument already exists by the same name, should it be overwritten? (Default=FALSE)
+#' @param identifiers list of identifers to add to the \code{future}
 #' @param ... any other parameters to pass through to \code{instrument}
 #' @return a \code{\link[FinancialInstrument]{future}} object unless called with \code{assign_i=TRUE}
 #' in which case the \code{future} will be stored and only the \code{primary_id} will be returned.
@@ -104,7 +105,7 @@ define_futures  <- function(symbols, exch, expiries=as.Date(Sys.time()), currenc
 #' # extract_future("AUD_Z1", future_id='AUD', assign_i=TRUE, identifiers=list(CME='6A'), overwrite=TRUE)
 #' }
 #' @export
-extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, ...) {
+extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, identifiers=list(), ...) {
     instr <- if (is.instrument(x)) {
         x
     } else getInstrument(x, type='future_series')
@@ -127,10 +128,10 @@ extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, ...) {
     if (!is.null(instr$exchange)) args$exchange = instr$exchange
     if (!is.null(instr$marketName)) {
         args$exchange_id = instr$marketName
-        args$identifiers <- list(exchange_id=args$exchange_id)
+        args$identifiers <- c(identifiers, list(exchange_id=args$exchange_id))
     }
     if (future_id != parsed_root) {
-        args$identifiers <- c(args$identifiers, root_id=parsed_root)
+        args$identifiers <- c(identifiers, args$identifiers, root_id=parsed_root)
     }
     if (!is.null(instr$longName)) args$description = instr$longName
     if (!is.null(instr$priceMagnifier)) args$priceMagnifier = instr$priceMagnifier
