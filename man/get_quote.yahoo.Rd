@@ -27,10 +27,7 @@
 }
 \details{
   This \code{get_quote.yahoo} method is the same as Jeff
-  Ryan's code for getQuote.yahoo (see also) except for 2
-  changes.  The first is a patch to allow custom quote
-  formats for requests for 200 symbols or more. (put the
-  \sQuote{what} arg in the rbind) The second is that in
+  Ryan's code for getQuote.yahoo (see also) except that in
   this version, the quote requests are wrapped in a while
   loop.  If the timestamp of the receied quote has a year
   that is different than the current year (as reported by
@@ -44,7 +41,7 @@
   \url{http://r.789695.n4.nabble.com/getQuote-problem-tt3689746.html}
 }
 \seealso{
-  quantmod:::getQuote.yahoo, \code{\link{get_quote}},
+  \code{\link[quantmod]{getQuote}},
   \code{\link{get_quote.IB}}
 }
 

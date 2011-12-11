@@ -34,6 +34,5 @@ data(SP500desc)
 \seealso{
   define_stocks, load.instruments
 }
-\keyword{dataset}
 \keyword{datasets}
 

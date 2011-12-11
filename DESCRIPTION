@@ -2,8 +2,8 @@ Package: twsInstrument
 Type: Package
 Title: Improves ease of use of IBrokers and
     FinancialInstrument
-Version: 1.2-7
-Date: 2011-09-30
+Version: 1.2-8
+Date: 2011-12-11
 Depends:
     IBrokers,
     FinancialInstrument (>= 0.8),
@@ -37,7 +37,6 @@ Collate:
     'instrument.R'
     'ls_twsInstruments.R'
     'Mid.r'
-    'quantmod_ow.r'
     'twsClock.R'
     'twsInstrument-package.R'
     'update_instruments.R'

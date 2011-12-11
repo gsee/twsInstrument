@@ -54,12 +54,6 @@
   EPS Estimate Next Year, book.value, EBITDA, and 52 week
   range.
 
-  This function uses getQuote.yahoo as defined in this
-  package.  When, Jeff updates the quantmod code for
-  getQuote.yahoo, it should be removed from this package,
-  and \code{define_stocks} should use
-  quantmod:::getQuote.yahoo or getQuote(...,src='yahoo')
-
   If use.IB is TRUE, it will add descriptive information
   from Interactive Brokers to the instruments.  Also, it
   will turn your instruments into twsInstruments, which
