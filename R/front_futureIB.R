@@ -106,7 +106,7 @@ front_future.IB <- function (roots, currency='USD', exchange=NULL, underlying_id
 #                    underlying_id=instr$underlying_id)                       
         }
 
-        instr$suffix_id <- gsub(root, "", instr$local)    
+        #instr$suffix_id <- gsub(root, "", instr$local)
         id <- paste(root, instr$suffix_id, sep="_")   
         id <- gsub(" ","", id) 
         instr$primary_id <- id

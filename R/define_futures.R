@@ -1,4 +1,4 @@
-#' futures contract contstructor
+#' futures contract constructor
 #' 
 #' Define one or many futures contracts for a given underlying.
 #' 
