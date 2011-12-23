@@ -372,11 +372,9 @@ buildIBcontract <- function(symbol, tws=NULL,
             #warning(paste("Unable to find or infer instrument, ",
             #        symbol, ".\n  Trying with type = \"stock\"", sep=""))
             ccys <- ls_currencies()
-            instr.name <- instrument.auto(primary_id=primary_id, silent=TRUE)
-            instr <- getInstrument(instr.name) #workaround because instrument.auto calls wrappers that don't allow assign_i=FALSE
-            rm_instruments(instr.name)
+            instr <- instrument.auto(primary_id=primary_id, silent=TRUE, assign_i=FALSE)
             ccys <- ls_currencies()[!ls_currencies() %in% ccys]
-            if (!identical(ccys, character(0))) rm_currencies(ccys)
+            if (!identical(ccys, character(0))) rm_currencies(ccys) #if instrument.auto created a currecy, remove it
             instr$currency <- "" # since we don't know it, we'll have to let IB guess for us (IB may be wrong!)
         } 
     }
@@ -387,7 +385,9 @@ buildIBcontract <- function(symbol, tws=NULL,
         pid <- parse_id(instr$primary_id)
 	    #figure out sectype
 	    if (is.null(instr$sectype) ) {
-            if (is.null(instr$type)) { #future_series or option_series created with instrument.auto when no root existed
+            if (is.null(instr$type) || 
+                (!is.null(instr$type) && instr$type == "unknown") ) 
+            { #future_series or option_series created with instrument.auto when no root existed
                 instr$multiplier <- ""
                 if (any(pid$type == 'future')) {
                     instr$type <- 'future_series' #a future object would parse out to 'root', not 'future'
