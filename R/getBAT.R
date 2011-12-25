@@ -142,14 +142,22 @@ getBAT <- function(Symbols, endDateTime, tws=NULL,
             bat <- na.omit(bat)
             if (!is.null(TRADES)) {
                 bat <- merge(bat, Vo(TRADES))
-            	colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Trade.Price','Mid.Price','Volume'),sep='.')
+            	colnames(bat) <- paste(contract$symbol, 
+                                    c('Bid.Price', 'Ask.Price', 'Trade.Price', 'Mid.Price', 'Volume'), sep='.')
             } else colnames(bat) <- paste(contract$symbol,c('Bid.Price','Ask.Price','Mid.Price'),sep='.')
-                    
+            
 	        if (auto.assign) { 
                 assign(symbol, bat, envir=env)
 	    	    symout <- c(symout, symbol)
 	        } else { return(bat) }
-        } else NULL
+        } else if (!is.null(TRADES)) {  # This part was added to deal with "TICK-NYSE"
+            bat <- Cl(TRADES)
+            colnames(bat) <- paste(contract$symbol, 'Trade.Price', sep=".")
+            if (auto.assign) { 
+                assign(make.names(symbol), bat, envir=env)
+	    	    symout <- c(symout, make.names(symbol))
+	        } else { return(bat) }
+        } else return(NULL)
     }
     symout
 }
