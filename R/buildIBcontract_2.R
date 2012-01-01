@@ -185,7 +185,7 @@ twsInstrument <- function(symbol, tws=NULL,
 #' stock('AAPL','USD')
 #' buildIBcontract('AAPL', updateInstrument=FALSE) #uses instrument
 #' 
-#' ls(.instrument,all.names=TRUE)
+#' ls_instruments()
 #' 
 #' }
 #' @export
@@ -661,7 +661,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                 tclass <- unique(c('twsInstrument', instr$type, 'instrument'))                     
             class(instr) <- tclass
             if (assign_i) {
-                assign(primary_id, instr, pos=.instrument)        
+                assign(primary_id, instr, pos=FinancialInstrument:::.instrument)        
             }    
         }    
     }
@@ -819,7 +819,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     instr$primary_id != "" &&
                     instr$currency != "" &&
                     instr$multiplier != "")
-            assign(primary_id, instr, pos=.instrument)        
+            assign(primary_id, instr, pos=FinancialInstrument:::.instrument)        
                     
         }    
     }

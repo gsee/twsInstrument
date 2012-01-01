@@ -1,7 +1,7 @@
 \name{define_futures.IB}
 \alias{define_futures}
 \alias{define_futures.IB}
-\title{futures contract contstructor}
+\title{futures contract constructor}
 \usage{
   define_futures.IB(symbols, exch,
     expiries = as.Date(Sys.time()), currency = "USD",

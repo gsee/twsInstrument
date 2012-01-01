@@ -79,19 +79,19 @@ front_future.IB <- function (roots, currency='USD', exchange=NULL, underlying_id
             warning("underlying_id should only be NULL for cash-settled futures")
         } else if (is.null(instr$underlying_id)) {
             instr$underlying_id <- underlying_id
-        } else if (!is.null(underlying_id) && !exists(underlying_id, where = .instrument, inherits = TRUE)) {
+        } else if (!is.null(underlying_id) && !exists(underlying_id, where = FinancialInstrument:::.instrument, inherits = TRUE)) {
             warning('underlying_id not defined.')    
         }
         #Do we need to create the root?
 #        tmproot <- try(get(root,pos=.instrument),silent=TRUE)
         tmproot <- try(getInstrument(root, type='future', silent=TRUE))
         if (!inherits(tmproot,'future')) {
-            if (is.instrument(try(get(root,pos=.instrument),silent=TRUE))) {
+            if (is.instrument(try(getInstrument(root), silent=TRUE))) {
                 warning(paste(root,
                         " already exists, but it is not futures specs.", sep=""))
-                store.to <- if(!is.instrument(try(get(paste('..',root,sep=""))))) {
+                store.to <- if(!is.instrument(try(getInstrument(paste('..',root,sep=""))))) {
                         paste("..",root,sep="")
-                    } else if (!is.instrument(try(get(paste('.',root,sep=""))))) {
+                    } else if (!is.instrument(try(getInstrument(paste('.',root,sep=""))))) {
                         paste("..",root,sep="")
                     } else paste(root, 'fspecs', sep="_")
                 cat(paste('Futures contract specs stored in ', store.to, "\n", sep=""))                
@@ -111,7 +111,7 @@ front_future.IB <- function (roots, currency='USD', exchange=NULL, underlying_id
         id <- gsub(" ","", id) 
         instr$primary_id <- id
         class(instr) <- c('future_series','future','twsInstrument','instrument')
-        assign(id, instr, pos=.instrument)   
+        assign(id, instr, pos=Financialnstrument:::.instrument)   
         #cat('assinging', id)
         all.ids <- c(all.ids, id)
     }

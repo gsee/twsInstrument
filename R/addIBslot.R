@@ -61,7 +61,7 @@ addIBslot <- function (symbols, sectype="STK", exch = "SMART", primary = "", exp
                     combo_legs_desc=NULL, comboleg=NULL, include_expired=include_expired)
             tclass <- unique(c('twsInstrument', instr$type, 'instrument'))
             class(instr) <- tclass
-            assign(symbol,instr,pos=.instrument)    
+            assign(symbol,instr,pos=FinancialInstrument:::.instrument)    
         }
     }
 

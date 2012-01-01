@@ -1,8 +1,8 @@
 #TODO: add match to all functions
-.onLoad <- function(lib, pkg) {
-    if(!exists('.instrument'))
-        .instrument <<- new.env(hash=TRUE)
-}
+#.onLoad <- function(lib, pkg) {
+#    if(!exists('.instrument'))
+#        .instrument <<- new.env(hash=TRUE)
+#}
 
 
 
@@ -149,7 +149,7 @@ function (primary_id="", ..., currency="", multiplier="", tick_size = NULL,
     }
     class(tmpinstr) <- tclass
     if (assign_i) 
-        assign(primary_id, tmpinstr, envir = as.environment(.instrument))
+        assign(primary_id, tmpinstr, envir = as.environment(FinancialInstrument:::.instrument))
     else return(tmpinstr)
 }
 

@@ -173,7 +173,7 @@ buildIBcontract(twsSTK("GOOG"),updateInstrument=TRUE, addIBslot=FALSE, output='n
 stock('AAPL','USD')
 buildIBcontract('AAPL', updateInstrument=FALSE) #uses instrument
 
-ls(.instrument,all.names=TRUE)
+ls_instruments()
 
 }
 }

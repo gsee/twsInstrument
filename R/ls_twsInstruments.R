@@ -77,7 +77,7 @@ ls_twsInstruments <- function(pattern=NULL, match=TRUE) {
     symbols <- ls_instruments(pattern, match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
-        tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
+        tmp_instr <- try(get(instr, pos = FinancialInstrument:::.instrument),silent=TRUE)
         if (inherits(tmp_instr, 'twsInstrument') || !is.null(tmp_instr$IB) ) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
@@ -91,7 +91,7 @@ ls_non_twsInstruments <- function(pattern=NULL) {
     symbols <- ls_instruments(pattern, match)
     tmp_symbols <- NULL            
     for (instr in symbols) {
-        tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
+        tmp_instr <- try(get(instr, pos = FinancialInstrument:::.instrument),silent=TRUE)
         if (!inherits(tmp_instr, 'twsInstrument') && is.null(tmp_instr$IB) ) {
             tmp_symbols <- c(tmp_symbols,instr)
         }    
@@ -112,7 +112,7 @@ ls_yahoo <- function(pattern=NULL) {
     symbols <- ls_instruments(pattern) #TODO: other functions should be updated to get symbols like this too   
     tmp_symbols <- NULL
     for (instr in symbols) {
-        tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
+        tmp_instr <- try(get(instr, pos = FinancialInstrument:::.instrument),silent=TRUE)
         if ( is.instrument(tmp_instr) && !is.null(tmp_instr$defined.by) )  {        
             dby <- unlist(strsplit( tmp_instr$defined.by,";"))    
             if (any(dby == "yahoo" )) 
@@ -129,7 +129,7 @@ ls_IB <- function(pattern=NULL) {
     symbols <- ls_instruments(pattern)   
     tmp_symbols <- NULL
     for (instr in symbols) {
-        tmp_instr <- try(get(instr, pos = .instrument),silent=TRUE)
+        tmp_instr <- try(get(instr, pos = FinancialInstrument:::.instrument),silent=TRUE)
         if ( is.instrument(tmp_instr) && !is.null(tmp_instr$defined.by) )  {        
             dby <- unlist(strsplit( tmp_instr$defined.by,";"))    
             if (any(dby == "IB" )) tmp_symbols <- c(tmp_symbols,instr)
@@ -165,7 +165,7 @@ ls_defined.by <- function(x, pattern=NULL) {
 	symbols <- ls_instruments(pattern)
 	tmp_symbols <- NULL
 	for (symbol in symbols) {
-		tmp_instr <- try(get(symbol, pos=.instrument),silent=TRUE)
+		tmp_instr <- try(get(symbol, pos=FinancialInstrument:::.instrument),silent=TRUE)
 		if (is.instrument(tmp_instr) && !is.null(tmp_instr$defined.by) ) {
 			dby <- unlist(strsplit( tmp_instr$defined.by,";"))
 			if (any(dby == x)) tmp_symbols <- c(tmp_symbols,symbol)
@@ -189,7 +189,7 @@ rm_twsInstruments <- function(x, keep.currencies=TRUE) {
                 x <- x[-match(ls_currencies(),x)] #then take them out
         } else stop('Use keep.currencies=FALSE to delete a currency')    
     }
-    rm(list=x,pos=.instrument) 
+    rm(list=x,pos=FinancialInstrument:::.instrument) 
 }
 
 #' @export
@@ -204,18 +204,6 @@ rm_non_twsInstruments <- function(x, keep.currencies=TRUE) {
                 x <- x[-match(ls_currencies(),x)] #then take them out
         } else stop('Use keep.currencies=FALSE to delete a currency')    
     }
-    rm(list=x,pos=.instrument)  
+    rm(list=x,pos=FinancialInstrument:::.instrument)  
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
