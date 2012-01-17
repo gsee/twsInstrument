@@ -113,7 +113,8 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
         #instr <- Instr_From_Contr(Symbol, verbose = FALSE)
         instr <- twsInstrument(Symbol,output="instrument",assign_i=FALSE,verbose=FALSE)
         contract <- instr$IB
-        symout <- c(symout, instr$primary_id)
+        symbol <- instr$primary_id
+        symout <- c(symout, symbol)
         if (autoDate) {
             if (contract$expiry == "" || is.null(contract$expiry)) {
                 endDate <- Sys.Date()
@@ -173,28 +174,28 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
                 ceDT <- paste(format(st,"%Y%m%d %H:%M:%S"))
                 cat(paste("Request ",i, " of ", length(endDateTime), ": request end Date: ", format(st,"%Y-%m-%d"),"\n",sep="")) #debug
                 if (hasbidask) {                
-                    assign(Symbol, reqHistoricalData(tws, contract, barSize=barSize, 
+                    assign(symbol, reqHistoricalData(tws, contract, barSize=barSize, 
                                                     duration=duration, endDateTime=ceDT, 
                                                     useRTH=useRTH,whatToShow='BID'),pos=bidenv)
-                    assign(Symbol, reqHistoricalData(tws, contract, barSize=barSize, 
+                    assign(symbol, reqHistoricalData(tws, contract, barSize=barSize, 
                                                     duration=duration, endDateTime=ceDT, 
                                                     useRTH=useRTH,whatToShow='ASK'),pos=askenv)
                     slptime <- slptime + 20
                 }
                 if (hastrades) {
-                    assign(Symbol, reqHistoricalData(tws, contract, barSize=barSize, 
+                    assign(symbol, reqHistoricalData(tws, contract, barSize=barSize, 
                                                         duration=duration, endDateTime=ceDT, 
                                                         useRTH=useRTH,whatToShow='TRADES'),pos=trdenv)
-                    
+                    if (!hasbidask) assign(symbol, trdenv[[symbol]], env)                    
                     slptime <- slptime + 10
                 } 
                 if (slptime < 20) domakeBATs <- FALSE #if there is only Trade data (IND/synthetic)
-                if (!is.null(bidenv[[Symbol]])) saveSymbols.days(Symbols=Symbol,base_dir=paste(base_dir,'BID/',sep=""), env=bidenv)
-                if (!is.null(askenv[[Symbol]])) saveSymbols.days(Symbols=Symbol,base_dir=paste(base_dir,'ASK/',sep=""), env=askenv)
-                if (!is.null(trdenv[[Symbol]])) saveSymbols.days(Symbols=Symbol,base_dir=paste(base_dir,'TRADES/',sep=""), env=trdenv)
+                if (!is.null(bidenv[[symbol]])) saveSymbols.days(Symbols=symbol,base_dir=paste(base_dir,'BID/',sep=""), env=bidenv)
+                if (!is.null(askenv[[symbol]])) saveSymbols.days(Symbols=symbol,base_dir=paste(base_dir,'ASK/',sep=""), env=askenv)
+                if (!is.null(trdenv[[symbol]])) saveSymbols.days(Symbols=symbol,base_dir=paste(base_dir,'TRADES/',sep=""), env=trdenv)
                 #uncomment if you don't want to sleep after last request. 
                 #(if you don't sleep, then repeated calls to this function will result in pacing violation)                
-                #if ((ndays > 5 && i < length(endDateTime)) || (Symbol != Symbols[length(Symbols)])) {
+                #if ((ndays > 5 && i < length(endDateTime)) || (symbol != symbols[length(symbols)])) {
                     cat("Pausing for", round(slptime,0), "seconds to avoid pacing violation...\n")
                     Sys.sleep(slptime)
                     slptime <- 0.1
@@ -204,8 +205,8 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
     }
 #	tmp <- reqHistoricalData(tws, contract, barSize = barSize, duration = duration, 
 #        endDateTime = endDateTime, useRTH=useRTH)
-#	assign(Symbol, tmp, pos=tmpenv)
-#	saveSymbols.days(Symbol=Symbol, base_dir=base_dir,env=tmpenv)
+#	assign(symbol, tmp, pos=tmpenv)
+#	saveSymbols.days(Symbol=symbol, base_dir=base_dir,env=tmpenv)
     if (domakeBATs)	makeBATs(symout,base_dir,env=env,ndays=ndays)
     if (save) saveSymbols.days(symout,base_dir=paste(base_dir,"BAT",sep=""),env=env)
     symout
