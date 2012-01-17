@@ -126,12 +126,13 @@ extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, identi
     args$primary_id <- future_id
     # stuff that gets passed through instrument dots
     if (!is.null(instr$exchange)) args$exchange = instr$exchange
+    args$identifiers <- identifiers
     if (!is.null(instr$marketName)) {
         args$exchange_id = instr$marketName
-        args$identifiers <- c(identifiers, list(exchange_id=args$exchange_id))
+        args$identifiers <- c(args$identifiers, list(exchange_id=args$exchange_id))
     }
     if (future_id != parsed_root) {
-        args$identifiers <- c(identifiers, args$identifiers, root_id=parsed_root)
+        args$identifiers <- c(args$identifiers, root_id=parsed_root)
     }
     if (!is.null(instr$longName)) args$description = instr$longName
     if (!is.null(instr$priceMagnifier)) args$priceMagnifier = instr$priceMagnifier
