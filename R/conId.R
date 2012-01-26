@@ -62,7 +62,7 @@ conId.twsContractDetails <- function(x, ...)
 #' @keywords internal
 conId.twsInstrument <- function(x, ...)
 {
-    if (x[["IB"]][["conId"]]) != 0)
+    if (x[["IB"]][["conId"]] != 0)
         return(x[["IB"]][["conId"]])
     return(Contr_From_Instr(x)[["conId"]])
 }
