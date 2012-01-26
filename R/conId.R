@@ -38,7 +38,9 @@ conId <- function(x, ...)
 #' @keywords internal
 conId.twsContract <- function(x, ...) 
 {
-    return(x[["conId"]])
+    if (x[["conId"]] != 0)
+        return(x[["conId"]])
+    return(Contr_From_Instr(x)[["conId"]])
 }
 
 #' twsContractDetails class conId extractor
@@ -60,7 +62,9 @@ conId.twsContractDetails <- function(x, ...)
 #' @keywords internal
 conId.twsInstrument <- function(x, ...)
 {
-    return(x[["IB"]][["conId"]])
+    if (x[["IB"]][["conId"]]) != 0)
+        return(x[["IB"]][["conId"]])
+    return(Contr_From_Instr(x)[["conId"]])
 }
 
 #' instrument class conId extractor
