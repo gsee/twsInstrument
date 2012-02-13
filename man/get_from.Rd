@@ -4,9 +4,10 @@
 \title{Get first or last date for which there are data stored on disk}
 \usage{
   get_from(Symbol, base_dir = "/mnt/W/TRADES",
-    maxDays = 365)
+    maxDays = 365, use_identifier = FALSE, ...)
 
-  get_to(Symbol, base_dir = "/mnt/W/TRADES", maxDays = 365)
+  get_to(Symbol, base_dir = "/mnt/W/TRADES", maxDays = 365,
+    use_identifier = FALSE, ...)
 }
 \arguments{
   \item{Symbol}{name of instrument}
@@ -18,6 +19,14 @@
   \item{maxDays}{if there are no data for \code{Symbol}
   stored on disk, get_from and get_to will return today's
   date minus maxDays.}
+
+  \item{use_identifier}{if not \code{FALSE} \code{Symbol}
+  will become \code{getInstrument(Symbol,
+  ...)$identifiers[[use_identifier]]}}
+
+  \item{...}{anything to pass through to
+  \code{getInstrument}.  Only used if \code{use_identifier}
+  is not \code{FALSE}}
 }
 \value{
   character string of format "\%Y-\%m-\%d" representing the
