@@ -317,8 +317,12 @@ buildIBcontract <- function(symbol, tws=NULL,
         } else {
 	#we'll get here if the symbol argument given was a string (e.g. "SPY") or a twsContract
             if (is.null(primary_id)) { #i.e. if it wasn't a twsContract
-				#if it has a "_" in it, then split into primary and suffix?				
-				primary_id <- symbol
+				#if it has a space, it's probably a B-share
+                #e.g. primary_id of "BRK B" would be "BRKb"
+				tmpss <- strsplit(symbol, " ")[[1]]
+                primary_id <- if (length(tmpss) == 2) {
+                    paste(tmpss[1], tolower(tmpss[2]), sep="")
+                } else primary_id <- make.names(symbol)
 			}             
             if (is.null(instr) && length(primary_id) ==1 )  {
 		#instr will be null if we were given a string.
@@ -395,7 +399,7 @@ buildIBcontract <- function(symbol, tws=NULL,
                     instr$type <- 'option_series' #an option object would parse out to 'root', not 'option'
                 } else if (any(pid$type == 'root')) {
                     instr$type <- 'stock'
-                    ambiguous <- TRUE
+                    ambiguous <- primary_id == toupper(primary_id) #will be TRUE except for B Shares like BRKb
                     #if (!silent) warning(paste(instr$primary_id, "is of an ambiguous format. ",
                     #            "Trying with type = \"stock\""))
                     instr$multiplier <- 1
