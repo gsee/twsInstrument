@@ -103,9 +103,9 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
         autoDate <- TRUE
     } else {
         autoDate <- FALSE
-        if (is.character(endDateTime)) {
-            endDate <- as.Date(endDateTime, format="%Y%m%d")
-        }
+        endDate <- if (is.character(endDateTime)) {
+            as.Date(endDateTime, format="%Y%m%d")
+        } else endDateTime
     }
     symout <- NULL
     for (Symbol in Symbols) {	        
