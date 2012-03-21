@@ -52,12 +52,12 @@ update.data.all <- function(base_dir = "/mnt/W/") {
 
 
 update.stocks <- function(base_dir='/mnt/W', useRTH=1) {
-    loadInstruments("MyStocks",base_dir,'RData')
+    loadInstruments("MyStocks.RData", base_dir)
     update.data(ls_stocks(), base_dir, useRTH=1)
 }
 
 update.FX <- function(base_dir='/mnt/W', useRTH=1) {
-    loadInstruments("MyFX",base_dir,'RData')
+    loadInstruments("MyFX.RData", base_dir)
     update.data(ls_exchange_rates(), base_dir, useRTH=0)
 }
 
