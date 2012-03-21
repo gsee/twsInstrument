@@ -6,7 +6,7 @@ get_quote <- function(Symbols, src='IB', ...) {
 #    if (src != 'IB' && src != 'yahoo') stop("\"IB\" and \"yahoo\" are the only valid values for src.")
 #    if (src == 'yahoo') getQuote(Symbols)
 #    else 
-    do.call(paste('get_quote', src, sep='.'), list(Symbols, ...))
+    do.call(paste('get_quote', src, sep='.'), c(Symbols, list(...)))
 }
 
 
@@ -63,6 +63,9 @@ get_quote <- function(Symbols, src='IB', ...) {
 #' @rdname get_quote.IB
 get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
     if (length(Symbols) == 1) Symbols <- strsplit(Symbols,";")[[1]]
+    if (!hasArg(silent)) {
+        silent <- !verbose
+    } else silent <- list(...)[["silent"]]
     snapShot <- function (twsCon, eWrapper, timestamp, file, playback = 1, ...)
     {
         if (missing(eWrapper))
@@ -143,14 +146,15 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
             cat(paste("Connected with clientId ", tws$clientId, 
                         ".\n Requesting ", Symbols, "\n", sep = ""))
         if (tws$clientId == 150) warning("IB TWS should be restarted.")
-        contracts <- lapply(Symbols, getContract)
+        contracts <- lapply(Symbols, getContract, silent=TRUE)
         if (hasArg(eWrapper)) {
             eW <- list(...)$eWrapper
             ew <- eW(length(Symbols))
         } else ew <- if(any(lapply(contracts, "[[", "sectype") == "CASH"))
                     eWrapper.FXdata(length(Symbols))  
               else eWrapper.data(length(Symbols))      
-        qt <- reqMktData(tws, lapply(Symbols,getContract), eventWrapper=ew,CALLBACK=snapShot)
+        qt <- reqMktData(tws, lapply(Symbols, getContract, silent=silent), 
+                         eventWrapper=ew, CALLBACK=snapShot)
                   
     },finally={try(twsDisconnect(tws), silent=TRUE)} )
     qt
