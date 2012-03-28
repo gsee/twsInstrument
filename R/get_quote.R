@@ -219,7 +219,7 @@ get_quote.yahoo<-function(Symbols,what=standardQuote(),waitTime=30,...) {
 	}
 	QF <- paste('d1t1',QF,sep='') 
 	download.file(paste("http://finance.yahoo.com/d/quotes.csv?s=", 
-        Symbols,"&f=",QF,sep=""), dest=tmp,quiet=TRUE) 
+        Symbols,"&f=",QF,sep=""), destfile=tmp,quiet=TRUE) 
 	Year <- 1970 
 	currentYear <- as.numeric(format(Sys.time(),'%Y')) 
 	start_time <- Sys.time()

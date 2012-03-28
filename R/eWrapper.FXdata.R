@@ -13,7 +13,7 @@ eWrapper.FXdata <- function (n)
 {
     eW <- eWrapper(NULL)
     eW$assign.Data("data", rep(list(structure(.xts(matrix(rep(NA_real_, 
-        4), nc = 4), 0), .Dimnames = list(NULL, c("BidSize", 
+        4), ncol = 4), 0), .Dimnames = list(NULL, c("BidSize", 
         "BidPrice", "AskPrice", "AskSize")))), n))
     eW$tickPrice <- function(curMsg, msg, timestamp, file, ...) {
         tickType = msg[3]

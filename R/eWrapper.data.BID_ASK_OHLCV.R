@@ -13,7 +13,7 @@
 eWrapper.data.BID_ASK_OHLCV <- function(n) {
 	# internally updated data
 	eW <- eWrapper(NULL)  # use basic template
-	eW$assign.Data("data", rep(list(structure(.xts(matrix(rep(NA_real_,11),nc=11),0),
+	eW$assign.Data("data", rep(list(structure(.xts(matrix(rep(NA_real_,11),ncol=11),0),
 									.Dimnames=list(NULL,
 											c("BidSize","BidPrice",
 													"AskPrice","AskSize",
@@ -28,7 +28,7 @@ eWrapper.data.BID_ASK_OHLCV <- function(n) {
 		id <- msg[2] #as.numeric(msg[2])
 		data <- eW$get.Data("data") #[[1]]  # list position of symbol (by id == msg[2])
 		attr(data[[id]],"index") <- as.numeric(Sys.time())
-#    data[[1]] <- rbind(data[[1]],.xts(matrix(rep(NA_real_,7),nc=7), Sys.time()))
+#    data[[1]] <- rbind(data[[1]],.xts(matrix(rep(NA_real_,7),ncol=7), Sys.time()))
 		nr.data <- NROW(data[[id]])
 		#data[[id]][1] <- as.numeric(Sys.time()) #timestamp
 		if(tickType == .twsTickType$BID) {
@@ -61,7 +61,7 @@ eWrapper.data.BID_ASK_OHLCV <- function(n) {
 		tickType = msg[3]
 		msg <- as.numeric(msg)
 		id <- as.numeric(msg[2])
-#    data[[1]] <- rbind(data[[1]],.xts(matrix(rep(NA_real_,7),nc=7), Sys.time()))
+#    data[[1]] <- rbind(data[[1]],.xts(matrix(rep(NA_real_,7),ncol=7), Sys.time()))
 		attr(data[[id]],"index") <- as.numeric(Sys.time())
 		nr.data <- NROW(data[[id]])
 		#data[[id]][1] <- as.numeric(Sys.time()) #timestamp
