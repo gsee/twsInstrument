@@ -64,7 +64,7 @@ get_quote <- function(Symbols, src='IB', ...) {
 get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
     if (length(Symbols) == 1) Symbols <- strsplit(Symbols,";")[[1]]
     if (!hasArg(silent)) {
-        silent <- !verbose
+        silent <- !isTRUE(verbose)
     } else silent <- list(...)[["silent"]]
     snapShot <- function (twsCon, eWrapper, timestamp, file, playback = 1, ...)
     {
@@ -142,7 +142,7 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
         tws <- ConnectIB(c(130:134,150))
     tryCatch( 
     {
-        if (suppressWarnings(isConnected(tws)) && verbose) 
+        if (suppressWarnings(isConnected(tws)) && isTRUE(verbose)) 
             cat(paste("Connected with clientId ", tws$clientId, 
                         ".\n Requesting ", Symbols, "\n", sep = ""))
         if (tws$clientId == 150) warning("IB TWS should be restarted.")
