@@ -6,7 +6,7 @@ get_quote <- function(Symbols, src='IB', ...) {
 #    if (src != 'IB' && src != 'yahoo') stop("\"IB\" and \"yahoo\" are the only valid values for src.")
 #    if (src == 'yahoo') getQuote(Symbols)
 #    else 
-    do.call(paste('get_quote', src, sep='.'), c(Symbols, list(...)))
+    do.call(paste('get_quote', src, sep='.'), list(Symbols=Symbols, ...))
 }
 
 
