@@ -1,4 +1,3 @@
-#' @export
 #' @rdname front_future.IB
 front_future <- function(roots, currency='USD', exchange=NULL, underlying_id = NULL, addIBslot=TRUE, src='IB') {
     do.call(paste('front_future',src,sep="."),list(roots=roots,currency=currency, underlying_id=underlying_id, addIBslot=addIBslot))
@@ -59,7 +58,6 @@ front_future <- function(roots, currency='USD', exchange=NULL, underlying_id = N
 #' #or, 
 #' #unlist(lapply(c("YM","ES","SPY"), front_future))
 #' }
-#' @export
 #' @rdname front_future.IB
 front_future.IB <- function (roots, currency='USD', exchange=NULL, underlying_id = NULL, addIBslot=TRUE) 
 {
