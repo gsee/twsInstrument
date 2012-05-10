@@ -100,17 +100,17 @@ getBAT <- function(Symbols, endDateTime, tws=NULL,
         useRTH="1", auto.assign=TRUE, 
         env=.GlobalEnv) {
     #TODO: use dots. check for tws, symbol, contract, endDateTime, barSize, duration, clientId
+    if (missing(endDateTime)) endDateTime <- Sys.time()    
     if (length(Symbols) > 1 && !auto.assign) stop('auto.assign must be TRUE if using multiple Symbols')
     symout <- NULL	
     for (symbol in Symbols) {
 	    contract <- getContract(symbol,verbose=FALSE)
         
-        if (missing(endDateTime)) endDateTime <- Sys.time()
         if (!is.null(contract$expiry) && contract$expiry != "") {
             endDate <- min(as.Date(contract$expiry,format="%Y%m%d"), Sys.Date())
             endDateTime <- as.POSIXct(paste(endDate, "23:59:59"))    
         }
-        endDateTime <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
+        endDateTimeIB <- paste(format(as.POSIXct(endDateTime),"%Y%m%d %H:%M:%S")) #format for IB
         
         if (missing(tws) || is.null(tws) || (is.twsConnection(tws) && !isConnected(tws)) ) 
             tws <- ConnectIB(c(120:124, 150))
@@ -121,7 +121,7 @@ getBAT <- function(Symbols, endDateTime, tws=NULL,
         tryCatch(
         {
             for (field in fields) {
-                assign(field, reqHistoricalData(tws,contract,endDateTime=endDateTime,
+                assign(field, reqHistoricalData(tws,contract,endDateTime=endDateTimeIB,
                             barSize=barSize,duration=duration,useRTH=useRTH, whatToShow=field))
                 if (!is.null(get(field))) {
                     cat("Pausing 10 seconds between requests ...\n")
