@@ -111,7 +111,7 @@ front_future.IB <- function (roots, currency='USD', exchange=NULL, underlying_id
         id <- gsub(" ","", id) 
         instr$primary_id <- id
         class(instr) <- c('future_series','future','twsInstrument','instrument')
-        assign(id, instr, pos=Financialnstrument:::.instrument)   
+        assign(id, instr, pos=FinancialInstrument:::.instrument)   
         #cat('assinging', id)
         all.ids <- c(all.ids, id)
     }
