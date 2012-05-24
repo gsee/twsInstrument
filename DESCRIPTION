@@ -3,7 +3,7 @@ Type: Package
 Title: Improves ease of use of IBrokers and
     FinancialInstrument
 Version: 1.4-4
-Date: $Date$
+Date: $Date: 2012-05-24 15:26:10 -0500 (Thu, 24 May 2012) $
 Depends:
     IBrokers,
     FinancialInstrument (>= 0.10.0),
