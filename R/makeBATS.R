@@ -51,18 +51,21 @@ function(Symbols, base_dir='/mnt/W',env=.GlobalEnv, ndays) {
 		#setSymbolLookup.FI(base_dir=paste(base_dir,'BID',sep=""))
 		bid <- getSymbols(Symbol,auto.assign=FALSE,from=from,to=to,
                     src='FI',dir=paste(base_dir,'BID',sep=""),
-                        split_method='days',storage_method='rda')
+                        split_method='days',storage_method='rda', 
+                        days_to_omit="Saturday")
         #setSymbolLookup.FI(base_dir=paste(base_dir,'ASK',sep=""))
 		ask <- getSymbols(Symbol,auto.assign=FALSE,from=from,to=to,
                     src='FI',dir=paste(base_dir,'ASK',sep=""),
-                        split_method='days',storage_method='rda')
+                        split_method='days',storage_method='rda',
+                        days_to_omit="Saturday")
 		#setSymbolLookup.FI(base_dir=paste(base_dir,'TRADES',sep=""))		
 		bat <- merge(Cl(bid),Cl(ask))
 		bat <- na.omit(bat)
         if (hastrades) {
             trade <- getSymbols(Symbol,auto.assign=FALSE,from=from,to=to,
                         src='FI',dir=paste(base_dir,'TRADES',sep=""),
-                                split_method='days',storage_method='rda')
+                                split_method='days',storage_method='rda',
+                                days_to_omit="Saturday")
             bat <- merge(bat, Cl(trade), all=FALSE)
 		    bat <- na.locf(bat,na.rm=TRUE)
         }		
