@@ -2,10 +2,14 @@
 \alias{updateContract}
 \title{update the IB attribute of a \code{\link{twsInstrument}}}
 \usage{
-  updateContract(x, ...)
+  updateContract(x, add.identifier = TRUE, ...)
 }
 \arguments{
   \item{x}{character primary_id of an instrument}
+
+  \item{add.identifier}{logical. If the conId has changed,
+  should a \dQuote{old.conId} identifier be added to the
+  instrument?}
 
   \item{...}{arguments to pass to
   \code{\link{update_instruments.IB}}.}

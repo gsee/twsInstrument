@@ -10,6 +10,8 @@
 #'
 #' This is a very simple function
 #' @param x character primary_id of an instrument
+#' @param add.identifier logical. If the conId has changed, should a
+#'   \dQuote{old.conId} identifier be added to the instrument?
 #' @param ... arguments to pass to \code{\link{update_instruments.IB}}.
 #' @return character name of instrument
 #' @author Garrett See
@@ -29,15 +31,21 @@
 #' loadInstruments(ibak)
 #' }
 #' @export
-updateContract <- function(x, ...) {
+updateContract <- function(x, add.identifier=TRUE, ...) {
     stopifnot(is.character(x))
     tws <- ConnectIB(c(100:104, 150)) 
     cdet <- suppressWarnings(reqContractDetails(tws, getContract(x)))
     twsDisconnect(tws)
     if (length(cdet) > 0) cdet <- cdet[[1L]]
-    if (!identical(cdet$contract, getContract(x))) {
+    oc <- getContract(x)
+    if (!identical(cdet$contract, oc)) {
         suppressWarnings(instrument_attr(x, "IB", NULL))
-        update_instruments.IB(x, ...)   
+        update_instruments.IB(x, ...)
+        if (isTRUE(add.identifier)) {
+            if(!identical(getContract(x)$conId, oc$conId)) {
+               add.identifier(x, old.conId=oc$conId)
+           }
+        }   
     }
     x
 }
