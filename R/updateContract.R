@@ -12,6 +12,10 @@
 #' @param x character primary_id of an instrument
 #' @param add.identifier logical. If the conId has changed, should a
 #'   \dQuote{old.conId} identifier be added to the instrument?
+#' @param type type of instrument being updated. Passed to 
+#'   \code{\link[FinancialInstrument]{getInstrument}}.  Only used if more than
+#'   two or more instruments have \code{primary_id}s that are the same except
+#'   for leading dots.
 #' @param ... arguments to pass to \code{\link{update_instruments.IB}}.
 #' @return character name of instrument
 #' @author Garrett See
@@ -31,13 +35,23 @@
 #' loadInstruments(ibak)
 #' }
 #' @export
-updateContract <- function(x, add.identifier=TRUE, ...) {
+updateContract <- function(x, add.identifier=TRUE, type='instrument', ...) {
     stopifnot(is.character(x))
-    tws <- ConnectIB(c(100:104, 150)) 
-    cdet <- suppressWarnings(reqContractDetails(tws, getContract(x)))
+    instr <- getInstrument(x, type)
+    if (!is.instrument(instr)) {
+        stop(paste("Please define ", x, " first", sep=""))
+    }
+    oc <- instr$IB
+    if (length(oc) == 0L) {
+        oc <- try(getContract(x))
+        if (inherits(oc, 'try-error')) {
+            stop(paste("Cannot getContract for", x))
+        }
+    }
+    tws <- ConnectIB(c(100:104, 150L))
+    cdet <- suppressWarnings(try(reqContractDetails(tws, oc)))
     twsDisconnect(tws)
-    if (length(cdet) > 0) cdet <- cdet[[1L]]
-    oc <- getContract(x)
+    if (!inherits(cdet, "try-error") && length(cdet) > 0L) cdet <- cdet[[1L]]
     if (!identical(cdet$contract, oc)) {
         suppressWarnings(instrument_attr(x, "IB", NULL))
         update_instruments.IB(x, ...)
@@ -46,7 +60,7 @@ updateContract <- function(x, add.identifier=TRUE, ...) {
                add.identifier(x, old.conId=oc$conId)
            }
         }   
-    }
+    } else instrument_attr(x, "IB", oc)
     x
 }
 

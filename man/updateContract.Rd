@@ -2,7 +2,8 @@
 \alias{updateContract}
 \title{update the IB attribute of a \code{\link{twsInstrument}}}
 \usage{
-  updateContract(x, add.identifier = TRUE, ...)
+  updateContract(x, add.identifier = TRUE,
+    type = "instrument", ...)
 }
 \arguments{
   \item{x}{character primary_id of an instrument}
@@ -10,6 +11,12 @@
   \item{add.identifier}{logical. If the conId has changed,
   should a \dQuote{old.conId} identifier be added to the
   instrument?}
+
+  \item{type}{type of instrument being updated. Passed to
+  \code{\link[FinancialInstrument]{getInstrument}}.  Only
+  used if more than two or more instruments have
+  \code{primary_id}s that are the same except for leading
+  dots.}
 
   \item{...}{arguments to pass to
   \code{\link{update_instruments.IB}}.}
