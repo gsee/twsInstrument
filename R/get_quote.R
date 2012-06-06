@@ -167,32 +167,60 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
 #' Download current instrument quote from yahoo
 #' 
 #' This \code{get_quote.yahoo} method is the same as Jeff Ryan's code for
-#' getQuote.yahoo (see also) except that in this version, the
-#' quote requests are wrapped in a while loop.  If the timestamp of the receied
+#' getQuote.yahoo (see also) except for two differences.  First, the quote 
+#' requests are wrapped in a while loop.  If the timestamp of the receied
 #' quote has a year that is different than the current year (as reported by
 #' \code{Sys.time()}), it will keep trying until either the year in the quote
 #' is the same as the current year, or \code{waitTime} has passed. Thanks to
 #' Zachary Mayar for suggesting the change, and Samo Pahor for providing the
-#' specific patch for this code.
+#' specific patch for this code.  Second, if the \code{Symbols} are defined 
+#' \code{instrument}s that have a \sQuote{yahoo} identifier.
 #' 
 #' @param Symbols Can be a vector of instrument names, or a character string of
 #' symbols, separated by semi-colons.
 #' @param what what should be retrieved
 #' @param waitTime time in seconds that is the longest you're willing to wait
 #' to get back a quote with a valid timestamp.
-#' @param \dots other args
+#' @param \dots args to pass to \code{\link[FinancialInstrument]{getSymbols.FI}}
 #' @return a data frame with rows matching the number of Symbols requested, and
 #' the columns matching the requested columns.
 #' @seealso \code{\link[quantmod]{getQuote}},
 #' \code{\link{get_quote.IB}}
 #' @references
 #' \url{http://r.789695.n4.nabble.com/getQuote-problem-tt3689746.html}
+#' @examples
+#' \dontrun{
+#' ibak <- as.list(FinancialInstrument:::.instrument) #backup instruments
+#' rm_instruments()
+#' # create some instruments and give them 'yahoo' identifiers
+#' synthetic("SPX", currency("USD"), identifiers=list(yahoo="^GSPC"))
+#' future("ES", currency("USD"), multiplier=50, underlying_id="SPX")
+#' future_series("ES_M2", identifiers=list(yahoo="ESM12.CME"))
+#' s <- c("SPX", "SPY", "ES_M2")
+#' get_quote.yahoo(s)
+#' get_quote(s, src='yahoo') #same
+#' ## restore previous instrument environment
+#' reloadInstruments(ibak)
+#' }
 #' @export
 get_quote.yahoo<-function(Symbols,what=standardQuote(),waitTime=30,...) { 
 	tmp <- tempfile()
 	if(length(Symbols) > 1 && is.character(Symbols)) 
 		Symbols <- paste(Symbols,collapse=";") 
-	length.of.symbols <- length(unlist(strsplit(Symbols, ";"))) 
+    s <- unlist(strsplit(Symbols, ";"))
+    get_identifier <- function(x) {
+        instr <- getInstrument(x, silent=TRUE, ...)
+        if (is.instrument(instr)) {
+            idents <- instr[["identifiers"]]
+            names(idents) <- tolower(names(idents))
+            if ("yahoo" %in% names(idents)) {
+                return(idents[["yahoo"]])
+            } 
+        }
+        return(x)
+    }
+	Symbols <- paste(unname(sapply(s, get_identifier)), collapse=";")
+	length.of.symbols <- length(s) 
 	if(length.of.symbols > 200) { 
 		# yahoo only works with 200 symbols or less per call 
 		# we will recursively call getQuote.yahoo to handle each block of 200 
@@ -212,8 +240,7 @@ get_quote.yahoo<-function(Symbols,what=standardQuote(),waitTime=30,...) {
 	if(inherits(what, 'quoteFormat')) { 
 		QF <- what[[1]] 
 		QF.names <- what[[2]] 
-	} 
-	else { 
+	} else { 
 		QF <- what
 		QF.names <- NULL 
 	}
