@@ -27,13 +27,13 @@
   Download current instrument quote from yahoo
 }
 \details{
-  This \code{get_quote.yahoo} method differs from Jeff
-  Ryan's code for getQuote.yahoo (see also) in two ways.
-  First, the quote requests are wrapped in a while loop.
-  If the timestamp of the receied quote has a year that is
-  different than the current year (as reported by
-  \code{Sys.time()}), it will keep trying until either the
-  year in the quote is the same as the current year, or
+  This \code{get_quote.yahoo} method is the same as Jeff
+  Ryan's code for getQuote.yahoo (see also) except for two
+  differences.  First, the quote requests are wrapped in a
+  while loop.  If the timestamp of the receied quote has a
+  year that is different than the current year (as reported
+  by \code{Sys.time()}), it will keep trying until either
+  the year in the quote is the same as the current year, or
   \code{waitTime} has passed. Thanks to Zachary Mayar for
   suggesting the change, and Samo Pahor for providing the
   specific patch for this code.  Second, if the
@@ -47,8 +47,12 @@ rm_instruments()
 # create some instruments and give them 'yahoo' identifiers
 synthetic("SPX", currency("USD"), identifiers=list(yahoo="^GSPC"))
 future("ES", currency("USD"), multiplier=50, underlying_id="SPX")
-future_series("ES_M2", identifiers=list(yahoo="ESM12.CME"))
-s <- c("SPX", "SPY", "ES_M2")
+## figure out front month contract for ES
+(fid <- future_id("ES", format(Sys.Date(), "\%b"), format(Sys.Date(), "\%y")))
+(yahooid <- paste(format_id(fid, sep=""), "CME", sep="."))
+## define future_series, adding yahoo identifier
+future_series(fid, identifiers=list(yahoo=yahooid))
+s <- c("SPX", "SPY", "ES_M12")
 get_quote.yahoo(s)
 get_quote(s, src='yahoo') #same
 ## restore previous instrument environment

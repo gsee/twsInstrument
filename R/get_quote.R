@@ -195,8 +195,12 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
 #' # create some instruments and give them 'yahoo' identifiers
 #' synthetic("SPX", currency("USD"), identifiers=list(yahoo="^GSPC"))
 #' future("ES", currency("USD"), multiplier=50, underlying_id="SPX")
-#' future_series("ES_M2", identifiers=list(yahoo="ESM12.CME"))
-#' s <- c("SPX", "SPY", "ES_M2")
+#' ## figure out front month contract for ES
+#' (fid <- future_id("ES", format(Sys.Date(), "%b"), format(Sys.Date(), "%y")))
+#' (yahooid <- paste(format_id(fid, sep=""), "CME", sep="."))
+#' ## define future_series, adding yahoo identifier
+#' future_series(fid, identifiers=list(yahoo=yahooid))
+#' s <- c("SPX", "SPY", "ES_M12")
 #' get_quote.yahoo(s)
 #' get_quote(s, src='yahoo') #same
 #' ## restore previous instrument environment
