@@ -21,7 +21,7 @@
 #' @note This does not do anything with the \code{.instrument} environment.
 #'   You should update your instruments separately (e.g. change the primary_id
 #'   to the \code{new.ticker} and add \code{old.ticker} as an identifier of the 
-#'   new instrument with \code{link[FinancialInstrument]{add.identifier}}
+#'   new instrument with \code{\link[FinancialInstrument]{add.identifier}}
 #' @examples
 #' \dontrun{
 #' # If you have data stored on disk for ERTS,

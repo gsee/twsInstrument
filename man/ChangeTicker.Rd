@@ -37,7 +37,7 @@
   separately (e.g. change the primary_id to the
   \code{new.ticker} and add \code{old.ticker} as an
   identifier of the new instrument with
-  \code{link[FinancialInstrument]{add.identifier}}
+  \code{\link[FinancialInstrument]{add.identifier}}
 }
 \examples{
 \dontrun{
