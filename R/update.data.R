@@ -32,6 +32,7 @@ update.data <- function(Symbols, base_dir='/mnt/W', maxDays=365, useRTH=0) {
         if (nDays > 0) {
             nDays <- ceiling(nDays/5) * 5 #round up to the nearest 5
             reqTBBOhistory(s, base_dir=base_dir, ndays=nDays, save=TRUE, useRTH=useRTH, chronological=TRUE)
+            rm(list=s, pos=.GlobalEnv)
         }
 
     }
