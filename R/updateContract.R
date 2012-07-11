@@ -41,7 +41,7 @@ updateContract <- function(x, add.identifier=TRUE, type='instrument', ...) {
     if (!is.instrument(instr)) {
         stop(paste("Please define ", x, " first", sep=""))
     }
-    oc <- instr$IB
+    oc <- instr[["IB"]]
     if (length(oc) == 0L) {
         oc <- try(getContract(x))
         if (inherits(oc, 'try-error')) {
