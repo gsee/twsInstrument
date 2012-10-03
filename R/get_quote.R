@@ -82,8 +82,7 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
                     if (!is.null(last.time)) {
                       Sys.sleep((sys.time - last.time) * playback)
                     }
-                    curMsg <- .Internal(readBin(con, "character",
-                      1L, NA_integer_, TRUE, FALSE))
+                    curMsg <- readBin(con, "character", 1L)
                     if (length(curMsg) < 1)
                       next
                     processMsg(curMsg, con, eWrapper, format(sys.time,
@@ -103,8 +102,7 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
         else {
             while (TRUE) {
                 socketSelect(list(con), FALSE, NULL)
-                curMsg <- .Internal(readBin(con, "character", 1L,
-                    NA_integer_, TRUE, FALSE))
+                curMsg <- readBin(con, "character", 1L)
                 if (!is.null(timestamp)) {
                     processMsg(curMsg, con, eWrapper, format(Sys.time(),
                       timestamp), file, ...)
