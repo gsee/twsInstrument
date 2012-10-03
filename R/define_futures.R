@@ -165,21 +165,28 @@ extract_future <- function(x, future_id, assign_i=FALSE, overwrite=FALSE, identi
 }
 
 
-#' Create future_series ids...
+#' Create future_series ids
 #' 
+#' Create a vector of future_series ids.
+#'
 #' @param root character vector of names of contract roots
 #' @param month numeric vector of months (3 letter abbreviations also work)
 #' @param year numeric vector of years
+#' @param format character string indicating how the id should be formatted. 
+#'   See \code{\link[FinancialInstrument]{format_id}}
+#' @param sep character that will separate root_id and suffix_id
 #' @return character vector of primary_ids for future_series instruments, OR,
 #' if \code{root} is missing, a character vector of suffix_ids.
 #' @author Garrett See
+#' @seealso \code{\link[FinancialInstrument]{format_id}} and 
+#'   \code{\link[FinancialInstrument]{parse_suffix}} for examples of id formats.
 #' @examples
 #' future_id(root=c("ES","YM"), month=c(3,6,9,12), year=2010:2011)
 #' #getSymbols(future_id("VX",1:12,10:11),src='cfe')
 #' future_id('VX',M2C(),10)
 #' #future_id('VX',paste(M2C(),collapse=','),10)
 #' @export
-future_id <- function(root, month, year) {
+future_id <- function(root, month, year, format="CYY", sep="_") {
     m <- suppressWarnings(if (all(!is.na(as.numeric(month)))) { 
             M2C()[month] 
         } else if (toupper(month) %in% toupper(C2M())) {
@@ -195,9 +202,12 @@ future_id <- function(root, month, year) {
         } else year
 #    my <- paste(m,y,sep='')    
     suff <- as.character(do.call(rbind, lapply(m, paste, y, sep="")))
+    if (!missing(format) || !missing(sep)) {
+        suff <- format_id(suff, format=format, parse='suffix')
+    }
     if (missing(root))
         suff
-    else do.call(c, lapply(root, paste, suff, sep="_"))
+    else do.call(c, lapply(root, paste, suff, sep=sep))
 }
 
 

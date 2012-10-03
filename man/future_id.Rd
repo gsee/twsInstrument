@@ -1,8 +1,8 @@
 \name{future_id}
 \alias{future_id}
-\title{Create future_series ids...}
+\title{Create future_series ids}
 \usage{
-  future_id(root, month, year)
+  future_id(root, month, year, format = "CYY", sep = "_")
 }
 \arguments{
   \item{root}{character vector of names of contract roots}
@@ -11,6 +11,13 @@
   abbreviations also work)}
 
   \item{year}{numeric vector of years}
+
+  \item{format}{character string indicating how the id
+  should be formatted.  See
+  \code{\link[FinancialInstrument]{format_id}}}
+
+  \item{sep}{character that will separate root_id and
+  suffix_id}
 }
 \value{
   character vector of primary_ids for future_series
@@ -18,7 +25,7 @@
   vector of suffix_ids.
 }
 \description{
-  Create future_series ids...
+  Create a vector of future_series ids.
 }
 \examples{
 future_id(root=c("ES","YM"), month=c(3,6,9,12), year=2010:2011)
@@ -28,5 +35,10 @@ future_id('VX',M2C(),10)
 }
 \author{
   Garrett See
+}
+\seealso{
+  \code{\link[FinancialInstrument]{format_id}} and
+  \code{\link[FinancialInstrument]{parse_suffix}} for
+  examples of id formats.
 }
 
