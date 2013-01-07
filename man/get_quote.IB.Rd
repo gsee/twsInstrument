@@ -1,11 +1,14 @@
 \name{get_quote}
 \alias{get_quote}
 \alias{get_quote.IB}
+\alias{getQuote.IB}
 \title{Download current instrument quote using IBrokers...}
 \usage{
   get_quote(Symbols, src = "IB", ...)
 
   get_quote.IB(Symbols, verbose = FALSE, tws = NULL, ...)
+
+  getQuote.IB(Symbols, verbose = FALSE, tws = NULL, ...)
 }
 \arguments{
   \item{Symbols}{Can be a vector of instrument names, or a

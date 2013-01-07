@@ -151,13 +151,16 @@ get_quote.IB <- function(Symbols, verbose=FALSE, tws=NULL, ...) {
         } else ew <- if(any(lapply(contracts, "[[", "sectype") == "CASH"))
                     eWrapper.FXdata(length(Symbols))  
               else eWrapper.data(length(Symbols))      
-        qt <- reqMktData(tws, lapply(Symbols, getContract, silent=silent), 
+        qt <- reqMktData(tws, contracts, 
                          eventWrapper=ew, CALLBACK=snapShot)
                   
     },finally={try(twsDisconnect(tws), silent=TRUE)} )
     qt
 }
 
+#' @export
+#' @rdname get_quote.IB
+getQuote.IB <- get_quote.IB
 
 
 #' Download current instrument quote from yahoo...

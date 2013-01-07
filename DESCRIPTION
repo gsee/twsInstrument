@@ -2,8 +2,8 @@ Package: twsInstrument
 Type: Package
 Title: Improves ease of use of IBrokers and
     FinancialInstrument
-Version: 1.4-8
-Date: 2012-10-02
+Version: 1.4-9
+Date: 2013-01-06
 Depends:
     IBrokers,
     FinancialInstrument (>= 0.10.0),
