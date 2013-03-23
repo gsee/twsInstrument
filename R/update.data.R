@@ -1,5 +1,6 @@
 
-update.data <- function(Symbols, base_dir='/mnt/W', maxDays=365, useRTH=0) {
+update.data <- function(Symbols, base_dir='/mnt/W', maxDays=365, useRTH=0, timeout=120) {
+    caught <- NULL
     for (s in Symbols) {
         nDays=maxDays
         instr <- getInstrument(s)
@@ -31,10 +32,22 @@ update.data <- function(Symbols, base_dir='/mnt/W', maxDays=365, useRTH=0) {
         # if there is no directory for this stock, we'll use 365 for nDays to get max data allowed
         if (nDays > 0) {
             nDays <- ceiling(nDays/5) * 5 #round up to the nearest 5
-            reqTBBOhistory(s, base_dir=base_dir, ndays=nDays, save=TRUE, useRTH=useRTH, chronological=TRUE)
+            tryCatch({
+                evalWithTimeout({
+                    reqTBBOhistory(s, base_dir=base_dir, ndays=nDays, save=TRUE, 
+                                   useRTH=useRTH, chronological=TRUE)
+                }, timeout=timeout)
+            }, TimeoutException=function(ex) {
+                message("Timeout fetching", sym)
+                caught <<- c(caught, sym)
+            })
             rm(list=s, pos=.GlobalEnv)
         }
 
+    }
+    if (length(caught) > 0L) {
+        update.data(caught, base_dir=base_dir, maxDays=365, useRTH=0,
+                    timeout=timeout * 2)
     }
 }
 
