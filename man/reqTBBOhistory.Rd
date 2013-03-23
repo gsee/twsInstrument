@@ -11,8 +11,8 @@
   data}
 
   \item{base_dir}{base_dir that contains sub-directories
-  \sQuote{BID}, \sQuote{ASK}, \sQuote{TRADES},
-  \sQuote{BAT}, and/or \sQuote{BAM}}
+  \sQuote{BID}, \sQuote{ASK}, \sQuote{TRADES}, and
+  \sQuote{BAT}}
 
   \item{ndays}{total number of days to retrieve. Default is
   95. Max is 365}
@@ -54,9 +54,7 @@
 
   Important: You should have a base directory that contains
   these sub-directories: \sQuote{BID}, \sQuote{ASK},
-  \sQuote{TRADES}, and \sQuote{BAT}.  If you will be
-  requesting data for foreign exchange rates, you should
-  also have a sub-directory called \sQuote{BAM}.
+  \sQuote{TRADES}, and \sQuote{BAT}.
 
   The default \code{base_dir} is \dQuote{/mnt/W}.  If you
   do not have a directory there, you should either create
@@ -70,8 +68,7 @@
   After all requests have been made (approx. 37 minutes),
   the data are re-read and merged together into BATMV
   format and (if \code{save=TRUE}) stored in the BAT
-  directory (or BAM directory for forex instruments, see
-  below).
+  directory
 
   IBrokers does not disseminate TRADES data for FX (CASH).
   Therefore, \code{reqTBBOhistory} will make 2 requests
@@ -104,7 +101,6 @@ dir.create("tmpdata/BID", recursive=TRUE)
 dir.create("tmpdata/ASK")
 dir.create("tmpdata/TRADES")
 dir.create("tmpdata/BAT")
-dir.create("tmpdata/BAM")
 define_stocks("SPY")
 # get the last 20 days of minutely data
 # (this will take ~2 minutes)

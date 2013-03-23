@@ -10,7 +10,8 @@ Depends:
     quantmod
 Suggests:
     qmao,
-    TTR
+    TTR,
+    R.utils
 Author: Garrett See
 Maintainer: Garrett See <gsee000@gmail.com>
 Description: Integrates IBrokers and FinancialInstrument.

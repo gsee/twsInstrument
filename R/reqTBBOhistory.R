@@ -5,21 +5,24 @@
 #' 
 #' Experimental code -- see Note section
 #'
-#' Important: You should have a base directory that contains these sub-directories: \sQuote{BID}, \sQuote{ASK}, 
-#' \sQuote{TRADES}, and \sQuote{BAT}.  If you will be requesting data for foreign exchange rates, you should also
-#' have a sub-directory called \sQuote{BAM}.
+#' Important: You should have a base directory that contains these 
+#' sub-directories: \sQuote{BID}, \sQuote{ASK}, \sQuote{TRADES}, and 
+#' \sQuote{BAT}.
 #'
-#' The default \code{base_dir} is \dQuote{/mnt/W}.  If you do not have a directory there, you should either create
+#' The default \code{base_dir} is \dQuote{/mnt/W}.  If you do not have a 
+#' directory there, you should either create
 #' it, or not use the default value for \code{base_dir}.
 #'
-#' \code{reqTBBOhistory} will make requests for 5 days of bid, ask, and trade data and then pause for 30 seconds.
-#' In between requests, all BID, ASK, and TRADES data are saved into the respective subdirectories. Data are saved in rda files named 
-#' with the format YYYY.MM.DD.Symbol.rda.  After all requests have been made (approx. 37 minutes), 
-#' the data are re-read and merged together into BATMV format and (if \code{save=TRUE}) stored in the BAT directory 
-#' (or BAM directory for forex instruments, see below).
+#' \code{reqTBBOhistory} will make requests for 5 days of bid, ask, and trade 
+#' data and then pause for 30 seconds. In between requests, all BID, ASK, and 
+#' TRADES data are saved into the respective subdirectories. Data are saved in 
+#' rda files named with the format YYYY.MM.DD.Symbol.rda.  After all requests 
+#' have been made (approx. 37 minutes), the data are re-read and merged together 
+#' into BATMV format and (if \code{save=TRUE}) stored in the BAT directory 
 #'
-#' IBrokers does not disseminate TRADES data for FX (CASH).  Therefore, \code{reqTBBOhistory} will make 2 requests 
-#' every 20 seconds (BID and ASK data) instead of 3 requests every 30 seconds.
+#' IBrokers does not disseminate TRADES data for FX (CASH).  Therefore, 
+#' \code{reqTBBOhistory} will make 2 requests every 20 seconds 
+#' (BID and ASK data) instead of 3 requests every 30 seconds.
 #'
 #' For best results, you should define your instruments before calling this function.
 #'
@@ -28,7 +31,8 @@
 #' IB limits historical data requests to 6 every 60 seconds
 #'
 #' @param Symbols names of instruments for which to request data
-#' @param base_dir base_dir that contains sub-directories \sQuote{BID}, \sQuote{ASK}, \sQuote{TRADES}, \sQuote{BAT}, and/or \sQuote{BAM}
+#' @param base_dir base_dir that contains sub-directories \sQuote{BID}, 
+#' \sQuote{ASK}, \sQuote{TRADES}, and \sQuote{BAT}
 #' @param ndays total number of days to retrieve. Default is 95. Max is 365
 #' @param endDateTime \sQuote{YYYYMMDD H:M:S}
 #' @param tws twsConnection object (Not yet implemented)
@@ -66,7 +70,6 @@
 #' dir.create("tmpdata/ASK")
 #' dir.create("tmpdata/TRADES")
 #' dir.create("tmpdata/BAT")
-#' dir.create("tmpdata/BAM")
 #' define_stocks("SPY")
 #' # get the last 20 days of minutely data 
 #' # (this will take ~2 minutes)
