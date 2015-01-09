@@ -111,7 +111,9 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
         } else endDateTime
     }
     symout <- NULL
-    for (Symbol in Symbols) {	        
+    lastCompletedHistoricalRequestTime <- Sys.time()
+    slptime <- 0.1     
+    for (Symbol in Symbols) {          
         #contract <- Contr_From_Instr(Symbol, verbose = FALSE)
         #instr <- Instr_From_Contr(Symbol, verbose = FALSE)
         instr <- twsInstrument(Symbol,output="instrument",assign_i=FALSE,verbose=FALSE)
@@ -147,18 +149,18 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
         }
 
         if (missing(tws) || is.null(tws) || 
-		        (is.twsConnection(tws) && !isConnected(tws))) 
+             (is.twsConnection(tws) && !isConnected(tws))) 
             tws <- try(ConnectIB(c(120:122, 150)))
             if (isConnected(tws)) {
                 cat(paste("Connected with clientId ", tws$clientId, 
                             ".\n Requesting ", Symbol, "\n", sep = ""))
-    	        if (tws$clientId == 150) warning("IB TWS should be restarted.")
+                if (tws$clientId == 150) warning("IB TWS should be restarted.")
             } else stop("Could not connect to IB.") 
 
-        tryCatch( {        
-	        if (substr(base_dir,nchar(base_dir),nchar(base_dir)) != "/") base_dir <- paste(base_dir, "/",sep="")
+        tryCatch( {
+          if (substr(base_dir,nchar(base_dir),nchar(base_dir)) != "/") base_dir <- paste(base_dir, "/",sep="")
 
-	        bidenv <- new.env()
+            bidenv <- new.env()
             askenv <- new.env()
             trdenv <- new.env()
         
@@ -191,18 +193,19 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
                                                         useRTH=useRTH,whatToShow='TRADES'),pos=trdenv)
                     if (!hasbidask) assign(symbol, trdenv[[symbol]], env)                    
                     slptime <- slptime + 10
-                } 
+                }
+                lastCompletedHistoricalRequestTime <- Sys.time()
                 if (slptime < 20) domakeBATs <- FALSE #if there is only Trade data (IND/synthetic)
                 if (!is.null(bidenv[[symbol]])) saveSymbols.days(Symbols=symbol,base_dir=paste(base_dir,'BID/',sep=""), env=bidenv)
                 if (!is.null(askenv[[symbol]])) saveSymbols.days(Symbols=symbol,base_dir=paste(base_dir,'ASK/',sep=""), env=askenv)
                 if (!is.null(trdenv[[symbol]])) saveSymbols.days(Symbols=symbol,base_dir=paste(base_dir,'TRADES/',sep=""), env=trdenv)
                 #uncomment if you don't want to sleep after last request. 
                 #(if you don't sleep, then repeated calls to this function will result in pacing violation)                
-                #if ((ndays > 5 && i < length(endDateTime)) || (symbol != symbols[length(symbols)])) {
+                if ((ndays > 5 && i < length(endDateTime)) || (Symbol != Symbols[length(Symbols)])) {
                     cat("Pausing for", round(slptime,0), "seconds to avoid pacing violation...\n")
                     Sys.sleep(slptime)
                     slptime <- 0.1
-                #}
+                }
             }
         },finally={twsDisconnect(tws)} )
     }
@@ -210,8 +213,16 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
 #        endDateTime = endDateTime, useRTH=useRTH)
 #	assign(symbol, tmp, pos=tmpenv)
 #	saveSymbols.days(Symbol=symbol, base_dir=base_dir,env=tmpenv)
+
     if (domakeBATs)	makeBATs(symout,base_dir,env=env,ndays=ndays)
     if (save) saveSymbols.days(symout,base_dir=paste(base_dir,"BAT",sep=""),env=env)
+
+  # Determine if sleep is needed
+    if ((Sys.time() - lastCompletedHistoricalRequestTime) < slptime) {
+        slptime <- slptime -  (Sys.time() - lastCompletedHistoricalRequestTime)
+        cat("Pausing for", round(slptime,0), "seconds to avoid pacing violation...\n")
+        Sys.sleep(slptime)
+    }
     symout
 }
 
