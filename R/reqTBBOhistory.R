@@ -218,10 +218,14 @@ function(Symbols, base_dir='/mnt/W', ndays=95,
     if (save) saveSymbols.days(symout,base_dir=paste(base_dir,"BAT",sep=""),env=env)
 
   # Determine if sleep is needed
-    if ((Sys.time() - lastCompletedHistoricalRequestTime) < slptime) {
-        slptime <- slptime -  (Sys.time() - lastCompletedHistoricalRequestTime)
-        cat("Pausing for", round(slptime,0), "seconds to avoid pacing violation...\n")
-        Sys.sleep(slptime)
+    if ((as.numeric(Sys.time()) - 
+           as.numeric(lastCompletedHistoricalRequestTime)) < slptime) {
+        slptime <- slptime -  (as.numeric(Sys.time()) - 
+                                 as.numeric(lastCompletedHistoricalRequestTime))
+        if (slptime > 0) {
+          cat("Pausing for", round(slptime,0), "seconds to avoid pacing violation...\n")
+          Sys.sleep(slptime)
+        }
     }
     symout
 }

@@ -191,7 +191,8 @@ getQuote.IB <- get_quote.IB
 #' \url{http://r.789695.n4.nabble.com/getQuote-problem-tt3689746.html}
 #' @examples
 #' \dontrun{
-#' ibak <- as.list(FinancialInstrument:::.instrument) #backup instruments
+#' #backup instruments
+#' ibak <- as.list(FinancialInstrument:::.instrument, all.names=TRUE)
 #' rm_instruments()
 #' # create some instruments and give them 'yahoo' identifiers
 #' synthetic("SPX", currency("USD"), identifiers=list(yahoo="^GSPC"))

@@ -21,7 +21,8 @@
 #' @author Garrett See
 #' @examples
 #' \dontrun{
-#' ibak <- as.list(FinancialInstrument:::.instrument) #backup instrument envir
+#' #backup instrument envir
+#' ibak <- as.list(FinancialInstrument:::.instrument, all.names=TRUE) 
 #' rm_instruments()
 #' define_stocks("SPY")
 #' contr <- getContract("SPY")

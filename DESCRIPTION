@@ -2,8 +2,8 @@ Package: twsInstrument
 Type: Package
 Title: Improves ease of use of IBrokers and
     FinancialInstrument
-Version: 1.4-9
-Date: 2013-01-06
+Version: 1.4-10
+Date: 2013-02-10
 Depends:
     IBrokers,
     FinancialInstrument (>= 0.10.0),
@@ -18,33 +18,3 @@ Description: Integrates IBrokers and FinancialInstrument.
 License: GPL-3
 LazyLoad: yes
 LazyData: yes
-Collate:
-    'addIBslot.R'
-    'ATM_k.R'
-    'ATMQuote.R'
-    'buildIBcontract_2.R'
-    'conId.R'
-    'define_futures.R'
-    'define_FX.R'
-    'define_options.R'
-    'define_stocks.R'
-    'eWrapper.data.BID_ASK_OHLCV.R'
-    'eWrapper.FXdata.R'
-    'front_futureIB.R'
-    'getBAT.R'
-    'getContract.R'
-    'getIBEquities.R'
-    'get_quote.R'
-    'instrument.R'
-    'ls_twsInstruments.R'
-    'Mid.r'
-    'twsClock.R'
-    'twsInstrument-package.R'
-    'update_instruments.R'
-    'ConnectIB.R'
-    'get_from.R'
-    'makeBATS.R'
-    'reqTBBOhistory.R'
-    'update.data.R'
-    'ChangeTicker.R'
-    'updateContract.R'
